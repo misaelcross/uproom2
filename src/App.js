@@ -81,10 +81,7 @@ function App() {
     setRightPanelContent('userDetails');
   };
 
-  const showSchedule = () => {
-    setSelectedUser(null);
-    setRightPanelContent('schedule');
-  };
+
 
   // Nova função para voltar dos detalhes do usuário
   const goBackFromUserDetails = () => {

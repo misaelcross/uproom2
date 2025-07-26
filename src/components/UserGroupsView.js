@@ -11,13 +11,6 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
     ]
   };
 
-  // Função para obter tempo desde última atualização
-  const getLastUpdateTime = (users) => {
-    // Simulando diferentes tempos
-    const times = ['2m', '12m', '3h', '23m', '4h', '1h', '1h'];
-    return times[Math.floor(Math.random() * times.length)];
-  };
-
   // Função para obter contagem de usuários
   const getUserCount = (users) => {
     return users.length;
@@ -27,7 +20,6 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
     <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
       {Object.entries(userGroups).map(([groupName, groupUsers]) => {
         const userCount = getUserCount(groupUsers);
-        const lastUpdate = getLastUpdateTime(groupUsers);
         
         return (
           <div

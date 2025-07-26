@@ -11,13 +11,6 @@ const RoleGroupView = ({ users, onUserClick, onGroupClick }) => {
     return groups;
   }, {});
 
-  // Função para obter tempo desde última atualização
-  const getLastUpdateTime = (users) => {
-    // Simulando diferentes tempos
-    const times = ['2m', '12m', '3h', '23m', '4h', '1h', '1h'];
-    return times[Math.floor(Math.random() * times.length)];
-  };
-
   // Função para obter contagem de usuários
   const getUserCount = (users) => {
     return users.length;
@@ -27,7 +20,6 @@ const RoleGroupView = ({ users, onUserClick, onGroupClick }) => {
     <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
       {Object.entries(groupedUsers).map(([role, roleUsers]) => {
         const userCount = getUserCount(roleUsers);
-        const lastUpdate = getLastUpdateTime(roleUsers);
         
         return (
           <div
