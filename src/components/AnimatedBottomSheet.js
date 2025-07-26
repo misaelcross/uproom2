@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   Check,
   ThumbsUp,
-  ThumbsDown,
   FileText
 } from 'lucide-react';
 
@@ -107,7 +106,6 @@ const AnimatedBottomSheet = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCardUsers, setSelectedCardUsers] = useState(new Set());
   const [nudges, setNudges] = useState(receivedNudges);
   const [selectedNudge, setSelectedNudge] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' ou 'detail'
@@ -182,17 +180,6 @@ const AnimatedBottomSheet = ({
       setSelectedUsers([...selectedUsers, user]);
     }
     setSearchTerm(''); // Limpar pesquisa após adicionar
-  };
-
-  // Função para toggle visual nos cards (sem adicionar à lista)
-  const toggleCardSelection = (userId) => {
-    const newSelected = new Set(selectedCardUsers);
-    if (newSelected.has(userId)) {
-      newSelected.delete(userId);
-    } else {
-      newSelected.add(userId);
-    }
-    setSelectedCardUsers(newSelected);
   };
 
   // Calcular altura dinâmica baseada no conteúdo

@@ -1,24 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Home, 
-  MessageSquare, 
   Calendar, 
   Users, 
-  Settings, 
-  Plus, 
   X, 
   Play, 
   Pause, 
-  RotateCcw,
   ChevronDown,
-  ChevronUp,
   Check,
   LayoutDashboard,
   Zap,
   Bell,
   BarChart3,
   Clock,
-  LogOut,
   Edit,
   Trash2
 } from 'lucide-react';
@@ -137,11 +130,6 @@ const Sidebar = () => {
     setPomodoroActive(false);
   };
 
-  const stopPomodoro = () => {
-    setPomodoroActive(false);
-    setPomodoroTime(25 * 60);
-  };
-
   const selectStatus = (status) => {
     setSelectedStatusOption(status);
     setShowStatusError(false);
@@ -196,11 +184,6 @@ const Sidebar = () => {
       case 'Offline': return 'bg-gray-500';
       default: return 'bg-neutral-600';
     }
-  };
-
-  const getCurrentStatusColor = () => {
-    const status = statusOptions.find(s => s.name === currentStatus);
-    return status ? status.dotColor : 'bg-green-500';
   };
 
   const navItems = [
