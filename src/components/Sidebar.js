@@ -516,7 +516,7 @@ const Sidebar = () => {
                     onClick={cancelStatusChange}
                     className="flex-1 border border-neutral-600 text-neutral-300 font-medium py-2 px-4 rounded-lg hover:border-neutral-500 hover:text-neutral-200 transition-colors"
                   >
-                    Cancelar
+                    Cancel
                   </button>
                   <button 
                     onClick={setNewStatus}
