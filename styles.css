@@ -1,0 +1,21 @@
+/* Estilos adicionais se necessário */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Garantir que as divs tenham altura mínima */
+.grid > div {
+    min-height: 60px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(6, 1fr);
+    }
+    
+    .w-32 {
+        width: 80px;
+    }
+}

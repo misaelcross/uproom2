@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout com Tailwind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1F1F1F] p-4">
+segunda    <div class="flex gap-4 h-screen">
+        <!-- PRIMEIRA COLUNA: 2 divs quadradas com space-between - 60px -->
+        <div class="flex flex-col justify-between" style="width: 60px;">
+            <div class="bg-gray-400" style="width: 60px; height: 60px;"></div>
+            <div class="bg-gray-400" style="width: 60px; height: 60px;"></div>
+        </div>
+        
+        <!-- SEGUNDA COLUNA: 2 divs retangulares com space-between - 300px -->
+        <div class="flex flex-col justify-between" style="width: 300px;">
+            <div class="h-48 bg-gray-400" style="width: 300px;"></div>
+            <div class="h-48 bg-gray-400" style="width: 300px;"></div>
+        </div>
+        
+        <!-- TERCEIRA COLUNA: 2 linhas -->
+        <div class="flex-1 flex flex-col gap-4">
+            <!-- Primeira linha: 3 divs retangulares -->
+            <div class="flex gap-4 h-20 mb-4">
+                <div class="flex-1 bg-blue-500 rounded-lg min-h-[80px]"></div>
+                <div class="flex-1 bg-green-500 rounded-lg min-h-[80px]"></div>
+                <div class="flex-1 bg-red-500 rounded-lg min-h-[80px]"></div>
+            </div>
+            
+            <!-- Segunda linha: 2 colunas -->
+            <div class="flex gap-4 flex-1">
+                <!-- Primeira coluna: Grid com cards responsivo baseado em largura mínima -->
+                <div class="flex-1 grid gap-4 auto-rows-fr" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+                    <!-- Card 1 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 7 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 8 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 9 -->
+                    <div class="user-card bg-gray-800 rounded-lg p-4 flex flex-col gap-3 cursor-pointer hover:bg-gray-700 transition-colors">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <div class="w-12 h-12 bg-gray-600 rounded-full"></div>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-medium">Brent Short</h3>
+                                    <p class="text-gray-400 text-sm">UI/UX Designer • 1h</p>
+                                </div>
+                            </div>
+                            <div class="text-gray-400">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <p class="text-white mb-3 flex-1">We can talk!</p>
+                        <div class="inline-block">
+                            <span class="bg-gray-700 text-green-400 px-3 py-1 rounded-full text-sm border border-green-400">Available</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Segunda coluna: Schedule/Agenda - 350px -->
+                <div id="rightColumn" class="flex flex-col gap-4 bg-gray-900 rounded-lg p-6" style="width: 350px;">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-white text-xl font-semibold">My Schedule</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-white">Jul 2025</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Date and Events Header -->
+                    <div class="flex gap-8 mb-4">
+                        <span class="text-gray-400 text-sm uppercase tracking-wide">DATE</span>
+                        <span class="text-gray-400 text-sm uppercase tracking-wide">EVENTS</span>
+                    </div>
+
+                    <!-- Date Section -->
+                    <div class="flex gap-8 mb-6">
+                        <div class="flex flex-col items-center">
+                            <span class="text-white text-3xl font-bold">02</span>
+                            <span class="text-gray-400 text-sm">Monday</span>
+                        </div>
+                        
+                        <!-- Events List -->
+                        <div class="flex-1 space-y-3">
+                            <!-- Team Meeting Event -->
+                            <div class="bg-blue-600 rounded-lg p-4 relative">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h3 class="text-white font-medium mb-1">Team Meeting</h3>
+                                        <p class="text-blue-100 text-sm">11:30am - 12:00pm</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex -space-x-2">
+                                            <div class="w-6 h-6 bg-gray-600 rounded-full border-2 border-blue-600"></div>
+                                            <span class="text-blue-100 text-xs ml-1">+3</span>
+                                        </div>
+                                        <svg class="w-4 h-4 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Launch break Event -->
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                                <h3 class="text-white font-medium mb-1">Launch break</h3>
+                                <p class="text-gray-400 text-sm">12:00am - 1:00pm</p>
+                            </div>
+
+                            <!-- Product Review Event -->
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                                <h3 class="text-white font-medium mb-1">Product Review</h3>
+                                <p class="text-gray-400 text-sm">13:00pm - 4:30pm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para criar o conteúdo de User Details
+        function createUserDetailsContent() {
+            return `
+                <!-- User Details Content -->
+                <div class="flex flex-col bg-gray-900 rounded-lg p-6 h-full" style="width: 350px;">
+                    <!-- Header com botão voltar -->
+                    <div class="flex items-center gap-3 mb-6">
+                        <button onclick="showSchedule()" class="text-gray-400 hover:text-white">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <h2 class="text-white text-xl font-semibold">User Details</h2>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="relative">
+                            <div class="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center">
+                                <span class="text-white text-xl font-semibold">AS</span>
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-white text-lg font-semibold">Alena Siphron</h3>
+                            <p class="text-gray-400">UI/UX Designer</p>
+                        </div>
+                    </div>
+
+                    <!-- Social Icons -->
+                    <div class="flex gap-3 mb-6">
+                        <div class="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
+                            <span class="text-white text-xs font-bold">F</span>
+                        </div>
+                        <div class="w-8 h-8 bg-gray-800 rounded flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                            </svg>
+                        </div>
+                        <div class="w-8 h-8 bg-green-600 rounded flex items-center justify-center">
+                            <span class="text-white text-xs">+</span>
+                        </div>
+                        <div class="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2h12v8H4V6z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Message Input -->
+                    <div class="relative mb-6">
+                        <input type="text" placeholder="Send a quick Nudge..." 
+                               class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-400 pr-10">
+                        <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="flex gap-1 mb-6">
+                        <button class="px-4 py-2 bg-gray-800 text-white rounded-lg text-sm font-medium">Activity</button>
+                        <button class="px-4 py-2 text-gray-400 hover:text-white text-sm">Schedule</button>
+                        <button class="px-4 py-2 text-gray-400 hover:text-white text-sm">Info</button>
+                    </div>
+
+                    <!-- Activity Items -->
+                    <div class="space-y-4 flex-1 overflow-y-auto">
+                        <!-- Design Review Meeting -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium mb-1">Design Review Meeting</h4>
+                                    <p class="text-blue-400 text-sm mb-2">11:30 AM - 12:30 PM</p>
+                                    <p class="text-gray-300 text-sm mb-3">Collaborating with designers and stakeholders to align on next steps and improvements.</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-400">
+                                        <span>Started 15m ago</span>
+                                        <span>•</span>
+                                        <span class="text-green-400">In Progress</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Creating HFD for Dashboard UI -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium mb-1">Creating HFD for Dashboard UI</h4>
+                                    <p class="text-gray-400 text-sm mb-2">2:15 PM - 5:00 PM</p>
+                                    <p class="text-gray-300 text-sm mb-3">Developing a High-Fidelity Design (HFD) for the dashboard interface, focusing on visual details, layout precision, and component interactions to accurately represent the final user experience.</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-400">
+                                        <span>1d</span>
+                                        <span>•</span>
+                                        <span class="text-gray-400">Finished</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Updating tokens -->
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-white font-medium mb-1">Updating the tokens for the Dashbo...</h4>
+                                    <p class="text-gray-400 text-sm mb-2">2:15 PM - 5:00 PM</p>
+                                    <p class="text-gray-300 text-sm mb-3">Refactoring and updating design tokens (colors, spacing, typography, etc.) to ensure consistency across the dashboard interface. Aligning token values with the latest design s...</p>
+                                    <div class="flex items-center gap-4 text-xs text-gray-400">
+                                        <span>1d</span>
+                                        <span>•</span>
+                                        <span class="text-gray-400">Finished</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Função para mostrar o schedule original
+        function showSchedule() {
+            const rightColumn = document.getElementById('rightColumn');
+            rightColumn.innerHTML = `
+                <!-- Segunda coluna: Schedule/Agenda - 350px -->
+                <div class="flex flex-col gap-4 bg-gray-900 rounded-lg p-6" style="width: 350px;">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-white text-xl font-semibold">My Schedule</h2>
+                        <div class="flex items-center gap-2">
+                            <span class="text-white">Jul 2025</span>
+                            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Date and Events Header -->
+                    <div class="flex gap-8 mb-4">
+                        <span class="text-gray-400 text-sm uppercase tracking-wide">DATE</span>
+                        <span class="text-gray-400 text-sm uppercase tracking-wide">EVENTS</span>
+                    </div>
+
+                    <!-- Date Section -->
+                    <div class="flex gap-8 mb-6">
+                        <div class="flex flex-col items-center">
+                            <span class="text-white text-3xl font-bold">02</span>
+                            <span class="text-gray-400 text-sm">Monday</span>
+                        </div>
+                        
+                        <!-- Events List -->
+                        <div class="flex-1 space-y-3">
+                            <!-- Team Meeting Event -->
+                            <div class="bg-blue-600 rounded-lg p-4 relative">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <h3 class="text-white font-medium mb-1">Team Meeting</h3>
+                                        <p class="text-blue-100 text-sm">11:30am - 12:00pm</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="flex -space-x-2">
+                                            <div class="w-6 h-6 bg-gray-600 rounded-full border-2 border-blue-600"></div>
+                                            <span class="text-blue-100 text-xs ml-1">+3</span>
+                                        </div>
+                                        <svg class="w-4 h-4 text-blue-100" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Launch break Event -->
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                                <h3 class="text-white font-medium mb-1">Launch break</h3>
+                                <p class="text-gray-400 text-sm">12:00am - 1:00pm</p>
+                            </div>
+
+                            <!-- Product Review Event -->
+                            <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                                <h3 class="text-white font-medium mb-1">Product Review</h3>
+                                <p class="text-gray-400 text-sm">13:00pm - 4:30pm</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Função para mostrar detalhes do usuário
+        function showUserDetails() {
+            const rightColumn = document.getElementById('rightColumn');
+            rightColumn.innerHTML = createUserDetailsContent();
+        }
+
+        // Adicionar event listeners aos cards quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar com o conteúdo do schedule
+            showSchedule();
+            
+            // Adicionar event listeners aos cards
+            const userCards = document.querySelectorAll('.user-card');
+            userCards.forEach(card => {
+                card.addEventListener('click', showUserDetails);
+            });
+        });
+    </script>
+</body>
+</html>
