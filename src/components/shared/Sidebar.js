@@ -16,7 +16,7 @@ import {
   Trash2
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ currentPage, onNavigate }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [currentStatus, setCurrentStatus] = useState('Available');
@@ -224,24 +224,42 @@ const Sidebar = () => {
       {/* Navigation Links e Widgets - Área com scroll */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-2 space-y-1">
-          {navItems.map((item, index) => (
-            <button
-              key={index}
-              className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-900 ${
-                item.label === 'Dashboard' ? 'bg-neutral-700 text-white' : 'text-neutral-300'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </div>
-              {item.count && (
-                <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
-                  {item.count}
-                </span>
-              )}
-            </button>
-          ))}
+          {navItems.map((item, index) => {
+            const isActive = (item.label === 'Dashboard' && currentPage === 'dashboard') || 
+                           (item.label === 'Nudge' && currentPage === 'nudges') ||
+                           (item.label === 'Schedule' && currentPage === 'schedule') ||
+                           (item.label === 'To-dos' && currentPage === 'todos');
+            
+            return (
+              <button
+                key={index}
+                onClick={() => {
+                  if (item.label === 'Dashboard') {
+                    onNavigate('dashboard');
+                  } else if (item.label === 'Nudge') {
+                    onNavigate('nudges');
+                  } else if (item.label === 'Schedule') {
+                    onNavigate('schedule');
+                  } else if (item.label === 'To-dos') {
+                    onNavigate('todos');
+                  }
+                }}
+                className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-900 ${
+                  isActive ? 'bg-neutral-700 text-white' : 'text-neutral-300'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </div>
+                {item.count && (
+                  <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                    {item.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
         {/* Reminders Section */}

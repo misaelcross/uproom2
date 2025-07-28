@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import UserCard from './components/UserCard';
-import UserDetails from './components/UserDetails';
-import Schedule from './components/Schedule';
-import StatusGroupView from './components/StatusGroupView';
-import StatusGroupDetails from './components/StatusGroupDetails';
-import RoleGroupView from './components/RoleGroupView';
-import RoleGroupDetails from './components/RoleGroupDetails';
-import UserGroupsView from './components/UserGroupsView';
-import UserGroupDetails from './components/UserGroupDetails';
-import AnimatedBottomSheet from './components/AnimatedBottomSheet';
-import Sidebar from './components/Sidebar';
-import FirstColumn from './components/FirstColumn';
-import TopTabs from './components/TopTabs';
-import LiveNotifications from './components/LiveNotifications';
-import ActionBar from './components/ActionBar';
+import UserCard from './components/dashboard/UserCard';
+import UserDetails from './components/dashboard/UserDetails';
+import Schedule from './components/schedule/Schedule';
+import SchedulePage from './components/schedule/SchedulePage';
+import StatusGroupView from './components/dashboard/StatusGroupView';
+import StatusGroupDetails from './components/dashboard/StatusGroupDetails';
+import RoleGroupView from './components/dashboard/RoleGroupView';
+import RoleGroupDetails from './components/dashboard/RoleGroupDetails';
+import UserGroupsView from './components/dashboard/UserGroupsView';
+import UserGroupDetails from './components/dashboard/UserGroupDetails';
+import AnimatedBottomSheet from './components/shared/AnimatedBottomSheet';
+import NudgePage from './components/nudges/NudgePage';
+import TodosPage from './components/todos/TodosPage';
+import Sidebar from './components/shared/Sidebar';
+import FirstColumn from './components/shared/FirstColumn';
+import TopTabs from './components/dashboard/TopTabs';
+import LiveNotifications from './components/shared/LiveNotifications';
+import ActionBar from './components/dashboard/ActionBar';
 import { usersData } from './data/usersData';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('dashboard'); // 'dashboard' ou 'nudges'
   const [rightPanelContent, setRightPanelContent] = useState('schedule');
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedRoleGroup, setSelectedRoleGroup] = useState(null);
   const [selectedUserGroup, setSelectedUserGroup] = useState(null);
-  const [previousContext, setPreviousContext] = useState(null); // Para rastrear contexto anterior
+  const [previousContext, setPreviousContext] = useState(null);
   const [usersWithIcons, setUsersWithIcons] = useState([]);
   const [sortBy, setSortBy] = useState('Recent Activity');
   const [topTabActive, setTopTabActive] = useState('overview');
@@ -44,14 +48,9 @@ function App() {
       'https://www.svgrepo.com/show/354463/trello.svg'
     ];
     
-    // Randomizar quantidade de ícones (0 a 5)
     const iconCount = Math.floor(Math.random() * 6);
+    if (iconCount === 0) return [];
     
-    if (iconCount === 0) {
-      return [];
-    }
-    
-    // Embaralhar e pegar a quantidade desejada
     const shuffled = [...allIcons].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, iconCount);
   };
@@ -66,7 +65,6 @@ function App() {
   }, []);
 
   const showUserDetails = (user) => {
-    // Salvar contexto anterior antes de mostrar detalhes do usuário
     if (rightPanelContent === 'group' && selectedGroup) {
       setPreviousContext({ type: 'group', data: selectedGroup });
     } else if (rightPanelContent === 'roleGroup' && selectedRoleGroup) {
@@ -81,9 +79,6 @@ function App() {
     setRightPanelContent('userDetails');
   };
 
-
-
-  // Nova função para voltar dos detalhes do usuário
   const goBackFromUserDetails = () => {
     setSelectedUser(null);
     
@@ -106,21 +101,17 @@ function App() {
     }
   };
 
-  // Função para selecionar usuário da busca
   const handleUserSelect = (user) => {
-    // Encontrar o usuário completo com ícones
     const userWithIcons = usersWithIcons.find(u => u.id === user.id);
     if (userWithIcons) {
       showUserDetails(userWithIcons);
     }
   };
 
-  // Função para lidar com mudança de ordenação
   const handleSortChange = (sortOption) => {
     setSortBy(sortOption);
   };
 
-  // Função para ordenar usuários
   const getSortedUsers = () => {
     let sortedUsers = [...usersWithIcons];
     
@@ -138,14 +129,12 @@ function App() {
         sortedUsers.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate));
         break;
       default:
-        // Para 'Recent Activity', 'Status', 'Role' mantém ordem original
         break;
     }
     
     return sortedUsers;
   };
 
-  // Função para mostrar detalhes do grupo
   const showGroupDetails = (group) => {
     setSelectedGroup(group);
     setSelectedUser(null);
@@ -153,13 +142,11 @@ function App() {
     setRightPanelContent('group');
   };
 
-  // Função para fechar detalhes do grupo
   const closeGroupDetails = () => {
     setSelectedGroup(null);
     setRightPanelContent('schedule');
   };
 
-  // Função para mostrar detalhes do grupo de cargos
   const showRoleGroupDetails = (roleGroup) => {
     setSelectedRoleGroup(roleGroup);
     setSelectedUser(null);
@@ -167,13 +154,11 @@ function App() {
     setRightPanelContent('roleGroup');
   };
 
-  // Função para fechar detalhes do grupo de cargos
   const closeRoleGroupDetails = () => {
     setSelectedRoleGroup(null);
     setRightPanelContent('schedule');
   };
 
-  // Função para mostrar detalhes do grupo de usuários
   const showUserGroupDetails = (userGroup) => {
     setSelectedUserGroup(userGroup);
     setSelectedUser(null);
@@ -182,7 +167,6 @@ function App() {
     setRightPanelContent('userGroup');
   };
 
-  // Função para fechar detalhes do grupo de usuários
   const closeUserGroupDetails = () => {
     setSelectedUserGroup(null);
     setRightPanelContent('schedule');
@@ -203,6 +187,22 @@ function App() {
     setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+  // Se estiver na página de nudges, renderizar NudgePage
+  if (currentPage === 'nudges') {
+    return <NudgePage onNavigate={setCurrentPage} />;
+  }
+
+  // Se estiver na página de schedule, renderizar SchedulePage
+  if (currentPage === 'schedule') {
+    return <SchedulePage onNavigate={setCurrentPage} />;
+  }
+
+  // Se estiver na página de todos, renderizar TodosPage
+  if (currentPage === 'todos') {
+    return <TodosPage onNavigate={setCurrentPage} />;
+  }
+
+  // Renderizar Dashboard (página padrão)
   return (
     <div className="min-h-screen bg-neutral-800">
       <div className="flex gap-4 h-screen">
@@ -213,7 +213,7 @@ function App() {
 
         {/* Segunda coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
-          <Sidebar />
+          <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
         </div>
 
         {/* Terceira coluna: flex-1 */}

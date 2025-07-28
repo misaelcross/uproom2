@@ -50,7 +50,7 @@ const UserDetails = ({ user, onBack }) => {
           },
           {
             id: 3,
-            title: `${user.skills[0]} Review`,
+            title: `${user.skills && user.skills[0] ? user.skills[0] : 'Project'} Review`,
             time: '2:00pm - 3:30pm',
             isCurrent: false
           }
@@ -95,7 +95,7 @@ const UserDetails = ({ user, onBack }) => {
         events: [
           {
             id: 8,
-            title: `${user.skills[1] || user.skills[0]} Workshop`,
+            title: `${user.skills && user.skills.length > 0 ? (user.skills[1] || user.skills[0]) : 'General'} Workshop`,
             time: '10:00am - 12:00pm',
             avatar: user.avatar,
             additionalPeople: '+6',
@@ -146,7 +146,7 @@ const UserDetails = ({ user, onBack }) => {
               alt={user.name}
               className="w-12 h-12 rounded-full object-cover"
             />
-            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-gray-800 ${
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900 ${
               user.status === 'online' ? 'bg-green-500' : 
               user.status === 'away' ? 'bg-yellow-500' : 
               user.status === 'busy' ? 'bg-red-500' : 'bg-gray-500'
@@ -154,7 +154,7 @@ const UserDetails = ({ user, onBack }) => {
           </div>
           <div>
             <h2 className="text-white text-xl font-semibold">{user.name}</h2>
-            <p className="text-neutral-400">{user.title} {user.department}</p>
+            <p className="text-neutral-400 text-sm">{user.title}{user.department}</p>
           </div>
         </div>
 
@@ -244,7 +244,7 @@ const UserDetails = ({ user, onBack }) => {
                     <Eye className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-white font-medium">Working on {user.skills[0]} project</h4>
+                    <h4 className="text-white font-medium">Working on {user.skills && user.skills[0] ? user.skills[0] : 'current'} project</h4>
                     <p className="text-neutral-400 text-sm">2:30 PM - 5:00 PM</p>
                   </div>
                 </div>
@@ -407,11 +407,13 @@ const UserDetails = ({ user, onBack }) => {
               <div className="border border-neutral-700 rounded-lg p-4">
                 <h4 className="text-neutral-400 text-sm font-medium pb-3 mb-3 border-b border-neutral-700">Skills</h4>
                 <div className="flex flex-wrap gap-2">
-                  {user.skills.map((skill, index) => (
+                  {user.skills && user.skills.length > 0 ? user.skills.map((skill, index) => (
                     <span key={index} className="bg-neutral-700 text-white text-sm px-3 py-1 rounded">
                       {skill}
                     </span>
-                  ))}
+                  )) : (
+                    <span className="text-neutral-400 text-sm">No skills listed</span>
+                  )}
                 </div>
               </div>
             </div>

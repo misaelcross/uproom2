@@ -17,7 +17,7 @@ const Schedule = () => {
         },
         {
           id: 2,
-          title: 'Launch break',
+          title: 'Lunch break',
           time: '12:00am - 1:00pm',
           isCurrent: false
         },
@@ -49,7 +49,7 @@ const Schedule = () => {
         },
         {
           id: 6,
-          title: 'Launch break',
+          title: 'Lunch break',
           time: '12:00am - 1:00pm',
           isCurrent: false
         },
@@ -83,7 +83,7 @@ const Schedule = () => {
         },
         {
           id: 10,
-          title: 'Launch break',
+          title: 'Lunch break',
           time: '12:00am - 1:00pm',
           isCurrent: false
         }
@@ -93,7 +93,7 @@ const Schedule = () => {
 
   return (
     <div className="border border-neutral-700 rounded-lg max-w-md h-full flex flex-col">
-      {/* Header Fixo */}
+      {/* Fixed Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
         <h2 className="text-white text-xl font-semibold">My Schedule</h2>
         <div className="flex items-center gap-2 text-white">
@@ -102,7 +102,7 @@ const Schedule = () => {
         </div>
       </div>
 
-      {/* Conteúdo Scrollável */}
+      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto px-6 pb-6">
         <div className="space-y-1">
           {scheduleData.map((dayData) => (

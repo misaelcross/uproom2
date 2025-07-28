@@ -100,8 +100,8 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
         <div className="flex-1 min-w-0">
           <h3 className="text-white font-medium text-base">{user.name}</h3>
           <div className="flex items-center gap-2">
-            <p className="text-neutral-400 text-sm truncate flex-1 min-w-0">{user.title}</p>
-            <span className="text-neutral-400 text-sm flex-shrink-0">• 2h</span>
+            <p className="text-neutral-400 text-sm truncate">{user.title}</p>
+            <span className="text-neutral-400 text-sm whitespace-nowrap">• 2h</span>
           </div>
         </div>
         <div className="relative" ref={dropdownRef}>

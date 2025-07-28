@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Search,
   Filter,
-  Users,
-  UserPlus,
+  Plus,
   Check
 } from 'lucide-react';
-import { usersData } from '../data/usersData';
+import { usersData } from '../../data/usersData';
 
-const ActionBar = ({ onUserSelect, onSortChange }) => {
+const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Recent Activity');
+  const [selectedSort, setSelectedSort] = useState('Recent');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
@@ -32,13 +31,11 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
     setSearchTerm(''); // Limpar pesquisa após selecionar
   };
 
-  // Opções de ordenação
+  // Opções de ordenação para nudges
   const sortOptions = [
-    'Recent Activity',
-    'Status',
-    'Name (A–Z)',
-    'Name (Z–A)',
-    'Role',
+    'Recent',
+    'Name (A-Z)',
+    'Name (Z-A)',
     'Date Created (Newest)',
     'Date Created (Oldest)'
   ];
@@ -149,19 +146,16 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
         )}
       </div>
 
-      {/* Create Group Button */}
-      <button className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors">
-        <Users className="h-4 w-4 text-neutral-300" />
-        <span className="text-neutral-300 text-sm font-medium">Create group</span>
-      </button>
-
-      {/* Invite Button */}
-      <button className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-100 rounded-lg transition-colors">
-        <UserPlus className="h-4 w-4 text-black" />
-        <span className="text-black text-sm font-medium">Invite</span>
+      {/* Create Nudge Button */}
+      <button 
+        onClick={onCreateNudge}
+        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-100 rounded-lg transition-colors"
+      >
+        <Plus className="h-4 w-4 text-black" />
+        <span className="text-black text-sm font-medium">Create nudge</span>
       </button>
     </div>
   );
 };
 
-export default ActionBar;
+export default ActionBarNudges;
