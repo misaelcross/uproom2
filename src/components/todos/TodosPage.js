@@ -35,7 +35,8 @@ const TodosPage = ({ onNavigate }) => {
         { id: 1, description: 'Read document', completed: true },
         { id: 2, description: 'Prepare feedback', completed: false }
       ],
-      createdAt: '5m ago'
+      createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
+      groupId: 1 // Work Projects
     },
     {
       id: 2,
@@ -45,7 +46,8 @@ const TodosPage = ({ onNavigate }) => {
       priority: 'Medium',
       starred: true,
       steps: [],
-      createdAt: '2h ago'
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+      groupId: 1 // Work Projects
     },
     {
       id: 3,
@@ -59,7 +61,8 @@ const TodosPage = ({ onNavigate }) => {
         { id: 2, description: 'Add new sections', completed: false },
         { id: 3, description: 'Proofread', completed: false }
       ],
-      createdAt: '1d ago'
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+      groupId: 2 // Personal
     }
   ]);
 
@@ -100,10 +103,20 @@ const TodosPage = ({ onNavigate }) => {
         priority: 'Medium',
         starred: false,
         steps: [],
-        createdAt: 'now'
+        createdAt: new Date().toISOString(),
+        groupId: selectedGroup?.id || null // Add to selected group if any
       };
       setTodos([...todos, newTodo]);
       setNewTodoText('');
+      
+      // Update group count if creating in a group
+      if (selectedGroup) {
+        setGroups(groups.map(group => 
+          group.id === selectedGroup.id 
+            ? { ...group, count: group.count + 1 }
+            : group
+        ));
+      }
     }
   };
 
@@ -242,13 +255,8 @@ const TodosPage = ({ onNavigate }) => {
 
   const getFilteredTodos = () => {
     if (!selectedGroup) return todos;
-    // Para demonstração, vamos filtrar por ID do grupo
-    // Em uma implementação real, os todos teriam um campo groupId
-    return todos.filter(todo => {
-      if (selectedGroup.id === 1) return todo.id === 1 || todo.id === 2; // Work Projects
-      if (selectedGroup.id === 2) return todo.id === 3; // Personal
-      return false;
-    });
+    // Filter todos by groupId
+    return todos.filter(todo => todo.groupId === selectedGroup.id);
   };
 
   return (

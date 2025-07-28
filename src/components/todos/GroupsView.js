@@ -183,23 +183,33 @@ const GroupsView = ({
                     </button>
                   </>
                 ) : (
-                  <span className="text-neutral-400 text-sm">{group.count}</span>
+                  // Counter with sidebar design - square background
+                  <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                    {group.count}
+                  </span>
                 )}
               </div>
             </div>
             
-            {selectedGroup?.id === group.id && (
-              <div className="mt-3 pt-3 border-t border-neutral-600 space-y-2">
+            {/* Accordion-style buttons - only show when group is selected and not editing */}
+            {selectedGroup?.id === group.id && editingGroup !== group.id && (
+              <div className="mt-2 ml-7 space-y-1">
                 <button
-                  onClick={() => startEdit(group)}
-                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    startEdit(group);
+                  }}
+                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded transition-colors text-sm"
                 >
                   <Edit3 className="w-4 h-4" />
                   <span>Edit</span>
                 </button>
                 <button
-                  onClick={() => onDeleteGroup(group.id)}
-                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-neutral-700 rounded transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteGroup(group.id);
+                  }}
+                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-neutral-700 rounded transition-colors text-sm"
                 >
                   <Trash2 className="w-4 h-4" />
                   <span>Delete</span>

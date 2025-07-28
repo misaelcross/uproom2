@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, Star, Trash2, ChevronDown } from 'lucide-react';
+import { Check, Star, ChevronDown } from 'lucide-react';
 
 const TodoItem = ({ 
   todo, 
@@ -13,10 +13,10 @@ const TodoItem = ({
   const dropdownRef = useRef(null);
 
   const priorities = [
-    { value: 'High', label: 'High', color: 'bg-red-500' },
-    { value: 'Medium', label: 'Medium', color: 'bg-yellow-500' },
-    { value: 'Low', label: 'Low', color: 'bg-green-500' },
-    { value: 'None', label: 'None', color: 'bg-neutral-500' }
+    { value: 'High', label: 'High', color: 'text-red-500', borderColor: 'border-red-500' },
+    { value: 'Medium', label: 'Medium', color: 'text-yellow-500', borderColor: 'border-yellow-500' },
+    { value: 'Low', label: 'Low', color: 'text-green-500', borderColor: 'border-green-500' },
+    { value: 'None', label: 'None', color: 'text-neutral-500', borderColor: 'border-neutral-500' }
   ];
 
   const currentPriority = priorities.find(p => p.value === (todo.priority || 'None'));
@@ -57,11 +57,6 @@ const TodoItem = ({
     onToggleStar(todo.id);
   };
 
-  const handleDeleteClick = (e) => {
-    e.stopPropagation();
-    onDelete(todo.id);
-  };
-
   const handleCheckboxClick = (e) => {
     e.stopPropagation();
     onToggleComplete(todo.id);
@@ -89,16 +84,6 @@ const TodoItem = ({
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {todo.starred && (
-                <button onClick={handleStarClick}>
-                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                </button>
-              )}
-              {!todo.starred && (
-                <button onClick={handleStarClick} className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Star className="w-4 h-4 text-neutral-400 hover:text-yellow-500" />
-                </button>
-              )}
               <span className={`text-white ${todo.completed ? 'line-through opacity-60' : ''}`}>
                 {todo.description}
               </span>
@@ -107,11 +92,11 @@ const TodoItem = ({
             <div className="flex items-center gap-3">
               <span className="text-neutral-400 text-sm">{todo.time}</span>
               
-              {/* Priority Badge with Dropdown */}
+              {/* Priority Badge with Dropdown - Similar to UserCard status badge */}
               <div className="relative priority-badge" ref={dropdownRef}>
                 <button
                   onClick={handlePriorityClick}
-                  className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium text-white transition-colors hover:opacity-80 ${currentPriority.color}`}
+                  className={`flex items-center space-x-1 px-2 py-1 border rounded text-xs font-medium transition-colors hover:opacity-80 ${currentPriority.color} ${currentPriority.borderColor}`}
                 >
                   <span>{currentPriority.label}</span>
                   <ChevronDown className="w-3 h-3" />
@@ -125,7 +110,7 @@ const TodoItem = ({
                         onClick={() => handlePrioritySelect(priority)}
                         className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-neutral-700 transition-colors first:rounded-t-lg last:rounded-b-lg"
                       >
-                        <div className={`w-3 h-3 rounded ${priority.color}`}></div>
+                        <div className={`w-3 h-3 rounded border ${priority.borderColor} ${priority.color.replace('text-', 'bg-')}`}></div>
                         <span>{priority.label}</span>
                       </button>
                     ))}
@@ -133,11 +118,16 @@ const TodoItem = ({
                 )}
               </div>
               
+              {/* Star Icon - Moved to where trash was */}
               <button
-                onClick={handleDeleteClick}
-                className="text-neutral-500 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                onClick={handleStarClick}
+                className={`transition-colors ${
+                  todo.starred 
+                    ? 'text-white' 
+                    : 'text-neutral-600 hover:text-white group-hover:opacity-100'
+                }`}
               >
-                <Trash2 className="w-4 h-4" />
+                <Star className={`w-4 h-4 ${todo.starred ? 'fill-current' : ''}`} />
               </button>
             </div>
           </div>
