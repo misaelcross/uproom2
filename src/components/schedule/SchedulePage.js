@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Users, CheckCircle, Clock, AlertTriangle, TrendingUp, Calendar, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Users, CheckCircle, AlertTriangle, TrendingUp, Calendar, ChevronDown, ChevronUp, Search } from 'lucide-react';
 import Sidebar from '../shared/Sidebar';
 import FirstColumn from '../shared/FirstColumn';
 import MonthCalendar from './MonthCalendar';
-import Schedule from './Schedule';
 import { usersData } from '../../data/usersData';
 
 const SchedulePage = ({ onNavigate }) => {
@@ -25,9 +24,9 @@ const SchedulePage = ({ onNavigate }) => {
     overdueTasks: 3
   };
 
-  // Get unique roles and statuses for filters
-  const uniqueRoles = [...new Set(usersData.map(user => user.title))];
-  const uniqueStatuses = [...new Set(usersData.map(user => user.availability))];
+  // Get unique roles and statuses for filters using useMemo
+  const uniqueRoles = useMemo(() => [...new Set(usersData.map(user => user.title))], []);
+  const uniqueStatuses = useMemo(() => [...new Set(usersData.map(user => user.availability))], []);
 
   // Initialize filters with all options selected
   React.useEffect(() => {
@@ -37,20 +36,7 @@ const SchedulePage = ({ onNavigate }) => {
     if (statusFilter.length === 0) {
       setStatusFilter(uniqueStatuses);
     }
-  }, []);
-
-  // Function to get team members status
-  const getTeamStatus = () => {
-    const statusCounts = usersData.reduce((acc, user) => {
-      const status = user.availability || 'Available';
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    }, {});
-
-    return statusCounts;
-  };
-
-  const teamStatus = getTeamStatus();
+  }, [roleFilter.length, statusFilter.length, uniqueRoles, uniqueStatuses]);
 
   // Sort function
   const handleSort = (key) => {
