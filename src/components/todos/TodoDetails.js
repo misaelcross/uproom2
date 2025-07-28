@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Star, Plus, Trash2, X, Check } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat } from 'lucide-react';
 import TodoStep from './TodoStep';
 
 const TodoDetails = ({ 
@@ -18,6 +18,15 @@ const TodoDetails = ({
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReminderForm, setShowReminderForm] = useState(false);
+  const [showDurationForm, setShowDurationForm] = useState(false);
+  const [showRepeatForm, setShowRepeatForm] = useState(false);
+  const [newStepText, setNewStepText] = useState('');
+  const [reminderDate, setReminderDate] = useState('');
+  const [reminderTime, setReminderTime] = useState('');
+  const [durationStart, setDurationStart] = useState('');
+  const [durationEnd, setDurationEnd] = useState('');
+  const [repeatOption, setRepeatOption] = useState('daily');
   const titleInputRef = useRef(null);
 
   useEffect(() => {
@@ -31,6 +40,20 @@ const TodoDetails = ({
 
   const completedSteps = todo.steps?.filter(step => step.completed).length || 0;
   const totalSteps = todo.steps?.length || 0;
+
+  // Function to calculate time ago
+  const getTimeAgo = (date) => {
+    const now = new Date();
+    const diffInMs = now - new Date(date);
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInMinutes < 1) return 'just now';
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    return `${diffInDays}d ago`;
+  };
 
   const handleTitleClick = () => {
     setIsEditingTitle(true);
@@ -73,6 +96,41 @@ const TodoDetails = ({
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
+  };
+
+  const handleAddStep = () => {
+    if (newStepText.trim()) {
+      onAddStep(newStepText.trim());
+      setNewStepText('');
+    }
+  };
+
+  const handleAddReminder = () => {
+    if (reminderDate && reminderTime) {
+      // Here you would typically call a prop function to update the todo with reminder
+      console.log('Adding reminder:', { date: reminderDate, time: reminderTime });
+      setShowReminderForm(false);
+      setReminderDate('');
+      setReminderTime('');
+    }
+  };
+
+  const handleAddDuration = () => {
+    if (durationStart && durationEnd) {
+      // Here you would typically call a prop function to update the todo with duration
+      console.log('Adding duration:', { start: durationStart, end: durationEnd });
+      setShowDurationForm(false);
+      setDurationStart('');
+      setDurationEnd('');
+    }
+  };
+
+  const handleAddRepeat = () => {
+    if (repeatOption) {
+      // Here you would typically call a prop function to update the todo with repeat
+      console.log('Adding repeat:', repeatOption);
+      setShowRepeatForm(false);
+    }
   };
 
   return (
@@ -146,10 +204,10 @@ const TodoDetails = ({
             <button
               onClick={() => onToggleStar(todo.id)}
               className={`transition-colors ${
-                todo.starred ? 'text-yellow-400' : 'text-neutral-400 hover:text-yellow-400'
+                todo.starred ? 'text-white' : 'text-neutral-400 hover:text-white'
               }`}
             >
-              <Star className={`w-5 h-5 ${todo.starred ? 'fill-current' : ''}`} />
+              <Star className={`w-5 h-5 ${todo.starred ? 'fill-white' : ''}`} />
             </button>
           )}
         </div>
@@ -175,36 +233,210 @@ const TodoDetails = ({
             ))}
           </div>
 
-          <button
-            onClick={onAddStep}
-            className="flex items-center text-neutral-400 hover:text-white transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add step
-          </button>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <input
+                type="text"
+                value={newStepText}
+                onChange={(e) => setNewStepText(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAddStep()}
+                placeholder="Add a step..."
+                className="flex-1 bg-transparent border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+              />
+              <button
+                onClick={handleAddStep}
+                disabled={!newStepText.trim()}
+                className="px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Additional Sections */}
         <div className="space-y-4">
+          {/* Reminders Section */}
           <div>
             <h4 className="text-sm font-medium text-neutral-400 mb-2">Reminders</h4>
-            <button className="text-sm text-neutral-400 hover:text-white transition-colors">
-              + Add reminder
-            </button>
+            {todo.reminders && todo.reminders.length > 0 ? (
+              <div className="space-y-2">
+                {todo.reminders.map((reminder, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-neutral-700 rounded">
+                    <div className="flex items-center space-x-2">
+                      <Bell className="w-4 h-4 text-neutral-400" />
+                      <span className="text-white text-sm">
+                        {new Date(reminder.date + 'T' + reminder.time).toLocaleString()}
+                      </span>
+                    </div>
+                    <button className="text-neutral-400 hover:text-red-400 transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+            
+            {showReminderForm ? (
+              <div className="space-y-2 p-3 border border-neutral-600 rounded">
+                <div className="flex space-x-2">
+                  <input
+                    type="date"
+                    value={reminderDate}
+                    onChange={(e) => setReminderDate(e.target.value)}
+                    className="flex-1 bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  />
+                  <input
+                    type="time"
+                    value={reminderTime}
+                    onChange={(e) => setReminderTime(e.target.value)}
+                    className="flex-1 bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setShowReminderForm(false)}
+                    className="flex-1 px-3 py-2 border border-neutral-600 rounded text-neutral-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAddReminder}
+                    disabled={!reminderDate || !reminderTime}
+                    className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowReminderForm(true)}
+                className="flex items-center text-neutral-400 hover:text-white transition-colors"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add reminder
+              </button>
+            )}
           </div>
 
+          {/* Duration Section */}
           <div>
-            <h4 className="text-sm font-medium text-neutral-400 mb-2">Time</h4>
-            <button className="text-sm text-neutral-400 hover:text-white transition-colors">
-              + Add time
-            </button>
+            <h4 className="text-sm font-medium text-neutral-400 mb-2">Duration</h4>
+            {todo.duration ? (
+              <div className="flex items-center justify-between p-2 bg-neutral-700 rounded">
+                <div className="flex items-center space-x-2">
+                  <Clock className="w-4 h-4 text-neutral-400" />
+                  <span className="text-white text-sm">
+                    {todo.duration.start} - {todo.duration.end}
+                  </span>
+                </div>
+                <button className="text-neutral-400 hover:text-red-400 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : null}
+            
+            {showDurationForm ? (
+              <div className="space-y-2 p-3 border border-neutral-600 rounded">
+                <div className="flex space-x-2">
+                  <input
+                    type="time"
+                    value={durationStart}
+                    onChange={(e) => setDurationStart(e.target.value)}
+                    placeholder="Start time"
+                    className="flex-1 bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  />
+                  <input
+                    type="time"
+                    value={durationEnd}
+                    onChange={(e) => setDurationEnd(e.target.value)}
+                    placeholder="End time"
+                    className="flex-1 bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                  />
+                </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setShowDurationForm(false)}
+                    className="flex-1 px-3 py-2 border border-neutral-600 rounded text-neutral-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAddDuration}
+                    disabled={!durationStart || !durationEnd}
+                    className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowDurationForm(true)}
+                className="flex items-center text-neutral-400 hover:text-white transition-colors"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add duration
+              </button>
+            )}
           </div>
 
+          {/* Repeat Section */}
           <div>
             <h4 className="text-sm font-medium text-neutral-400 mb-2">Repeat</h4>
-            <button className="text-sm text-neutral-400 hover:text-white transition-colors">
-              + Add repeat
-            </button>
+            {todo.repeat ? (
+              <div className="flex items-center justify-between p-2 bg-neutral-700 rounded">
+                <div className="flex items-center space-x-2">
+                  <Repeat className="w-4 h-4 text-neutral-400" />
+                  <span className="text-white text-sm capitalize">
+                    {todo.repeat}
+                  </span>
+                </div>
+                <button className="text-neutral-400 hover:text-red-400 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : null}
+            
+            {showRepeatForm ? (
+              <div className="space-y-2 p-3 border border-neutral-600 rounded">
+                <select
+                  value={repeatOption}
+                  onChange={(e) => setRepeatOption(e.target.value)}
+                  className="w-full bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                  <option value="weekdays">Weekdays</option>
+                  <option value="weekends">Weekends</option>
+                </select>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setShowRepeatForm(false)}
+                    className="flex-1 px-3 py-2 border border-neutral-600 rounded text-neutral-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleAddRepeat}
+                    className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setShowRepeatForm(true)}
+                className="flex items-center text-neutral-400 hover:text-white transition-colors"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add repeat
+              </button>
+            )}
           </div>
 
           <div>
@@ -220,7 +452,14 @@ const TodoDetails = ({
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-neutral-700">
+      <div className="p-4 border-t border-neutral-700 flex items-center justify-between">
+        <div className="text-sm text-neutral-400">
+          {todo.editedAt ? (
+            <span>Edited {getTimeAgo(todo.editedAt)}</span>
+          ) : (
+            <span>Created {getTimeAgo(todo.createdAt || new Date())}</span>
+          )}
+        </div>
         <button
           onClick={handleDeleteClick}
           className="flex items-center text-red-400 hover:text-red-300 transition-colors"
