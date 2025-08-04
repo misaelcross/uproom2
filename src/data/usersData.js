@@ -13,6 +13,7 @@ export const usersData = [
     joinDate: "2022-03-15",
     skills: ["Figma", "Adobe XD", "Prototyping", "User Research"],
     bio: "Passionate UI/UX designer with 5+ years of experience creating intuitive and beautiful user interfaces.",
+    currentWork: "Redesigning mobile app user onboarding flow",
     socialLinks: {
       figma: "https://figma.com/@alena",
       github: "https://github.com/alena-design",
@@ -35,6 +36,7 @@ export const usersData = [
     joinDate: "2021-08-22",
     skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
     bio: "Frontend developer specializing in React ecosystem and modern web technologies.",
+    currentWork: "Building Q4 dashboard components with React",
     socialLinks: {
       figma: null,
       github: "https://github.com/marcus-dev",
@@ -57,6 +59,7 @@ export const usersData = [
     joinDate: "2020-11-10",
     skills: ["Product Strategy", "Agile", "Analytics", "User Stories"],
     bio: "Experienced product manager focused on delivering user-centric solutions and driving product growth.",
+    currentWork: "Planning Q4 product roadmap and feature prioritization",
     socialLinks: {
       figma: null,
       github: null,
@@ -79,6 +82,7 @@ export const usersData = [
     joinDate: "2021-01-18",
     skills: ["Node.js", "Python", "PostgreSQL", "AWS"],
     bio: "Backend developer with expertise in scalable systems and cloud infrastructure.",
+    currentWork: "Optimizing API performance and database queries",
     socialLinks: {
       figma: null,
       github: "https://github.com/david-backend",
@@ -101,6 +105,7 @@ export const usersData = [
     joinDate: "2022-06-05",
     skills: ["Python", "Machine Learning", "SQL", "Tableau"],
     bio: "Data scientist passionate about extracting insights from complex datasets and building predictive models.",
+    currentWork: "Building ML model for user behavior prediction",
     socialLinks: {
       figma: null,
       github: "https://github.com/emily-data",
@@ -123,6 +128,7 @@ export const usersData = [
     joinDate: "2020-09-12",
     skills: ["Docker", "Kubernetes", "CI/CD", "Terraform"],
     bio: "DevOps engineer focused on automation, infrastructure as code, and reliable deployment pipelines.",
+    currentWork: "Setting up CI/CD pipeline for Q4 deployment",
     socialLinks: {
       figma: null,
       github: "https://github.com/alex-devops",
@@ -189,6 +195,7 @@ export const usersData = [
     joinDate: "2022-01-30",
     skills: ["Digital Marketing", "Content Strategy", "SEO", "Analytics"],
     bio: "Marketing manager focused on growth strategies and building strong brand presence.",
+    currentWork: "Developing Q4 marketing campaign strategy",
     socialLinks: {
       figma: "https://figma.com/@jessica",
       github: null,
@@ -299,6 +306,7 @@ export const usersData = [
     joinDate: "2021-10-12",
     skills: ["React Native", "Swift", "Kotlin", "Mobile UI/UX"],
     bio: "Mobile developer passionate about creating seamless cross-platform mobile experiences.",
+    currentWork: "Implementing new mobile app features for iOS and Android",
     socialLinks: {
       figma: null,
       github: "https://github.com/daniel-mobile",

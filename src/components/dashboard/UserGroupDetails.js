@@ -72,7 +72,7 @@ const UserGroupDetails = ({ group, onUserClick, onClose, allUsers }) => {
   };
 
   return (
-    <div className="w-80 flex flex-col h-full border border-neutral-700 rounded-lg overflow-hidden">
+    <div className="w-80 flex flex-col h-full border border-neutral-700 rounded-lg overflow-hidden pb-12">
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-700">
         <div className="flex items-center space-x-3 mb-4">
@@ -168,7 +168,7 @@ const UserGroupDetails = ({ group, onUserClick, onClose, allUsers }) => {
 
         {/* Add Member Search */}
         {showAddMember && (
-          <div className="mb-4 p-3 bg-neutral-800 rounded-lg border border-neutral-700">
+          <div className="mb-4 p-3 rounded-lg border border-neutral-700">
             <div className="relative">
               <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
               <input

@@ -34,10 +34,9 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   // Opções de ordenação para nudges
   const sortOptions = [
     'Recent',
-    'Name (A-Z)',
-    'Name (Z-A)',
-    'Date Created (Newest)',
-    'Date Created (Oldest)'
+    'Priority',
+    'Alphabetical (A-Z)',
+    'Alphabetical (Z-A)'
   ];
 
   // Fechar dropdown quando clicar fora
@@ -71,7 +70,7 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   };
 
   return (
-    <div className="w-fit bg-neutral-800 rounded-lg h-20 p-4 flex items-center space-x-3">
+    <div className="w-fit rounded-lg h-20 p-4 flex items-center space-x-3">
       {/* Search Input */}
       <div className="relative">
         <input

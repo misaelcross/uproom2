@@ -1,5 +1,4 @@
 import React from 'react';
-import { MoreVertical } from 'lucide-react';
 
 const FloatingUserCard = ({ user, position, isVisible }) => {
   if (!user || !isVisible) return null;
@@ -76,7 +75,6 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
             <span className="text-neutral-400 text-sm">• 2h</span>
           </div>
         </div>
-        <MoreVertical className="w-5 h-5 text-neutral-400" />
       </div>
 
       {/* Atividade atual - truncada em 1 linha */}

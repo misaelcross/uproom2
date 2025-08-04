@@ -8,6 +8,7 @@ import TopTabsNudges from './TopTabsNudges';
 import LiveNotifications from '../shared/LiveNotifications';
 import ActionBarNudges from './ActionBarNudges';
 import UserDetails from '../dashboard/UserDetails';
+import GroupNudgesView from './GroupNudgesView';
 import { usersData } from '../../data/usersData';
 
 // Dados fake dos nudges
@@ -208,6 +209,14 @@ function NudgePage({ onNavigate }) {
     }
   };
 
+  // Função para criar nudge para grupo
+  const handleCreateGroupNudge = (group) => {
+    console.log('Creating nudge for group:', group);
+    setIsCreatingNudge(true);
+    setSelectedNudge(null);
+    // Aqui você pode adicionar lógica adicional para pré-preencher o formulário com o grupo selecionado
+  };
+
   // Função para ordenar nudges
   const getSortedNudges = () => {
     let sortedNudges = [...nudges];
@@ -219,20 +228,14 @@ function NudgePage({ onNavigate }) {
           return priorityOrder[b.priority] - priorityOrder[a.priority];
         });
         break;
-      case 'Unread First':
-        sortedNudges.sort((a, b) => {
-          if (a.isRead === b.isRead) return 0;
-          return a.isRead ? 1 : -1;
-        });
-        break;
-      case 'Sender (A–Z)':
+      case 'Alphabetical (A-Z)':
         sortedNudges.sort((a, b) => a.sender.name.localeCompare(b.sender.name));
         break;
-      case 'Sender (Z–A)':
+      case 'Alphabetical (Z-A)':
         sortedNudges.sort((a, b) => b.sender.name.localeCompare(a.sender.name));
         break;
       default:
-        // Para 'Recent Activity' mantém ordem original (mais recentes primeiro)
+        // Para 'Recent' mantém ordem original (mais recentes primeiro)
         break;
     }
     
@@ -240,7 +243,7 @@ function NudgePage({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-800">
+    <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 60px */}
         <div className="h-full" style={{ width: '60px' }}>
@@ -270,22 +273,29 @@ function NudgePage({ onNavigate }) {
 
           {/* Segunda linha: Grid de nudges e coluna direita */}
           <div className="flex gap-6 flex-1 min-h-0">
-            {/* Grid de nudges */}
+            {/* Grid de nudges ou grupos */}
             <div className="flex-1 overflow-y-auto">
-              <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
-                {getSortedNudges().map((nudge) => (
-                  <NudgeCard 
-                    key={nudge.id} 
-                    nudge={nudge}
-                    isSelected={selectedNudge?.id === nudge.id}
-                    onClick={() => handleNudgeSelect(nudge)} 
-                  />
-                ))}
-              </div>
+              {topTabActive === 'groups' ? (
+                <GroupNudgesView 
+                  users={usersWithIcons}
+                  onCreateGroupNudge={handleCreateGroupNudge}
+                />
+              ) : (
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
+                  {getSortedNudges().map((nudge) => (
+                    <NudgeCard 
+                      key={nudge.id} 
+                      nudge={nudge}
+                      isSelected={selectedNudge?.id === nudge.id}
+                      onClick={() => handleNudgeSelect(nudge)} 
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Coluna direita - Detalhes do nudge, criação de nudge ou detalhes do usuário */}
-            <div className="overflow-y-auto" style={{ width: '350px' }}>
+            <div className="overflow-y-auto pb-12" style={{ width: '350px' }}>
               {selectedUser ? (
                 <UserDetails 
                   user={selectedUser}
@@ -293,7 +303,7 @@ function NudgePage({ onNavigate }) {
                 />
               ) : isCreatingNudge ? (
                 <CreateNudgeView onCancel={handleCancelCreateNudge} />
-              ) : selectedNudge ? (
+              ) : selectedNudge && topTabActive !== 'groups' ? (
                 <NudgeDetails 
                   nudge={selectedNudge}
                   onUserClick={handleUserClick}
@@ -306,7 +316,10 @@ function NudgePage({ onNavigate }) {
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-500">
-                  Selecione um nudge para ver os detalhes
+                  {topTabActive === 'groups' 
+                    ? 'Select a group to send a nudge' 
+                    : 'Selecione um nudge para ver os detalhes'
+                  }
                 </div>
               )}
             </div>

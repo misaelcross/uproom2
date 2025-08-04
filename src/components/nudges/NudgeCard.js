@@ -11,6 +11,19 @@ const NudgeCard = ({ nudge, isSelected, onClick }) => {
     }
   };
 
+  const getPriorityBadge = (priority) => {
+    switch (priority) {
+      case 'high':
+        return { color: 'text-red-500', text: 'High' };
+      case 'normal':
+        return { color: 'text-blue-500', text: 'Normal' };
+      case 'low':
+        return { color: 'text-gray-500', text: 'Low' };
+      default:
+        return { color: 'text-blue-500', text: 'Normal' };
+    }
+  };
+
   // Truncar mensagem para 2 linhas
   const truncateMessage = (text, maxLines = 2) => {
     const words = text.split(' ');
@@ -30,8 +43,8 @@ const NudgeCard = ({ nudge, isSelected, onClick }) => {
         isSelected 
           ? 'border border-white' 
           : nudge.isRead 
-            ? 'bg-transparent border border-neutral-700 hover:bg-neutral-900 hover:border-neutral-700'
-            : 'bg-neutral-700 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500'
+            ? 'bg-transparent border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-800'
+            : 'bg-neutral-800 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500'
       }`}
       onClick={onClick}
     >
@@ -62,13 +75,20 @@ const NudgeCard = ({ nudge, isSelected, onClick }) => {
         </div>
       </div>
 
-      {/* Mensagem - truncada em 2 linhas com indicador de não lido */}
-      <div className="flex items-start">
-        <p className="text-white text-sm leading-relaxed flex-1">
+      {/* Mensagem - truncada em 2 linhas */}
+      <div className="mb-3">
+        <p className="text-white text-sm leading-relaxed">
           {truncateMessage(nudge.message, 2)}
         </p>
+      </div>
+
+      {/* Badge de prioridade e notificação */}
+      <div className="flex items-center gap-2">
+        <div className={`border border-neutral-700 rounded px-2 pb-1 ${getPriorityBadge(nudge.priority).color}`}>
+          <span className="text-xs font-medium">{getPriorityBadge(nudge.priority).text}</span>
+        </div>
         {!nudge.isRead && (
-          <div className="ml-3 w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+          <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
             <span className="text-white text-xs font-bold leading-none">1</span>
           </div>
         )}

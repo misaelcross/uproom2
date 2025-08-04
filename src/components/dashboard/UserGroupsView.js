@@ -24,7 +24,7 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
         return (
           <div
             key={groupName}
-            className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 transition-all duration-200 hover:bg-neutral-800/70 cursor-pointer"
+            className="border border-neutral-700 rounded-lg p-4 transition-all duration-200 hover:bg-neutral-800/70 cursor-pointer"
             onClick={() => onGroupClick && onGroupClick({ name: groupName, users: groupUsers })}
           >
             {/* Header */}

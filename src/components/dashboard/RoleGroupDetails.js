@@ -25,7 +25,7 @@ const RoleGroupDetails = ({ group, onUserClick, onClose }) => {
   };
 
   return (
-    <div className="w-80 flex flex-col h-full border border-neutral-700 rounded-lg overflow-hidden">
+    <div className="w-80 flex flex-col h-full border border-neutral-700 rounded-lg overflow-hidden pb-12">
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-700">
         <div className="flex items-center space-x-3 mb-4">

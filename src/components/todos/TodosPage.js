@@ -260,7 +260,7 @@ const TodosPage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-800">
+    <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
         {/* First column: 60px */}
         <div className="h-full" style={{ width: '60px' }}>
@@ -303,7 +303,7 @@ const TodosPage = ({ onNavigate }) => {
           </div>
 
           {/* Right Column */}
-          <div className="w-80 border border-neutral-700 rounded-lg flex flex-col">
+          <div className="w-80 border border-neutral-700 rounded-lg flex flex-col pb-12">
             {!selectedTodo ? (
               <GroupsView 
                 groups={groups}

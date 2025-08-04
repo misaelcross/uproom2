@@ -11,7 +11,7 @@ import { usersData } from '../../data/usersData';
 const ActionBar = ({ onUserSelect, onSortChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Recent Activity');
+  const [selectedSort, setSelectedSort] = useState('Newest');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
@@ -34,13 +34,12 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
 
   // Opções de ordenação
   const sortOptions = [
-    'Recent Activity',
+    'Newest',
+    'Oldest',
     'Status',
-    'Name (A–Z)',
-    'Name (Z–A)',
-    'Role',
-    'Date Created (Newest)',
-    'Date Created (Oldest)'
+    'Alphabetical (A–Z)',
+    'Alphabetical (Z–A)',
+    'Role'
   ];
 
   // Fechar dropdown quando clicar fora
@@ -74,7 +73,7 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
   };
 
   return (
-    <div className="w-fit bg-neutral-800 rounded-lg h-20 p-4 flex items-center space-x-3">
+    <div className="w-fit rounded-lg h-20 p-4 flex items-center space-x-3">
       {/* Search Input */}
       <div className="relative">
         <input

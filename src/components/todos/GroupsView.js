@@ -136,7 +136,7 @@ const GroupsView = ({
           <div key={group.id}>
             <div 
               className={`flex items-center justify-between p-3 border border-neutral-700 rounded-lg hover:bg-neutral-700 transition-colors cursor-pointer ${
-                selectedGroup?.id === group.id ? 'bg-neutral-700' : ''
+                selectedGroup?.id === group.id ? 'bg-neutral-800' : ''
               }`}
               onClick={() => onSelectGroup(group)}
             >
@@ -221,7 +221,7 @@ const GroupsView = ({
         
         <button 
           onClick={() => setShowCreateGroup(true)}
-          className="w-full flex items-center gap-3 p-3 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition-colors text-white"
+          className="w-full flex items-center gap-3 p-3 bg-neutral-800 rounded-lg hover:bg-neutral-600 transition-colors text-white"
         >
           <Plus className="w-4 h-4" />
           <span className="">Create new group</span>
