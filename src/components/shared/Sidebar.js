@@ -14,9 +14,7 @@ import {
   Clock,
   Edit,
   Trash2,
-  ArrowUpDown,
-  AlertCircle,
-  User
+  ArrowUpDown
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
