@@ -35,9 +35,9 @@ const FirstColumn = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-neutral-900 px-2 py-4 gap-4">
+    <div className="flex flex-col h-full bg-neutral-800 px-2 py-4 gap-4">
       {/* Logo/Avatar do usuário */}
-      <div className="w-10 h-10 bg-neutral-700 rounded-lg flex items-center justify-center border border-neutral-600 align-center">
+      <div className="w-10 h-10 bg-neutral-800 rounded-lg flex items-center justify-center border border-neutral-600 align-center">
         <span className="text-white text-lg font-semibold">UR</span>
       </div>
 

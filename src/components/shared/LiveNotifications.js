@@ -4,6 +4,9 @@ import FloatingUserCard from './FloatingUserCard';
 const LiveNotifications = ({ usersData, onUserClick }) => {
   const [hoveredUser, setHoveredUser] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
   
   const [notifications, setNotifications] = useState([
     {
@@ -65,10 +68,32 @@ const LiveNotifications = ({ usersData, onUserClick }) => {
 
   // Handle click to show user details
   const handleUserClick = (notification) => {
+    if (isDragging) return; // Não clique se estiver arrastando
     const user = getUserById(notification.userId);
     if (user && onUserClick) {
       onUserClick(user);
     }
+  };
+
+  // Handle drag functionality
+  const handleMouseDown = (e) => {
+    setIsDragging(false);
+    setDragStart(e.clientX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (e.buttons === 1) { // Se o botão esquerdo estiver pressionado
+      const deltaX = e.clientX - dragStart;
+      if (Math.abs(deltaX) > 5) { // Threshold para iniciar drag
+        setIsDragging(true);
+        setScrollPosition(prev => Math.max(-200, Math.min(200, prev + deltaX * 0.5)));
+        setDragStart(e.clientX);
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setTimeout(() => setIsDragging(false), 100); // Pequeno delay para evitar cliques acidentais
   };
 
   // Simular atualizações em tempo real
@@ -104,9 +129,16 @@ const LiveNotifications = ({ usersData, onUserClick }) => {
 
   return (
     <>
-      <div className="flex-1 bg-neutral-800 rounded-lg h-20 p-4 relative overflow-hidden">
+      <div className="flex-1 rounded-lg h-20 p-4 relative overflow-hidden">
         {/* Notifications Container */}
-        <div className="flex space-x-3 overflow-hidden relative h-full items-center">
+        <div 
+          className="flex space-x-3 overflow-hidden relative h-full items-center cursor-grab active:cursor-grabbing select-none"
+          style={{ transform: `translateX(${scrollPosition}px)` }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           {notifications.map((notification, index) => {
             const user = getUserById(notification.userId);
             if (!user) return null;
@@ -117,9 +149,10 @@ const LiveNotifications = ({ usersData, onUserClick }) => {
                 className="flex items-center space-x-3 flex-shrink-0 min-w-0 border border-neutral-700 p-2 rounded-md cursor-pointer hover:bg-neutral-700 transition-colors duration-200"
                 style={{
                   opacity: index > 4 ? 0.3 : 1,
-                  transform: index > 4 ? 'scale(0.9)' : 'scale(1)'
+                  transform: index > 4 ? 'scale(0.9)' : 'scale(1)',
+                  pointerEvents: isDragging ? 'none' : 'auto'
                 }}
-                onMouseEnter={(e) => handleMouseEnter(notification, e)}
+                onMouseEnter={(e) => !isDragging && handleMouseEnter(notification, e)}
                 onMouseLeave={handleMouseLeave}
                 onClick={() => handleUserClick(notification)}
               >
@@ -144,7 +177,7 @@ const LiveNotifications = ({ usersData, onUserClick }) => {
           })}
 
           {/* Fade Out Gradient */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-neutral-800 to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-neutral-900 to-transparent pointer-events-none" />
         </div>
       </div>
 

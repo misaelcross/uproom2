@@ -36,6 +36,30 @@ function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
 
+  // Função para reverter sidebar direita para visualização padrão
+  const resetRightSidebar = () => {
+    setRightPanelContent('schedule');
+    setSelectedUser(null);
+    setSelectedGroup(null);
+    setSelectedRoleGroup(null);
+    setSelectedUserGroup(null);
+    setPreviousContext(null);
+  };
+
+  // Event listener para tecla ESC
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        resetRightSidebar();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   // Função para gerar ícones aleatórios
   const generateRandomIcons = () => {
     const allIcons = [
@@ -116,16 +140,16 @@ function App() {
     let sortedUsers = [...usersWithIcons];
     
     switch (sortBy) {
-      case 'Name (A–Z)':
+      case 'Alphabetical (A–Z)':
         sortedUsers.sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case 'Name (Z–A)':
+      case 'Alphabetical (Z–A)':
         sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
         break;
-      case 'Date Created (Newest)':
+      case 'Newest':
         sortedUsers.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate));
         break;
-      case 'Date Created (Oldest)':
+      case 'Oldest':
         sortedUsers.sort((a, b) => new Date(a.joinDate) - new Date(b.joinDate));
         break;
       default:
@@ -204,7 +228,7 @@ function App() {
 
   // Renderizar Dashboard (página padrão)
   return (
-    <div className="min-h-screen bg-neutral-800">
+    <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 60px */}
         <div className="h-full" style={{ width: '60px' }}>
@@ -220,7 +244,7 @@ function App() {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Primeira linha: 3 divs retangulares */}
           <div className="flex w-full items-start gap-2 min-w-0">
-            <TopTabs activeTab={topTabActive} setActiveTab={setTopTabActive} />
+            <TopTabs activeTab={topTabActive} setActiveTab={setTopTabActive} users={usersWithIcons} />
             <LiveNotifications 
               usersData={usersWithIcons}
               onUserClick={showUserDetails}
@@ -264,7 +288,7 @@ function App() {
             </div>
 
             {/* Coluna direita */}
-            <div className="overflow-y-auto" style={{ width: '350px' }}>
+            <div className="overflow-y-auto pb-12" style={{ width: '350px' }}>
               {rightPanelContent === 'schedule' && <Schedule />}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />

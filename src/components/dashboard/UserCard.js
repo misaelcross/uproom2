@@ -133,7 +133,14 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
 
       {/* Atividade atual - truncada em 1 linha */}
       <div className="mb-3">
-        <p className="text-white text-sm truncate">{user.bio}</p>
+        {user.currentWork ? (
+          <div>
+            <p className="text-neutral-400 text-xs mb-1">Currently working on:</p>
+            <p className="text-white text-sm truncate">{user.currentWork}</p>
+          </div>
+        ) : (
+          <p className="text-white text-sm truncate">{user.bio}</p>
+        )}
       </div>
 
       {/* Badge de status */}

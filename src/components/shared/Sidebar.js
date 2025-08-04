@@ -13,17 +13,39 @@ import {
   BarChart3,
   Clock,
   Edit,
-  Trash2
+  Trash2,
+  ArrowUpDown,
+  AlertCircle,
+  User
 } from 'lucide-react';
+import { usersData } from '../../data/usersData';
 
 const Sidebar = ({ currentPage, onNavigate }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [currentStatus, setCurrentStatus] = useState('Available');
   const [reminders, setReminders] = useState([
-    { id: 1, text: 'Review last update on the documentation for the event next week', completed: false },
-    { id: 2, text: 'Check client\'s Q3 proposal', completed: true }
+    { 
+      id: 1, 
+      text: 'Review last update on the documentation for the event next week', 
+      completed: false,
+      createdAt: new Date('2024-01-15T10:30:00'),
+      dueDate: new Date('2024-01-22T14:00:00'),
+      priority: 'high',
+      mentions: ['@john', '@sarah']
+    },
+    { 
+      id: 2, 
+      text: 'Check client\'s Q3 proposal', 
+      completed: true,
+      createdAt: new Date('2024-01-10T09:15:00'),
+      dueDate: new Date('2024-01-20T16:30:00'),
+      priority: 'medium',
+      mentions: ['@mike']
+    }
   ]);
+  const [reminderSortBy, setReminderSortBy] = useState('recent'); // 'recent', 'oldest', 'priority'
+  const [showReminderSort, setShowReminderSort] = useState(false);
   const [pomodoroActive, setPomodoroActive] = useState(false);
   const [pomodoroTime, setPomodoroTime] = useState(25 * 60); // 25 minutos em segundos
   const [currentPomodoro, setCurrentPomodoro] = useState(1);
@@ -104,6 +126,20 @@ const Sidebar = ({ currentPage, onNavigate }) => {
     setNewReminderText('');
   };
 
+  // Função para obter avatar do usuário baseado na menção
+  const getUserAvatarFromMention = (mention) => {
+    // Remove o @ do início da menção
+    const username = mention.replace('@', '').toLowerCase();
+    
+    // Procura o usuário baseado no nome (primeira parte do nome)
+    const user = usersData.find(user => 
+      user.name.toLowerCase().split(' ')[0] === username ||
+      user.name.toLowerCase().includes(username)
+    );
+    
+    return user ? user.avatar : null;
+  };
+
   const cancelCreatingReminder = () => {
     setIsCreatingReminder(false);
     setNewReminderText('');
@@ -112,13 +148,44 @@ const Sidebar = ({ currentPage, onNavigate }) => {
   const confirmCreateReminder = () => {
     if (newReminderText.trim()) {
       const newId = Math.max(...reminders.map(r => r.id), 0) + 1;
+      const mentions = newReminderText.match(/@\w+/g) || [];
       setReminders(prev => [...prev, {
         id: newId,
         text: newReminderText.trim(),
-        completed: false
+        completed: false,
+        createdAt: new Date(),
+        dueDate: null,
+        priority: 'medium',
+        mentions: mentions
       }]);
       setIsCreatingReminder(false);
       setNewReminderText('');
+    }
+  };
+
+  // Function to sort reminders
+  const getSortedReminders = () => {
+    const sortedReminders = [...reminders];
+    
+    switch (reminderSortBy) {
+      case 'recent':
+        return sortedReminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      case 'oldest':
+        return sortedReminders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      case 'priority':
+        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        return sortedReminders.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+      default:
+        return sortedReminders;
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high': return 'bg-red-500';
+      case 'medium': return 'bg-yellow-500';
+      case 'low': return 'bg-green-500';
+      default: return 'bg-neutral-500';
     }
   };
 
@@ -200,7 +267,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
   const uncompletedReminders = reminders.filter(r => !r.completed).length;
 
   return (
-    <div className="w-[300px] h-full bg-neutral-800 flex flex-col overflow-hidden">
+    <div className="w-[300px] h-full flex flex-col overflow-hidden">
       {/* Header com nome da empresa e dropdown */}
       <div className="p-2 border-b border-neutral-700">
         <button 
@@ -244,8 +311,8 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                     onNavigate('todos');
                   }
                 }}
-                className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-900 ${
-                  isActive ? 'bg-neutral-700 text-white' : 'text-neutral-300'
+                className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-800 ${
+                  isActive ? 'bg-neutral-800 text-white' : 'text-neutral-300'
                 }`}
               >
                 <div className="flex items-center space-x-3">
@@ -274,6 +341,51 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                 </span>
               </div>
               <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowReminderSort(!showReminderSort)}
+                    className="p-1 hover:bg-neutral-600 rounded transition-colors"
+                  >
+                    <ArrowUpDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                  </button>
+                  {showReminderSort && (
+                    <div className="absolute right-0 top-6 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 min-w-32">
+                      <button
+                        onClick={() => {
+                          setReminderSortBy('recent');
+                          setShowReminderSort(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors ${
+                          reminderSortBy === 'recent' ? 'text-white' : 'text-neutral-400'
+                        }`}
+                      >
+                        Recent
+                      </button>
+                      <button
+                        onClick={() => {
+                          setReminderSortBy('oldest');
+                          setShowReminderSort(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors ${
+                          reminderSortBy === 'oldest' ? 'text-white' : 'text-neutral-400'
+                        }`}
+                      >
+                        Oldest
+                      </button>
+                      <button
+                        onClick={() => {
+                          setReminderSortBy('priority');
+                          setShowReminderSort(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors rounded-b-lg ${
+                          reminderSortBy === 'priority' ? 'text-white' : 'text-neutral-400'
+                        }`}
+                      >
+                        Priority
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={startCreatingReminder}
                   className="p-1 hover:bg-neutral-600 rounded transition-colors"
@@ -297,7 +409,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
             {!remindersCollapsed && (
               <div className="border-t border-neutral-700 p-4">
                 <div className="space-y-3">
-                  {reminders.map((reminder) => (
+                  {getSortedReminders().map((reminder) => (
                     <div 
                       key={reminder.id} 
                       className="flex items-start space-x-2 group"
@@ -316,23 +428,79 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                           <Check className="h-3 w-3 text-white" />
                         )}
                       </button>
-                      <div className="flex-1 flex items-start justify-between">
-                        <button
-                          onClick={() => toggleReminder(reminder.id)}
-                          className={`text-xs text-left hover:opacity-80 transition-opacity flex-1 ${
-                            reminder.completed ? 'text-neutral-500 line-through' : 'text-neutral-300'
-                          }`}
-                        >
-                          {reminder.text}
-                        </button>
-                        {hoveredReminder === reminder.id && (
+                      <div className="flex-1 flex flex-col space-y-1">
+                        <div className="flex items-start justify-between">
                           <button
-                            onClick={() => deleteReminder(reminder.id)}
-                            className="ml-2 p-1 hover:bg-neutral-600 rounded transition-colors opacity-0 group-hover:opacity-100"
+                            onClick={() => toggleReminder(reminder.id)}
+                            className={`text-xs text-left hover:opacity-80 transition-opacity flex-1 ${
+                              reminder.completed ? 'text-neutral-500 line-through' : 'text-neutral-300'
+                            }`}
                           >
-                            <Trash2 className="h-3 w-3 text-neutral-400 hover:text-red-400" />
+                            {reminder.text}
                           </button>
-                        )}
+                          {hoveredReminder === reminder.id && (
+                            <button
+                              onClick={() => deleteReminder(reminder.id)}
+                              className="ml-2 p-1 hover:bg-neutral-600 rounded transition-colors opacity-0 group-hover:opacity-100"
+                            >
+                              <Trash2 className="h-3 w-3 text-neutral-400 hover:text-red-400" />
+                            </button>
+                          )}
+                        </div>
+                        
+                        {/* Priority badge, mentions, and date */}
+                        <div className="flex items-center space-x-2 text-xs">
+                          {/* Priority badge */}
+                          <div className="flex items-center space-x-1">
+                            <div className={`w-2 h-2 rounded-full ${getPriorityColor(reminder.priority)}`}></div>
+                            <span className="text-neutral-500 capitalize">{reminder.priority}</span>
+                          </div>
+                          
+                          {/* Mentions */}
+                          {reminder.mentions && reminder.mentions.length > 0 && (
+                            <div className="flex items-center">
+                              <div className="flex space-x-1">
+                                {reminder.mentions.slice(0, 3).map((mention, index) => {
+                                  const avatar = getUserAvatarFromMention(mention);
+                                  return avatar ? (
+                                    <img
+                                      key={index}
+                                      src={avatar}
+                                      alt={mention}
+                                      className="w-3 h-3 rounded-full border border-neutral-600"
+                                    />
+                                  ) : (
+                                    <div
+                                      key={index}
+                                      className="w-3 h-3 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center"
+                                    >
+                                      <span className="text-[6px] text-white font-medium">
+                                        {mention.replace('@', '').charAt(0).toUpperCase()}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                                {reminder.mentions.length > 3 && (
+                                  <div className="w-3 h-3 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center">
+                                    <span className="text-[6px] text-white font-medium">
+                                      +{reminder.mentions.length - 3}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Due date */}
+                          {reminder.dueDate && (
+                            <div className="flex items-center space-x-1">
+                              <Clock className="w-3 h-3 text-neutral-500" />
+                              <span className="text-neutral-500">
+                                {new Date(reminder.dueDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -447,7 +615,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
       </div>
 
       {/* Footer fixo com Status e Upgrade */}
-      <div className="border-t border-neutral-700 bg-neutral-800">
+      <div className="border-t border-neutral-700">
         {/* Status Dropdown */}
         <div className="px-4 pt-4 pb-2 relative">
           <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4">
@@ -481,7 +649,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                       key={status.name}
                       onClick={() => selectStatus(status)}
                       className={`w-full flex items-center justify-between p-2 hover:bg-neutral-700 transition-colors rounded-lg ${
-                        selectedStatusOption?.name === status.name ? 'bg-neutral-700' : ''
+                        selectedStatusOption?.name === status.name ? 'bg-neutral-800' : ''
                       }`}
                     >
                       <div className="flex items-center space-x-2">
@@ -506,7 +674,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                       }
                     }}
                     placeholder="Give more details..."
-                    className={`w-full bg-neutral-800 border rounded-lg p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] max-h-[120px] overflow-y-auto transition-colors ${
+                    className={`w-full border rounded-lg p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] max-h-[120px] overflow-y-auto transition-colors ${
                       showStatusError 
                         ? 'border-red-500 focus:border-red-500' 
                         : 'border-neutral-700 focus:border-neutral-600'

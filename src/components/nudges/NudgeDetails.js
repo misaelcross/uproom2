@@ -95,7 +95,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           <div className="mb-6">
             <div className="space-y-2">
               {nudge.attachments.map((attachment, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-neutral-800 rounded-lg border border-neutral-700">
+                <div key={index} className="flex items-center gap-3 p-3 rounded-lg border border-neutral-700">
                   <Paperclip className="w-4 h-4 text-neutral-400" />
                   <span className="text-neutral-300 text-sm">{attachment}</span>
                 </div>

@@ -388,7 +388,7 @@ const AnimatedBottomSheet = ({
                       {selectedNudge.attachments.map((attachment, index) => (
                         <div
                           key={index}
-                          className="flex items-center space-x-3 p-3 bg-neutral-800 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-colors cursor-pointer"
+                          className="flex items-center space-x-3 p-3 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-colors cursor-pointer"
                         >
                           <FileText className="h-5 w-5 text-neutral-400" />
                           <span className="text-white text-sm flex-1">{attachment}</span>
@@ -428,7 +428,7 @@ const AnimatedBottomSheet = ({
                             value={selectedDate}
                             onChange={(e) => setSelectedDate(e.target.value)}
                             min={new Date().toISOString().split('T')[0]}
-                            className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                            className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                           />
                         </div>
                         
@@ -437,7 +437,7 @@ const AnimatedBottomSheet = ({
                           <select
                             value={selectedTimeRange}
                             onChange={(e) => setSelectedTimeRange(e.target.value)}
-                            className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                            className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                           >
                             <option value="">Choose a time range</option>
                             <option value="morning">Morning (9:00 - 12:00)</option>
