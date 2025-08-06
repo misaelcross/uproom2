@@ -7,6 +7,10 @@ import AddTodoInput from './AddTodoInput';
 import GroupsView from './GroupsView';
 import TodoDetails from './TodoDetails';
 import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
+import TopTabsTodos from './TopTabsTodos';
+import ActionBarTodos from './ActionBarTodos';
+import LiveNotifications from '../shared/LiveNotifications';
+import { usersData } from '../../data/usersData';
 
 const TodosPage = ({ onNavigate }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('Today');
@@ -34,6 +38,9 @@ const TodosPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('received');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
+  
+  // TopTabs state
+  const [activeTopTab, setActiveTopTab] = useState('todos');
 
   // Mock data for todos
   const [todos, setTodos] = useState([
@@ -134,9 +141,16 @@ const TodosPage = ({ onNavigate }) => {
   ]);
 
   const toggleTodoComplete = (todoId) => {
-    setTodos(todos.map(todo => 
+    const updatedTodos = todos.map(todo => 
       todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
-    ));
+    );
+    setTodos(updatedTodos);
+    
+    // Update selectedTodo if it's the same todo being toggled
+    if (selectedTodo && selectedTodo.id === todoId) {
+      const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
+      setSelectedTodo(updatedTodo);
+    }
   };
 
   const toggleStarred = (todoId) => {
@@ -368,13 +382,16 @@ const TodosPage = ({ onNavigate }) => {
   const getFilteredTodos = () => {
     let filteredTodos = todos;
     
-    // Filter by catch-up mode
-    if (catchUpMode) {
+    // Filter by active tab (todos or catch-up)
+    if (activeTopTab === 'catchup') {
       filteredTodos = filteredTodos.filter(todo => todo.missed);
+    } else {
+      // For todos tab, exclude missed todos
+      filteredTodos = filteredTodos.filter(todo => !todo.missed);
     }
     
     // Filter by selected group
-    if (selectedGroup && !catchUpMode) {
+    if (selectedGroup && activeTopTab !== 'catchup') {
       filteredTodos = filteredTodos.filter(todo => todo.groupId === selectedGroup.id);
     }
     
@@ -424,10 +441,30 @@ const TodosPage = ({ onNavigate }) => {
         </div>
 
         {/* Third column: flex-1 - Main content */}
-        <div className="flex-1 flex gap-6 py-4">
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col h-full">
-            <TodoHeader
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Top Bar with Tabs, Live Notifications and Actions */}
+          <div className="flex w-full items-start gap-2 min-w-0">
+            <TopTabsTodos 
+              activeTab={activeTopTab}
+              setActiveTab={setActiveTopTab}
+              catchUpCount={getMissedTodosCount()}
+            />
+            <LiveNotifications 
+              usersData={usersData}
+              onUserClick={(user) => console.log('User clicked:', user)}
+            />
+            <ActionBarTodos 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              onCreateGroup={() => setShowCreateGroup(true)}
+            />
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex gap-6 flex-1 min-h-0">
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col h-full">
+              <TodoHeader
               selectedPeriod={selectedPeriod}
               setSelectedPeriod={setSelectedPeriod}
               showPeriodDropdown={showPeriodDropdown}
@@ -507,6 +544,7 @@ const TodosPage = ({ onNavigate }) => {
             )}
           </div>
         </div>
+      </div>
 
         {/* Delete Modal */}
         {showDeleteModal && (

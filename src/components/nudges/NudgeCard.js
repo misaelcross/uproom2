@@ -43,7 +43,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
         isSelected 
           ? 'border border-white' 
           : nudge.isRead 
-            ? 'bg-transparent border border-neutral-800 hover:bg-neutral-900 hover:border-neutral-800'
+            ? 'bg-transparent border border-neutral-800 hover:bg-neutral-800/50 hover:border-neutral-700'
             : 'bg-neutral-800 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500'
       }`}
       onClick={onClick}

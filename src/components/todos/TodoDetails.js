@@ -181,6 +181,22 @@ const TodoDetails = ({
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back
         </button>
+        
+        <div className="flex items-center space-x-2">
+          <div className="text-sm text-neutral-400">
+            {todo.editedAt ? (
+              <span>Edited {getTimeAgo(todo.editedAt)}</span>
+            ) : (
+              <span>Created {getTimeAgo(todo.createdAt || new Date())}</span>
+            )}
+          </div>
+          <button
+            onClick={handleDeleteClick}
+            className="text-red-400 hover:text-red-300 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -413,21 +429,21 @@ const TodoDetails = ({
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-stretch space-x-2">
               <input
                 type="text"
                 value={newStepText}
                 onChange={(e) => setNewStepText(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleAddStep()}
                 placeholder="Add a step..."
-                className="flex-1 bg-transparent border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                className="min-w-0 flex-1 bg-transparent border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
               />
               <button
                 onClick={handleAddStep}
                 disabled={!newStepText.trim()}
-                className="px-3 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 border border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 bg-neutral-800 text-white rounded hover:bg-neutral-700 border border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Plus className="w-4 h-4" />
+                Add
               </button>
             </div>
           </div>
@@ -727,8 +743,6 @@ const TodoDetails = ({
             )}
           </div>
 
-
-
           {/* Comments Section */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -769,7 +783,7 @@ const TodoDetails = ({
                 )}
 
                 {/* Add Comment */}
-                <div className="flex space-x-2">
+                <div className="flex items-stretch space-x-2">
                   <input
                     type="text"
                     value={newComment}
@@ -782,7 +796,7 @@ const TodoDetails = ({
                       }
                     }}
                     placeholder="Add a comment..."
-                    className="flex-1 bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                    className="min-w-0 flex-1 bg-transparent border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                   />
                   <button
                     onClick={() => {
@@ -793,9 +807,9 @@ const TodoDetails = ({
                       }
                     }}
                     disabled={!newComment.trim()}
-                    className="px-3 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 border border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 bg-neutral-800 text-white rounded hover:bg-neutral-700 border border-neutral-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-4 h-4" />
+                    Add
                   </button>
                 </div>
               </div>
@@ -814,23 +828,7 @@ const TodoDetails = ({
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-neutral-700 flex items-center justify-between">
-        <div className="text-sm text-neutral-400">
-          {todo.editedAt ? (
-            <span>Edited {getTimeAgo(todo.editedAt)}</span>
-          ) : (
-            <span>Created {getTimeAgo(todo.createdAt || new Date())}</span>
-          )}
-        </div>
-        <button
-          onClick={handleDeleteClick}
-          className="flex items-center text-red-400 hover:text-red-300 transition-colors"
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Delete to-do
-        </button>
-      </div>
+
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

@@ -4,7 +4,46 @@ import Sidebar from '../shared/Sidebar';
 import FirstColumn from '../shared/FirstColumn';
 import MonthCalendar from './MonthCalendar';
 import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
+import TopTabsSchedule from './TopTabsSchedule';
+import ActionBarSchedule from './ActionBarSchedule';
+import LiveNotifications from '../shared/LiveNotifications';
 import { usersData } from '../../data/usersData';
+
+// Mock data for groups
+const groupsData = [
+  {
+    id: 1,
+    name: 'Development Team',
+    description: 'Frontend and Backend developers',
+    members: ['1', '2', '3', '4'],
+    color: 'bg-blue-600',
+    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=40&h=40&fit=crop&crop=face'
+  },
+  {
+    id: 2,
+    name: 'Design Team',
+    description: 'UI/UX designers and visual artists',
+    members: ['5', '6', '7'],
+    color: 'bg-purple-600',
+    avatar: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=40&h=40&fit=crop&crop=face'
+  },
+  {
+    id: 3,
+    name: 'Marketing Team',
+    description: 'Digital marketing and content creators',
+    members: ['8', '9', '10'],
+    color: 'bg-green-600',
+    avatar: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=40&h=40&fit=crop&crop=face'
+  },
+  {
+    id: 4,
+    name: 'Product Team',
+    description: 'Product managers and analysts',
+    members: ['11', '12'],
+    color: 'bg-orange-600',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=40&h=40&fit=crop&crop=face'
+  }
+];
 
 const SchedulePage = ({ onNavigate }) => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -20,6 +59,9 @@ const SchedulePage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('received');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
+  
+  // TopTabs state
+  const [activeTopTab, setActiveTopTab] = useState('members');
 
   // Mock data for widgets
   const weekStats = {
@@ -72,45 +114,75 @@ const SchedulePage = ({ onNavigate }) => {
 
   // Get filtered and sorted data
   const getFilteredAndSortedData = () => {
-    let filteredData = usersData.filter(user => {
-      // Filtro por role e status
-      const roleMatch = roleFilter.includes(user.title);
-      const statusMatch = statusFilter.includes(user.availability);
-      
-      // Filtro por busca de nome
-      const searchMatch = searchTerm.trim() === '' || 
-        user.name.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return roleMatch && statusMatch && searchMatch;
-    });
-
-    if (sortConfig.key) {
-      filteredData.sort((a, b) => {
-        let aValue = a[sortConfig.key];
-        let bValue = b[sortConfig.key];
-
-        if (sortConfig.key === 'name') {
-          aValue = a.name;
-          bValue = b.name;
-        } else if (sortConfig.key === 'role') {
-          aValue = a.title;
-          bValue = b.title;
-        } else if (sortConfig.key === 'status') {
-          aValue = a.availability;
-          bValue = b.availability;
-        }
-
-        if (aValue < bValue) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
+    if (activeTopTab === 'groups') {
+      // Return groups data with search filter
+      let filteredGroups = groupsData.filter(group => {
+        const searchMatch = searchTerm.trim() === '' || 
+          group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          group.description.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return searchMatch;
       });
-    }
 
-    return filteredData;
+      // Sort groups by name
+      if (sortConfig.key === 'name') {
+        filteredGroups.sort((a, b) => {
+          const aValue = a.name;
+          const bValue = b.name;
+          
+          if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+
+      return filteredGroups;
+    } else {
+      // Return users data (members tab)
+      let filteredData = usersData.filter(user => {
+        // Filtro por role e status
+        const roleMatch = roleFilter.includes(user.title);
+        const statusMatch = statusFilter.includes(user.availability);
+        
+        // Filtro por busca de nome
+        const searchMatch = searchTerm.trim() === '' || 
+          user.name.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        return roleMatch && statusMatch && searchMatch;
+      });
+
+      if (sortConfig.key) {
+        filteredData.sort((a, b) => {
+          let aValue = a[sortConfig.key];
+          let bValue = b[sortConfig.key];
+
+          if (sortConfig.key === 'name') {
+            aValue = a.name;
+            bValue = b.name;
+          } else if (sortConfig.key === 'role') {
+            aValue = a.title;
+            bValue = b.title;
+          } else if (sortConfig.key === 'status') {
+            aValue = a.availability;
+            bValue = b.availability;
+          }
+
+          if (aValue < bValue) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+
+      return filteredData;
+    }
   };
 
   // Function to generate personalized schedule based on selected user
@@ -200,9 +272,27 @@ const SchedulePage = ({ onNavigate }) => {
           <Sidebar currentPage="schedule" onNavigate={onNavigate} />
         </div>
         {/* Third column: flex-1 - Main content */}
-        <div className="flex-1 flex gap-6 py-4">
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Top Bar with Tabs, Live Notifications and Actions */}
+          <div className="flex w-full items-start gap-2 min-w-0">
+            <TopTabsSchedule 
+              activeTab={activeTopTab}
+              setActiveTab={setActiveTopTab}
+            />
+            <LiveNotifications 
+              usersData={usersData}
+              onUserClick={(user) => console.log('User clicked:', user)}
+            />
+            <ActionBarSchedule 
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              onScheduleMeet={() => console.log('Schedule meet clicked')}
+            />
+          </div>
+
           {/* Main Content Area */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex gap-6 flex-1 min-h-0">
+            <div className="flex-1 overflow-y-auto">
             {selectedUser ? (
               /* User Schedule - Full Width */
               <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
@@ -284,16 +374,18 @@ const SchedulePage = ({ onNavigate }) => {
                 </div>
               </div>
             ) : (
-              /* Team Members Table - Default View */
+              /* Main Content - Team Members or Groups based on active tab */
               <div className="border border-neutral-700 rounded-lg overflow-hidden">
                 <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-                  <h2 className="text-white text-xl font-semibold">Team Members</h2>
+                  <h2 className="text-white text-xl font-semibold">
+                    {activeTopTab === 'groups' ? 'Groups' : 'Team Members'}
+                  </h2>
                   
                   {/* Search Input */}
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="Search members..."
+                      placeholder={activeTopTab === 'groups' ? 'Search groups...' : 'Search members...'}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
@@ -302,62 +394,92 @@ const SchedulePage = ({ onNavigate }) => {
                   </div>
                 </div>
 
-                {/* Team Members List */}
+                {/* Content List */}
                 <div className="divide-y divide-neutral-700">
-                  {getFilteredAndSortedData().map((user) => {
-                    // Status functions (copied from UserCard)
-                    const getStatusColor = (availability) => {
-                      switch (availability) {
-                        case 'Available': return 'text-green-500';
-                        case 'In meeting': return 'text-blue-500';
-                        case 'Out for Lunch': return 'text-yellow-500';
-                        case 'Focus': return 'text-purple-500';
-                        case 'Emergency': return 'text-red-500';
-                        case 'Away': return 'text-orange-500';
-                        case 'Offline': return 'text-gray-500';
-                        default: return 'text-green-500';
-                      }
-                    };
-
-                    const getStatusDotColor = (availability) => {
-                      switch (availability) {
-                        case 'Available': return 'bg-green-500';
-                        case 'In meeting': return 'bg-blue-500';
-                        case 'Out for Lunch': return 'bg-yellow-500';
-                        case 'Focus': return 'bg-purple-500';
-                        case 'Emergency': return 'bg-red-500';
-                        case 'Away': return 'bg-orange-500';
-                        case 'Offline': return 'bg-gray-500';
-                        default: return 'bg-green-500';
-                      }
-                    };
-
-                    return (
+                  {activeTopTab === 'groups' ? (
+                    /* Groups List */
+                    getFilteredAndSortedData().map((group) => (
                       <div
-                        key={user.id}
+                        key={group.id}
                         className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                        onClick={() => handleUserSelect(user)}
+                        onClick={() => console.log('Group selected:', group)}
                       >
                         <div className="flex items-center gap-3">
                           <div className="relative">
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-10 h-10 rounded-full object-cover"
-                            />
-                            <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
+                            <div className={`w-10 h-10 ${group.color} rounded-lg flex items-center justify-center`}>
+                              <span className="text-white font-semibold text-sm">
+                                {group.name.charAt(0)}
+                              </span>
+                            </div>
                           </div>
-                          <div>
-                            <div className="text-white font-medium">{user.name}</div>
-                            <div className="text-neutral-400 text-sm">{user.title}</div>
+                          <div className="flex-1">
+                            <div className="text-white font-medium">{group.name}</div>
+                            <div className="text-neutral-400 text-sm">{group.description}</div>
+                          </div>
+                          <div className="text-neutral-400 text-sm">
+                            {group.members.length} members
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))
+                  ) : (
+                    /* Team Members List */
+                    getFilteredAndSortedData().map((user) => {
+                      // Status functions (copied from UserCard)
+                      const getStatusColor = (availability) => {
+                        switch (availability) {
+                          case 'Available': return 'text-green-500';
+                          case 'In meeting': return 'text-blue-500';
+                          case 'Out for Lunch': return 'text-yellow-500';
+                          case 'Focus': return 'text-purple-500';
+                          case 'Emergency': return 'text-red-500';
+                          case 'Away': return 'text-orange-500';
+                          case 'Offline': return 'text-gray-500';
+                          default: return 'text-green-500';
+                        }
+                      };
+
+                      const getStatusDotColor = (availability) => {
+                        switch (availability) {
+                          case 'Available': return 'bg-green-500';
+                          case 'In meeting': return 'bg-blue-500';
+                          case 'Out for Lunch': return 'bg-yellow-500';
+                          case 'Focus': return 'bg-purple-500';
+                          case 'Emergency': return 'bg-red-500';
+                          case 'Away': return 'bg-orange-500';
+                          case 'Offline': return 'bg-gray-500';
+                          default: return 'bg-green-500';
+                        }
+                      };
+
+                      return (
+                        <div
+                          key={user.id}
+                          className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                          onClick={() => handleUserSelect(user)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                              <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
+                            </div>
+                            <div>
+                              <div className="text-white font-medium">{user.name}</div>
+                              <div className="text-neutral-400 text-sm">{user.title}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             )}
+            </div>
           </div>
 
           {/* Right Sidebar - Team Members List or Calendar */}
