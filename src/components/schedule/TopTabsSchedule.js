@@ -1,29 +1,19 @@
 import React from 'react';
 
-const TopTabs = ({ activeTab, setActiveTab, users = [] }) => {
-  // Get current work summary for overview tab
-  const getCurrentWorkSummary = () => {
-    const onlineUsers = users.filter(user => user.status === 'online');
-    const activeProjects = onlineUsers.filter(user => user.currentWork).length;
-    
-    if (activeProjects === 0) return "No active work";
-    if (activeProjects === 1) return "1 person working";
-    return `${activeProjects} people working`;
-  };
-
+const TopTabsSchedule = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="w-fit rounded-lg h-20 py-4 flex flex-col">
+    <div className="w-fit min-w-0 rounded-lg h-20 py-4 flex flex-col">
       {/* Tabs */}
       <div className="flex space-x-2 bg-neutral-800 p-1 rounded-lg mb-4 w-fit">
         <button
-          onClick={() => setActiveTab('overview')}
+          onClick={() => setActiveTab('members')}
           className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'overview'
+            activeTab === 'members'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Overview
+          Team members
         </button>
         <button
           onClick={() => setActiveTab('groups')}
@@ -40,4 +30,4 @@ const TopTabs = ({ activeTab, setActiveTab, users = [] }) => {
   );
 };
 
-export default TopTabs;
+export default TopTabsSchedule;

@@ -84,7 +84,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
 
   return (
     <div 
-      className="bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-neutral-900 hover:border-neutral-700 relative"
+      className="bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:bg-neutral-800/50 hover:border-neutral-700 relative"
       onClick={onClick}
     >
       {/* Header com avatar, nome, cargo e menu */}
