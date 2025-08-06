@@ -159,7 +159,7 @@ const CreateNudgeView = ({ onCancel }) => {
             placeholder="Search for team member..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+            className="w-full bg-transparent border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
           />
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
           
@@ -170,7 +170,7 @@ const CreateNudgeView = ({ onCancel }) => {
                 <button
                   key={user.id}
                   onClick={() => addUserFromSearch(user)}
-                  className="w-full flex items-center space-x-3 p-3 hover:bg-gray-50 transition-colors text-left"
+                  className="w-full flex items-center space-x-3 p-3 hover:bg-neutral-700 transition-colors text-left"
                 >
                   <img
                     src={user.avatar}
@@ -228,23 +228,23 @@ const CreateNudgeView = ({ onCancel }) => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type your message..."
-            className="w-full border border-neutral-700 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
+            className="w-full bg-transparent border border-neutral-700 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
             rows={4}
           />
 
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">
-            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
+            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-neutral-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
               <Paperclip className="h-4 w-4 text-neutral-400" />
               <span className="text-neutral-400 text-sm">Files</span>
             </button>
-            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-neutral-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Link className="h-4 w-4 text-neutral-400" />
               <span className="text-neutral-400 text-sm">Links</span>
             </button>
             <button 
               onClick={() => setIsPollModalOpen(true)}
-              className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-neutral-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
             >
               <BarChart3 className="h-4 w-4 text-neutral-400" />
               <span className="text-neutral-400 text-sm">Poll</span>
@@ -256,8 +256,8 @@ const CreateNudgeView = ({ onCancel }) => {
             <div className="bg-neutral-700 border border-neutral-600 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-medium text-cyan-400">
+                  <BarChart3 className="w-4 h-4 text-white" />
+                  <span className="text-sm font-medium text-white">
                     {attachedPoll.type === 'poll' ? 'Poll' : 'Survey'} Attached
                   </span>
                 </div>

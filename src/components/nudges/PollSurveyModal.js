@@ -106,7 +106,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
               onClick={() => setPollData(prev => ({ ...prev, type: 'poll' }))}
               className={`flex-1 p-3 rounded-lg border transition-colors ${
                 pollData.type === 'poll'
-                  ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400'
+                  ? 'border-white bg-white/10 text-white'
                   : 'border-neutral-600 text-neutral-400 hover:border-neutral-500'
               }`}
             >
@@ -118,7 +118,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
               onClick={() => setPollData(prev => ({ ...prev, type: 'survey' }))}
               className={`flex-1 p-3 rounded-lg border transition-colors ${
                 pollData.type === 'survey'
-                  ? 'border-cyan-500 bg-cyan-500/10 text-cyan-400'
+                  ? 'border-white bg-white/10 text-white'
                   : 'border-neutral-600 text-neutral-400 hover:border-neutral-500'
               }`}
             >
@@ -137,7 +137,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
               value={pollData.title}
               onChange={(e) => setPollData(prev => ({ ...prev, title: e.target.value }))}
               placeholder="What's your question?"
-              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-cyan-500 focus:outline-none"
+              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-white focus:outline-none"
             />
           </div>
 
@@ -151,7 +151,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
               onChange={(e) => setPollData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Add more context..."
               rows={3}
-              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-cyan-500 focus:outline-none resize-none"
+              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-white focus:outline-none resize-none"
             />
           </div>
 
@@ -168,7 +168,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
                     value={option}
                     onChange={(e) => handleOptionChange(index, e.target.value)}
                     placeholder={`Option ${index + 1}`}
-                    className="flex-1 p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-cyan-500 focus:outline-none"
+                    className="flex-1 p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:border-white focus:outline-none"
                   />
                   {pollData.options.length > 2 && (
                     <button
@@ -207,7 +207,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
                 type="button"
                 onClick={() => setPollData(prev => ({ ...prev, isAnonymous: !prev.isAnonymous }))}
                 className={`w-12 h-6 rounded-full transition-colors ${
-                  pollData.isAnonymous ? 'bg-cyan-500' : 'bg-neutral-600'
+                  pollData.isAnonymous ? 'bg-neutral-900' : 'bg-neutral-600'
                 }`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
@@ -222,7 +222,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
                 type="button"
                 onClick={() => setPollData(prev => ({ ...prev, allowMultipleChoices: !prev.allowMultipleChoices }))}
                 className={`w-12 h-6 rounded-full transition-colors ${
-                  pollData.allowMultipleChoices ? 'bg-cyan-500' : 'bg-neutral-600'
+                  pollData.allowMultipleChoices ? 'bg-neutral-900' : 'bg-neutral-600'
                 }`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full transition-transform ${
@@ -240,7 +240,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
             <select
               value={pollData.targetAudience}
               onChange={(e) => setPollData(prev => ({ ...prev, targetAudience: e.target.value }))}
-              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:border-white focus:outline-none"
             >
               <option value="team">My Team</option>
               <option value="department">Department</option>
@@ -257,7 +257,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
               type="datetime-local"
               value={pollData.deadline}
               onChange={(e) => setPollData(prev => ({ ...prev, deadline: e.target.value }))}
-              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:border-cyan-500 focus:outline-none"
+              className="w-full p-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white focus:border-white focus:outline-none"
             />
           </div>
 
@@ -272,7 +272,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 p-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg text-white font-medium transition-colors"
+              className="flex-1 p-3 bg-neutral-600 hover:bg-neutral-700 rounded-lg text-white font-medium transition-colors"
             >
               Create {pollData.type === 'poll' ? 'Poll' : 'Survey'}
             </button>
