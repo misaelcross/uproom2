@@ -1,27 +1,25 @@
-To-Do List Page
-Purpose: Keep tasks lightweight, context-aware, and synced with workflow.
-> Context-Aware Tasks (Smart Capture)
-- [x] Tasks from Nudges auto-inherit: attached files/links, sender, due date/time.
-- [x] No manual copy-paste.
+Schedule
+Purpose: Integrate status + meetings + focus without heavy PM complexity.
 
-> Assignments & Mentions
-- [x] Tag individuals (@Alex) or teams (@Design).
+> Status-Aware Calendar
+- [x] Events show live status (Deep Work, Available, Meeting).
 
-> Shared Task Blocks (Temporary)
-- [x] Short-lived team lists (e.g., "Bug Fix List – Sprint Ends Friday").
+> Quick “Request Time” Action
+- [x] Suggest meetings based on free slots; simple accept/decline, create available schedule content, when clicking on this open a modal to schedule a meeting
 
-> Catch-Up Mode
-- [x] Summarizes changes for offline users instead of flooding notifications. When changing the status to offline, the user can see the changes in the catch-up modal that appears when they switch the status to something else then offline. The catch-up modal shows the changes in a list format with the task name, assignee, due date, and priority. The user can click on the task to see more details.
+>- [x] Context Linking - Attach relevant tasks, nudges, and files to events.
 
-> Nudge Integration
-- [x] One-click "Add to To-Do" or "Assign Task" directly from Nudges, both bottom sheet and the nudge page
-- [x] Role-based permissions (managers assign, peers suggest).
+Nudges
+Purpose: Fast, lightweight communication and coordination.
 
-> Organization & Search ✅
-- [x] Personal/shared folders, search by keyword, priority, assignee, on the search component (create on the left side of the dropdown sort date)
+> Quick Actions (3-dot menu)
+- [x] Mark as unread, assign, add to To-Do.
 
-> Quick Actions & Comments ✅
-- [x] Quick assigns, lightweight task comments, view tracking, this must be on the view component of the task
+> Polls & Surveys
+- [x] Quick team feedback, anonymous option.
 
-> Lightweight Progress Tracking ✅
-- [x] Simple checkmarks or % complete
+> Announcements
+- [x] Broadcast to whole team or department without chat clutter, when creating a nudge on the search dropdown, show groups (same visual design used in the to-do dropdown assignee) that can be selected, when groups is selected, show a preview of the nudge that will be sent to the selected group.
+
+> Linked to Tasks 
+- [x] Can trigger To-Dos, so with that add a dropdown to search to-do to link to the nudge

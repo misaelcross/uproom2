@@ -217,6 +217,86 @@ function NudgePage({ onNavigate }) {
     // Aqui você pode adicionar lógica adicional para pré-preencher o formulário com o grupo selecionado
   };
 
+  // Quick action: Create todo from nudge
+  const handleCreateTodoFromNudge = (nudge) => {
+    // Create a new todo based on the nudge
+    const newTodo = {
+      id: Date.now(),
+      text: `Follow up: ${nudge.message.substring(0, 50)}...`,
+      completed: false,
+      starred: false,
+      createdFrom: 'nudge',
+      sourceNudgeId: nudge.id,
+      assignedBy: nudge.sender.name,
+      priority: nudge.priority,
+      createdAt: new Date().toISOString()
+    };
+    
+    // Here you would typically add this to your todos state/context
+    console.log('Creating todo from nudge:', newTodo);
+    
+    // Show success feedback
+    alert(`Todo created: "${newTodo.text}"`);
+  };
+
+  // Quick action: Mark nudge as complete
+  const handleMarkNudgeComplete = (nudge) => {
+    setNudges(prev => prev.map(n => 
+      n.id === nudge.id 
+        ? { ...n, isCompleted: true, completedAt: new Date().toISOString() }
+        : n
+    ));
+    
+    // If this was the selected nudge, update it too
+    if (selectedNudge?.id === nudge.id) {
+      setSelectedNudge(prev => ({ 
+        ...prev, 
+        isCompleted: true, 
+        completedAt: new Date().toISOString() 
+      }));
+    }
+    
+    console.log('Marked nudge as complete:', nudge.id);
+  };
+
+  // Quick action: Reply to nudge
+  const handleReplyToNudge = (nudge) => {
+    // This would typically open a reply modal or navigate to a reply view
+    console.log('Replying to nudge:', nudge.id);
+    alert(`Opening reply to ${nudge.sender.name}`);
+  };
+
+  // Quick action: Snooze nudge
+  const handleSnoozeNudge = (nudge) => {
+    const snoozeUntil = new Date();
+    snoozeUntil.setHours(snoozeUntil.getHours() + 1); // Snooze for 1 hour
+    
+    setNudges(prev => prev.map(n => 
+      n.id === nudge.id 
+        ? { ...n, isSnoozed: true, snoozeUntil: snoozeUntil.toISOString() }
+        : n
+    ));
+    
+    console.log('Snoozed nudge:', nudge.id);
+    alert('Nudge snoozed for 1 hour');
+  };
+
+  // Quick action: Archive nudge
+  const handleArchiveNudge = (nudge) => {
+    setNudges(prev => prev.map(n => 
+      n.id === nudge.id 
+        ? { ...n, isArchived: true, archivedAt: new Date().toISOString() }
+        : n
+    ));
+    
+    // If this was the selected nudge, clear selection
+    if (selectedNudge?.id === nudge.id) {
+      setSelectedNudge(null);
+    }
+    
+    console.log('Archived nudge:', nudge.id);
+  };
+
   // Função para ordenar nudges
   const getSortedNudges = () => {
     let sortedNudges = [...nudges];
@@ -287,7 +367,12 @@ function NudgePage({ onNavigate }) {
                       key={nudge.id} 
                       nudge={nudge}
                       isSelected={selectedNudge?.id === nudge.id}
-                      onClick={() => handleNudgeSelect(nudge)} 
+                      onClick={() => handleNudgeSelect(nudge)}
+                      onCreateTodo={handleCreateTodoFromNudge}
+                      onMarkComplete={handleMarkNudgeComplete}
+                      onReply={handleReplyToNudge}
+                      onSnooze={handleSnoozeNudge}
+                      onArchive={handleArchiveNudge}
                     />
                   ))}
                 </div>

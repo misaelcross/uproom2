@@ -4,8 +4,15 @@ import {
   Send,
   Paperclip,
   Link,
-  X
+  X,
+  BarChart3,
+  Users,
+  User,
+  CheckSquare
 } from 'lucide-react';
+import PollSurveyModal from './PollSurveyModal';
+import GroupSelector from './GroupSelector';
+import TodoSelector from './TodoSelector';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
@@ -23,6 +30,11 @@ const CreateNudgeView = ({ onCancel }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
+  const [isPollModalOpen, setIsPollModalOpen] = useState(false);
+  const [attachedPoll, setAttachedPoll] = useState(null);
+  const [isAnnouncementMode, setIsAnnouncementMode] = useState(false);
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const [selectedTodos, setSelectedTodos] = useState([]);
 
   // Filtrar usuários baseado na pesquisa
   const filteredUsers = useMemo(() => {
@@ -47,15 +59,42 @@ const CreateNudgeView = ({ onCancel }) => {
     setSelectedUsers(selectedUsers.filter(user => user.id !== userId));
   };
 
+  // Função para criar poll/survey
+  const handleCreatePoll = (pollData) => {
+    setAttachedPoll(pollData);
+    console.log('Poll created:', pollData);
+  };
+
+  // Função para remover poll anexado
+  const handleRemovePoll = () => {
+    setAttachedPoll(null);
+  };
+
   // Função para enviar nudge
   const handleSendNudge = () => {
-    if (message.trim() && selectedUsers.length > 0) {
-      console.log('Sending nudge:', { selectedUsers, message });
+    const hasRecipients = isAnnouncementMode ? selectedGroups.length > 0 : selectedUsers.length > 0;
+    
+    if ((message.trim() || attachedPoll) && hasRecipients) {
+      const nudgeData = {
+        selectedUsers: isAnnouncementMode ? [] : selectedUsers,
+        selectedGroups: isAnnouncementMode ? selectedGroups : [],
+        selectedTodos,
+        message,
+        attachedPoll,
+        type: attachedPoll ? 'poll' : isAnnouncementMode ? 'announcement' : 'message',
+        isAnnouncement: isAnnouncementMode,
+        timestamp: new Date().toISOString()
+      };
+      console.log('Sending nudge:', nudgeData);
       // Aqui você pode adicionar a lógica para enviar o nudge
       // Limpar formulário após envio
       setSelectedUsers([]);
+      setSelectedGroups([]);
+      setSelectedTodos([]);
       setMessage('');
       setSearchTerm('');
+      setAttachedPoll(null);
+      setIsAnnouncementMode(false);
       if (onCancel) onCancel();
     }
   };
@@ -77,8 +116,44 @@ const CreateNudgeView = ({ onCancel }) => {
 
       {/* Content */}
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-        {/* Search */}
-        <div className="relative">
+        {/* Mode Toggle */}
+        <div className="flex items-center space-x-2 bg-neutral-800 rounded-lg p-1">
+          <button
+            onClick={() => setIsAnnouncementMode(false)}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+              !isAnnouncementMode 
+                ? 'bg-neutral-700 text-white' 
+                : 'text-neutral-400 hover:text-neutral-200'
+            }`}
+          >
+            <User className="w-4 h-4" />
+            <span className="text-sm font-medium">Individual</span>
+          </button>
+          <button
+            onClick={() => setIsAnnouncementMode(true)}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+              isAnnouncementMode 
+                ? 'bg-neutral-700 text-white' 
+                : 'text-neutral-400 hover:text-neutral-200'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span className="text-sm font-medium">Announcement</span>
+          </button>
+        </div>
+
+        {/* Conditional Content Based on Mode */}
+        {isAnnouncementMode ? (
+          /* Group Selector for Announcements */
+          <GroupSelector
+            selectedGroups={selectedGroups}
+            onGroupsChange={setSelectedGroups}
+          />
+        ) : (
+          /* Individual User Search */
+          <>
+            {/* Search */}
+            <div className="relative">
           <input
             type="text"
             placeholder="Search for team member..."
@@ -116,8 +191,8 @@ const CreateNudgeView = ({ onCancel }) => {
           )}
         </div>
 
-        {/* Selected Users */}
-        {selectedUsers.length > 0 && (
+            {/* Selected Users */}
+            {selectedUsers.length > 0 && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-400">Selected Recipients:</label>
             <div className="flex flex-wrap gap-2">
@@ -142,6 +217,8 @@ const CreateNudgeView = ({ onCancel }) => {
               ))}
             </div>
           </div>
+            )}
+          </>
         )}
 
         {/* Message Input */}
@@ -156,38 +233,96 @@ const CreateNudgeView = ({ onCancel }) => {
           />
 
           {/* Action Buttons */}
-          <div className="flex space-x-3">
-            <button className="flex items-center justify-center space-x-2 w-1/2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
+          <div className="grid grid-cols-3 gap-2">
+            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent">
               <Paperclip className="h-4 w-4 text-neutral-400" />
-              <span className="text-neutral-400 text-sm">Attach files</span>
+              <span className="text-neutral-400 text-sm">Files</span>
             </button>
-            <button className="flex items-center justify-center space-x-2 w-1/2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <button className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Link className="h-4 w-4 text-neutral-400" />
-              <span className="text-neutral-400 text-sm">Add links</span>
+              <span className="text-neutral-400 text-sm">Links</span>
+            </button>
+            <button 
+              onClick={() => setIsPollModalOpen(true)}
+              className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-gray-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            >
+              <BarChart3 className="h-4 w-4 text-neutral-400" />
+              <span className="text-neutral-400 text-sm">Poll</span>
             </button>
           </div>
+
+          {/* Attached Poll Preview */}
+          {attachedPoll && (
+            <div className="bg-neutral-700 border border-neutral-600 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="w-4 h-4 text-cyan-400" />
+                  <span className="text-sm font-medium text-cyan-400">
+                    {attachedPoll.type === 'poll' ? 'Poll' : 'Survey'} Attached
+                  </span>
+                </div>
+                <button
+                  onClick={handleRemovePoll}
+                  className="p-1 hover:bg-neutral-600 rounded transition-colors"
+                >
+                  <X className="w-4 h-4 text-neutral-400" />
+                </button>
+              </div>
+              <h4 className="text-white font-medium mb-2">{attachedPoll.title}</h4>
+              {attachedPoll.description && (
+                <p className="text-neutral-300 text-sm mb-2">{attachedPoll.description}</p>
+              )}
+              <div className="space-y-1">
+                {attachedPoll.options.map((option, index) => (
+                  <div key={index} className="text-neutral-400 text-sm">
+                    • {option.text}
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500">
+                {attachedPoll.isAnonymous && <span>Anonymous</span>}
+                {attachedPoll.allowMultipleChoices && <span>Multiple choices</span>}
+                <span>Send to: {attachedPoll.targetAudience}</span>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* Todo Selector */}
+        <TodoSelector
+          selectedTodos={selectedTodos}
+          onTodosChange={setSelectedTodos}
+        />
       </div>
 
       {/* Footer with Send Button */}
       <div className="p-6 border-t border-neutral-700">
         <button
           onClick={handleSendNudge}
-          disabled={!message.trim() || selectedUsers.length === 0}
+          disabled={(!message.trim() && !attachedPoll) || (isAnnouncementMode ? selectedGroups.length === 0 : selectedUsers.length === 0)}
           className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent ${
-            !message.trim() || selectedUsers.length === 0
+            (!message.trim() && !attachedPoll) || (isAnnouncementMode ? selectedGroups.length === 0 : selectedUsers.length === 0)
               ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
               : 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600'
           }`}
         >
           <Send className={`h-5 w-5 ${
-            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
+            (!message.trim() && !attachedPoll) || (isAnnouncementMode ? selectedGroups.length === 0 : selectedUsers.length === 0) ? 'text-neutral-400' : 'text-white'
           }`} />
           <span className={`font-medium ${
-            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
-          }`}>Send Nudge</span>
+            (!message.trim() && !attachedPoll) || (isAnnouncementMode ? selectedGroups.length === 0 : selectedUsers.length === 0) ? 'text-neutral-400' : 'text-white'
+          }`}>
+            {isAnnouncementMode ? 'Send Announcement' : 'Send Nudge'}
+          </span>
         </button>
       </div>
+
+      {/* Poll/Survey Modal */}
+      <PollSurveyModal
+        isOpen={isPollModalOpen}
+        onClose={() => setIsPollModalOpen(false)}
+        onCreatePoll={handleCreatePoll}
+      />
     </div>
   );
 };

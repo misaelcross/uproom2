@@ -1,7 +1,7 @@
 import React from 'react';
-import { MoreVertical, Plus, CheckCircle } from 'lucide-react';
+import { MoreVertical, Plus, CheckCircle, MessageCircle, Clock, Archive } from 'lucide-react';
 
-const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete }) => {
+const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive }) => {
   const getStatusDotColor = (status) => {
     switch (status) {
       case 'online': return 'bg-green-500';
@@ -97,6 +97,18 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete })
         
         {/* Quick Actions */}
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onReply && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onReply(nudge);
+              }}
+              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
+              title="Reply"
+            >
+              <MessageCircle className="w-4 h-4 text-neutral-400 hover:text-blue-500" />
+            </button>
+          )}
           {onCreateTodo && (
             <button
               onClick={(e) => {
@@ -109,6 +121,18 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete })
               <Plus className="w-4 h-4 text-neutral-400 hover:text-white" />
             </button>
           )}
+          {onSnooze && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSnooze(nudge);
+              }}
+              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
+              title="Snooze"
+            >
+              <Clock className="w-4 h-4 text-neutral-400 hover:text-yellow-500" />
+            </button>
+          )}
           {onMarkComplete && (
             <button
               onClick={(e) => {
@@ -119,6 +143,18 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete })
               title="Mark Complete"
             >
               <CheckCircle className="w-4 h-4 text-neutral-400 hover:text-green-500" />
+            </button>
+          )}
+          {onArchive && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onArchive(nudge);
+              }}
+              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
+              title="Archive"
+            >
+              <Archive className="w-4 h-4 text-neutral-400 hover:text-gray-500" />
             </button>
           )}
         </div>
