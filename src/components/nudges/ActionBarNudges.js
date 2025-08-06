@@ -148,10 +148,10 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
       {/* Create Nudge Button */}
       <button 
         onClick={onCreateNudge}
-        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-gray-100 rounded-lg transition-colors"
+        className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
       >
-        <Plus className="h-4 w-4 text-black" />
-        <span className="text-black text-sm font-medium">Create nudge</span>
+        <Plus className="h-4 w-4 text-white" />
+        <span className="text-white text-sm font-medium">Create nudge</span>
       </button>
     </div>
   );

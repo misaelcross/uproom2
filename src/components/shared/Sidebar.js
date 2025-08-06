@@ -582,7 +582,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                             className="w-6 h-1 bg-neutral-600 rounded-full relative overflow-hidden"
                           >
                             <div
-                              className="h-full bg-white rounded-full transition-all duration-1000 ease-linear"
+                              className="h-full bg-neutral-800 rounded-full transition-all duration-1000 ease-linear"
                               style={{ width: `${progress}%` }}
                             />
                           </div>
@@ -627,7 +627,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${getToggleBackgroundColor()}`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-neutral-800 transition-transform ${
                     isAvailable ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
@@ -672,7 +672,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                       }
                     }}
                     placeholder="Give more details..."
-                    className={`w-full border rounded-lg p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] max-h-[120px] overflow-y-auto transition-colors ${
+                    className={`w-full bg-neutral-800 border rounded-lg p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] max-h-[120px] overflow-y-auto transition-colors ${
                       showStatusError 
                         ? 'border-red-500 focus:border-red-500' 
                         : 'border-neutral-700 focus:border-neutral-600'
@@ -707,7 +707,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                     disabled={!selectedStatusOption || statusMessage.trim().length < 3}
                     className={`flex-1 font-medium py-2 px-4 rounded-lg transition-colors ${
                       selectedStatusOption && statusMessage.trim().length >= 3
-                        ? 'bg-white text-black hover:bg-gray-100'
+                        ? 'bg-neutral-800 text-white hover:bg-neutral-700 border border-neutral-600'
                         : 'bg-neutral-600 text-neutral-400 cursor-not-allowed'
                     }`}
                   >
@@ -721,7 +721,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
 
         {/* Upgrade CTA */}
         <div className="px-4 pb-4">
-          <button className="w-full bg-white text-black font-medium py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2">
+          <button className="w-full bg-neutral-800 text-white font-medium py-2 px-4 rounded-lg hover:bg-neutral-700 border border-neutral-600 transition-colors flex items-center justify-center space-x-2">
             <span>Upgrade to Pro</span>
             <Zap className="h-4 w-4" />
           </button>

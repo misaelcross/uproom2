@@ -6,7 +6,7 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
     "Q3 Overview": [
       users[0], users[1], users[2], users[3], users[4], users[5]
     ],
-    "Cliente - The Fade Genius": [
+    "Client - The Fade Genius": [
       users[6], users[7], users[8], users[9]
     ]
   };

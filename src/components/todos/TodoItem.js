@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, Star, ChevronDown } from 'lucide-react';
+import { Check, Star, ChevronDown, AlertTriangle, MessageCircle, Users, Clock } from 'lucide-react';
 
 const TodoItem = ({ 
   todo, 
@@ -64,7 +64,11 @@ const TodoItem = ({
 
   return (
     <div
-      className="border border-neutral-700 rounded-lg p-4 hover:bg-neutral-700 transition-colors cursor-pointer group"
+      className={`border rounded-lg p-4 hover:bg-neutral-800 transition-colors cursor-pointer group ${
+        todo.missed 
+          ? 'border-amber-600/50 bg-amber-900/10' 
+          : 'border-neutral-700'
+      }`}
       onClick={handleItemClick}
     >
       <div className="flex items-start gap-3">
@@ -84,6 +88,9 @@ const TodoItem = ({
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
+              {todo.missed && (
+                <AlertTriangle className="w-4 h-4 text-amber-500" />
+              )}
               <span className={`text-white ${todo.completed ? 'line-through opacity-60' : ''}`}>
                 {todo.description}
               </span>
@@ -108,7 +115,7 @@ const TodoItem = ({
                       <button
                         key={priority.value}
                         onClick={() => handlePrioritySelect(priority)}
-                        className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-neutral-700 transition-colors first:rounded-t-lg last:rounded-b-lg"
+                        className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-neutral-800 transition-colors first:rounded-t-lg last:rounded-b-lg"
                       >
                         <div className={`w-3 h-3 rounded border ${priority.borderColor} ${priority.color.replace('text-', 'bg-')}`}></div>
                         <span>{priority.label}</span>
@@ -118,13 +125,15 @@ const TodoItem = ({
                 )}
               </div>
               
-              {/* Star Icon - Moved to where trash was */}
+
+
+              {/* Star Icon */}
               <button
                 onClick={handleStarClick}
                 className={`transition-colors ${
                   todo.starred 
                     ? 'text-white' 
-                    : 'text-neutral-600 hover:text-white group-hover:opacity-100'
+                    : 'text-neutral-600 hover:text-white'
                 }`}
               >
                 <Star className={`w-4 h-4 ${todo.starred ? 'fill-current' : ''}`} />
@@ -132,12 +141,63 @@ const TodoItem = ({
             </div>
           </div>
           
-          {/* Steps indicator */}
+          {/* Steps indicator with progress bar */}
           {todo.steps && todo.steps.length > 0 && (
-            <div className="mt-2 text-sm text-neutral-400">
-              <span>Tasks</span>
-              <span className="mx-2">•</span>
-              <span>{todo.steps.filter(step => step.completed).length} of {todo.steps.length}</span>
+            <div className="mt-2 space-y-1">
+              <div className="flex items-center justify-between text-sm text-neutral-400">
+                <span>Tasks</span>
+                <span>{todo.steps.filter(step => step.completed).length} of {todo.steps.length}</span>
+              </div>
+              <div className="w-full bg-neutral-700 rounded-full h-1.5">
+                <div 
+                  className="bg-green-500 h-1.5 rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${(todo.steps.filter(step => step.completed).length / todo.steps.length) * 100}%` 
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {/* Additional info: Comments, Assignees, Duration */}
+          {(todo.comments?.length > 0 || todo.assignees?.length > 0 || todo.duration) && (
+            <div className="mt-2 space-y-1">
+              {/* Comments */}
+              {todo.comments && todo.comments.length > 0 && (
+                <div className="flex items-center gap-1 text-sm text-neutral-400">
+                  <MessageCircle className="w-3 h-3" />
+                  <span>{todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}</span>
+                </div>
+              )}
+              
+              {/* Assignees */}
+              {todo.assignees && todo.assignees.length > 0 && (
+                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                  <Users className="w-3 h-3" />
+                  <div className="flex items-center gap-1">
+                    {todo.assignees.slice(0, 3).map((assignee, index) => (
+                      <img 
+                        key={assignee.id}
+                        src={assignee.avatar} 
+                        alt={assignee.name}
+                        className="w-5 h-5 rounded-full border border-neutral-600"
+                        title={assignee.name}
+                      />
+                    ))}
+                    {todo.assignees.length > 3 && (
+                      <span className="text-xs">+{todo.assignees.length - 3}</span>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              {/* Duration */}
+              {todo.duration && (
+                <div className="flex items-center gap-1 text-sm text-neutral-400">
+                  <Clock className="w-3 h-3" />
+                  <span>{todo.duration.start} - {todo.duration.end}</span>
+                </div>
+              )}
             </div>
           )}
         </div>

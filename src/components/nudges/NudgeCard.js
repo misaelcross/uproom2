@@ -1,7 +1,7 @@
 import React from 'react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Plus, CheckCircle } from 'lucide-react';
 
-const NudgeCard = ({ nudge, isSelected, onClick }) => {
+const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete }) => {
   const getStatusDotColor = (status) => {
     switch (status) {
       case 'online': return 'bg-green-500';
@@ -39,7 +39,7 @@ const NudgeCard = ({ nudge, isSelected, onClick }) => {
 
   return (
     <div 
-      className={`cursor-pointer transition-all duration-200 rounded-lg p-4 ${
+      className={`cursor-pointer transition-all duration-200 rounded-lg p-4 group ${
         isSelected 
           ? 'border border-white' 
           : nudge.isRead 
@@ -83,15 +83,45 @@ const NudgeCard = ({ nudge, isSelected, onClick }) => {
       </div>
 
       {/* Badge de prioridade e notificação */}
-      <div className="flex items-center gap-2">
-        <div className={`border border-neutral-700 rounded px-2 pb-1 ${getPriorityBadge(nudge.priority).color}`}>
-          <span className="text-xs font-medium">{getPriorityBadge(nudge.priority).text}</span>
-        </div>
-        {!nudge.isRead && (
-          <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-xs font-bold leading-none">1</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={`border border-neutral-700 rounded px-2 pb-1 ${getPriorityBadge(nudge.priority).color}`}>
+            <span className="text-xs font-medium">{getPriorityBadge(nudge.priority).text}</span>
           </div>
-        )}
+          {!nudge.isRead && (
+            <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-xs font-bold leading-none">1</span>
+            </div>
+          )}
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onCreateTodo && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onCreateTodo(nudge);
+              }}
+              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
+              title="Create Todo"
+            >
+              <Plus className="w-4 h-4 text-neutral-400 hover:text-white" />
+            </button>
+          )}
+          {onMarkComplete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkComplete(nudge);
+              }}
+              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
+              title="Mark Complete"
+            >
+              <CheckCircle className="w-4 h-4 text-neutral-400 hover:text-green-500" />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
