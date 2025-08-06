@@ -119,7 +119,7 @@ const GroupSelector = ({ selectedGroups, onGroupsChange, className = '' }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setIsDropdownOpen(true)}
-            className="w-full border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            className="w-full border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
           />
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
         </div>
