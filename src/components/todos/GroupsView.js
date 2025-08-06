@@ -13,7 +13,9 @@ import {
   Edit3,
   Trash2,
   X,
-  Check
+  Check,
+  Clock,
+  Users
 } from 'lucide-react';
 
 const GroupsView = ({ 
@@ -32,7 +34,11 @@ const GroupsView = ({
   editGroupName,
   setEditGroupName,
   onEditGroup,
-  onDeleteGroup
+  onDeleteGroup,
+  newGroupExpirationDate,
+  setNewGroupExpirationDate,
+  newGroupIsShared,
+  setNewGroupIsShared
 }) => {
   const iconComponents = {
     Briefcase,
@@ -118,7 +124,7 @@ const GroupsView = ({
             </button>
             <button
               onClick={handleCreateGroup}
-              className="flex-1 px-4 py-2 bg-white text-black rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex-1 px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 border border-neutral-600 transition-colors"
             >
               Create
             </button>

@@ -6,6 +6,7 @@ import TodoList from './TodoList';
 import AddTodoInput from './AddTodoInput';
 import GroupsView from './GroupsView';
 import TodoDetails from './TodoDetails';
+import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 
 const TodosPage = ({ onNavigate }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('Today');
@@ -17,10 +18,22 @@ const TodosPage = ({ onNavigate }) => {
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupIcon, setNewGroupIcon] = useState('Folder');
+  const [newGroupIsShared, setNewGroupIsShared] = useState(false);
+  const [newGroupExpirationDate, setNewGroupExpirationDate] = useState('');
   const [editingGroup, setEditingGroup] = useState(null);
   const [editGroupName, setEditGroupName] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState(null);
+  
+  // Catch-up mode state
+  const [catchUpMode, setCatchUpMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // AnimatedBottomSheet state
+  const [activeTab, setActiveTab] = useState('received');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [message, setMessage] = useState('');
 
   // Mock data for todos
   const [todos, setTodos] = useState([
@@ -34,6 +47,17 @@ const TodosPage = ({ onNavigate }) => {
       steps: [
         { id: 1, description: 'Read document', completed: true },
         { id: 2, description: 'Prepare feedback', completed: false }
+      ],
+      comments: [
+        {
+          id: 1,
+          text: 'I have reviewed the initial draft. Looks good overall!',
+          author: {
+            name: 'Sarah Chen',
+            avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString() // 2 minutes ago
+        }
       ],
       createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
       groupId: 1 // Work Projects
@@ -63,15 +87,50 @@ const TodosPage = ({ onNavigate }) => {
       ],
       createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
       groupId: 2 // Personal
+    },
+    // Add some missed todos for catch-up mode demo
+    {
+      id: 4,
+      description: 'Call client about project update',
+      completed: false,
+      time: '09:00am - 09:30am',
+      priority: 'High',
+      starred: false,
+      steps: [],
+      createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+      dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago (overdue)
+      groupId: 1,
+      missed: true
+    },
+    {
+      id: 5,
+      description: 'Submit expense report',
+      completed: false,
+      time: '02:00pm - 02:30pm',
+      priority: 'Medium',
+      starred: false,
+      steps: [],
+      createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
+      dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago (overdue)
+      groupId: 2,
+      missed: true
     }
   ]);
 
   // Mock data for groups
   const [groups, setGroups] = useState([
-    { id: 1, name: 'Work Projects', icon: 'Briefcase', count: 2 },
-    { id: 2, name: 'Personal', icon: 'User', count: 1 },
-    { id: 3, name: 'Learning', icon: 'BookOpen', count: 0 },
-    { id: 4, name: 'Health', icon: 'Heart', count: 0 }
+    { id: 1, name: 'Work Projects', icon: 'Briefcase', count: 2, isShared: false },
+    { id: 2, name: 'Personal', icon: 'User', count: 1, isShared: false },
+    { id: 3, name: 'Learning', icon: 'BookOpen', count: 0, isShared: false },
+    { id: 4, name: 'Health', icon: 'Heart', count: 0, isShared: false },
+    { 
+      id: 5, 
+      name: 'Project Alpha Team', 
+      icon: 'Users', 
+      count: 0, 
+      isShared: true, 
+      expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+    }
   ]);
 
   const toggleTodoComplete = (todoId) => {
@@ -93,18 +152,29 @@ const TodosPage = ({ onNavigate }) => {
     }
   };
 
-  const addNewTodo = () => {
+  const addNewTodo = (nudgeData = null) => {
     if (newTodoText.trim()) {
       const newTodo = {
         id: Date.now(),
         description: newTodoText,
         completed: false,
-        time: '09:00am - 10:00am',
-        priority: 'Medium',
+        time: nudgeData?.dueTime || '09:00am - 10:00am',
+        priority: nudgeData?.priority || 'Medium',
         starred: false,
         steps: [],
         createdAt: new Date().toISOString(),
-        groupId: selectedGroup?.id || null // Add to selected group if any
+        groupId: selectedGroup?.id || null,
+        // Context-aware data from nudges
+        sourceNudge: nudgeData ? {
+          id: nudgeData.id,
+          sender: nudgeData.sender,
+          attachments: nudgeData.attachments || [],
+          links: nudgeData.links || [],
+          originalMessage: nudgeData.message
+        } : null,
+        assignees: nudgeData?.assignees || [],
+        mentions: nudgeData?.mentions || [],
+        dueDate: nudgeData?.dueDate || null
       };
       setTodos([...todos, newTodo]);
       setNewTodoText('');
@@ -118,6 +188,44 @@ const TodosPage = ({ onNavigate }) => {
         ));
       }
     }
+  };
+
+  // Function to create todo from nudge
+  const createTodoFromNudge = (nudge) => {
+    const newTodo = {
+      id: Date.now(),
+      description: nudge.message || nudge.title,
+      completed: false,
+      time: nudge.dueTime || '09:00am - 10:00am',
+      priority: nudge.priority || 'Medium',
+      starred: false,
+      steps: [],
+      createdAt: new Date().toISOString(),
+      groupId: selectedGroup?.id || null,
+      // Auto-inherited context from nudge
+      sourceNudge: {
+        id: nudge.id,
+        sender: nudge.sender,
+        attachments: nudge.attachments || [],
+        links: nudge.links || [],
+        originalMessage: nudge.message
+      },
+      assignees: [],
+      mentions: [],
+      dueDate: nudge.dueDate || null
+    };
+    setTodos([...todos, newTodo]);
+    
+    // Update group count if creating in a group
+    if (selectedGroup) {
+      setGroups(groups.map(group => 
+        group.id === selectedGroup.id 
+          ? { ...group, count: group.count + 1 }
+          : group
+      ));
+    }
+    
+    return newTodo;
   };
 
   const addStep = () => {
@@ -175,11 +283,15 @@ const TodosPage = ({ onNavigate }) => {
         id: Date.now(),
         name: newGroupName,
         icon: newGroupIcon,
-        count: 0
+        count: 0,
+        isShared: newGroupIsShared,
+        expirationDate: newGroupIsShared ? newGroupExpirationDate : null
       };
       setGroups([...groups, newGroup]);
       setNewGroupName('');
       setNewGroupIcon('Folder');
+      setNewGroupIsShared(false);
+      setNewGroupExpirationDate('');
       setShowCreateGroup(false);
     }
   };
@@ -254,9 +366,48 @@ const TodosPage = ({ onNavigate }) => {
   };
 
   const getFilteredTodos = () => {
-    if (!selectedGroup) return todos;
-    // Filter todos by groupId
-    return todos.filter(todo => todo.groupId === selectedGroup.id);
+    let filteredTodos = todos;
+    
+    // Filter by catch-up mode
+    if (catchUpMode) {
+      filteredTodos = filteredTodos.filter(todo => todo.missed);
+    }
+    
+    // Filter by selected group
+    if (selectedGroup && !catchUpMode) {
+      filteredTodos = filteredTodos.filter(todo => todo.groupId === selectedGroup.id);
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filteredTodos = filteredTodos.filter(todo => 
+        todo.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        todo.steps.some(step => step.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    
+    return filteredTodos;
+  };
+
+  // Get count of missed todos
+  const getMissedTodosCount = () => {
+    return todos.filter(todo => todo.missed && !todo.completed).length;
+  };
+
+  // Helper functions for AnimatedBottomSheet
+  const toggleUserSelection = (user) => {
+    setSelectedUsers(prev => {
+      const isSelected = prev.some(u => u.id === user.id);
+      if (isSelected) {
+        return prev.filter(u => u.id !== user.id);
+      } else {
+        return [...prev, user];
+      }
+    });
+  };
+
+  const removeSelectedUser = (userId) => {
+    setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
   return (
@@ -282,6 +433,13 @@ const TodosPage = ({ onNavigate }) => {
               showPeriodDropdown={showPeriodDropdown}
               setShowPeriodDropdown={setShowPeriodDropdown}
               selectedGroup={selectedGroup}
+              catchUpMode={catchUpMode}
+              setCatchUpMode={setCatchUpMode}
+              missedTodosCount={getMissedTodosCount()}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
             />
 
             <div className="flex-1 overflow-y-auto">
@@ -315,6 +473,10 @@ const TodosPage = ({ onNavigate }) => {
                 setNewGroupName={setNewGroupName}
                 newGroupIcon={newGroupIcon}
                 setNewGroupIcon={setNewGroupIcon}
+                newGroupIsShared={newGroupIsShared}
+                setNewGroupIsShared={setNewGroupIsShared}
+                newGroupExpirationDate={newGroupExpirationDate}
+                setNewGroupExpirationDate={setNewGroupExpirationDate}
                 onCreateGroup={createGroup}
                 editingGroup={editingGroup}
                 setEditingGroup={setEditingGroup}
@@ -360,7 +522,7 @@ const TodosPage = ({ onNavigate }) => {
                     setShowDeleteModal(false);
                     setGroupToDelete(null);
                   }}
-                  className="px-4 py-2 border border-neutral-600 rounded-lg text-white hover:bg-neutral-700 transition-colors"
+                  className="px-4 py-2 border border-neutral-600 rounded-lg text-white hover:bg-neutral-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -374,6 +536,17 @@ const TodosPage = ({ onNavigate }) => {
             </div>
           </div>
         )}
+
+        {/* AnimatedBottomSheet */}
+        <AnimatedBottomSheet
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          selectedUsers={selectedUsers}
+          toggleUserSelection={toggleUserSelection}
+          removeSelectedUser={removeSelectedUser}
+          message={message}
+          setMessage={setMessage}
+        />
       </div>
     </div>
   );

@@ -203,7 +203,7 @@ const UserDetails = ({ user, onBack }) => {
             <button
               onClick={handleSendNudge}
               disabled={!message.trim()}
-              className="bg-white hover:bg-neutral-100 disabled:bg-neutral-700 disabled:text-neutral-400 text-black px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              className="bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-700 disabled:text-neutral-400 text-white border border-neutral-600 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <Send size={16} />
               <span>Send Nudge</span>

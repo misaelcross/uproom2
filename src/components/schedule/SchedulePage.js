@@ -3,6 +3,7 @@ import { Users, CheckCircle, AlertTriangle, TrendingUp, Calendar, ChevronDown, C
 import Sidebar from '../shared/Sidebar';
 import FirstColumn from '../shared/FirstColumn';
 import MonthCalendar from './MonthCalendar';
+import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 import { usersData } from '../../data/usersData';
 
 const SchedulePage = ({ onNavigate }) => {
@@ -14,6 +15,11 @@ const SchedulePage = ({ onNavigate }) => {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // AnimatedBottomSheet state
+  const [activeTab, setActiveTab] = useState('received');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [message, setMessage] = useState('');
 
   // Mock data for widgets
   const weekStats = {
@@ -163,6 +169,22 @@ const SchedulePage = ({ onNavigate }) => {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
+  };
+
+  // AnimatedBottomSheet helper functions
+  const toggleUserSelection = (user) => {
+    setSelectedUsers(prev => {
+      const isSelected = prev.find(u => u.id === user.id);
+      if (isSelected) {
+        return prev.filter(u => u.id !== user.id);
+      } else {
+        return [...prev, user];
+      }
+    });
+  };
+
+  const removeSelectedUser = (userId) => {
+    setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
   return (
@@ -412,6 +434,18 @@ const SchedulePage = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+      
+      {/* AnimatedBottomSheet */}
+      <AnimatedBottomSheet
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers}
+        message={message}
+        setMessage={setMessage}
+        toggleUserSelection={toggleUserSelection}
+        removeSelectedUser={removeSelectedUser}
+      />
     </div>
   );
 };

@@ -177,14 +177,14 @@ const CreateNudgeView = ({ onCancel }) => {
           className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent ${
             !message.trim() || selectedUsers.length === 0
               ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
-              : 'bg-white hover:bg-neutral-200 text-black'
+              : 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600'
           }`}
         >
           <Send className={`h-5 w-5 ${
-            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-black'
+            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
           }`} />
           <span className={`font-medium ${
-            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-black'
+            !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
           }`}>Send Nudge</span>
         </button>
       </div>

@@ -97,7 +97,7 @@ const MonthCalendar = ({ selectedDate, onDateSelect }) => {
             className={`
               h-8 w-8 text-sm rounded transition-colors
               ${!date ? 'invisible' : ''}
-              ${isToday(date) ? 'bg-white text-black' : ''}
+              ${isToday(date) ? 'bg-neutral-800 text-white border border-neutral-600' : ''}
               ${isSelected(date) ? 'bg-neutral-800 text-white' : ''}
                 ${!isToday(date) && !isSelected(date) ? 'text-neutral-300 hover:bg-neutral-700' : ''}
             `}

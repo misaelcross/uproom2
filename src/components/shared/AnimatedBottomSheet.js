@@ -113,6 +113,45 @@ const AnimatedBottomSheet = ({
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeRange, setSelectedTimeRange] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [replies, setReplies] = useState([
+    {
+      id: 1,
+      message: "Sure, I can help with those frontend fixes! When do you need them completed?",
+      timestamp: "2:30 PM",
+      date: "Today",
+      isFromMe: true
+    },
+    {
+      id: 2,
+      message: "Great! I'd like to have them done by end of week if possible. Let me know if you need any clarification on the requirements.",
+      timestamp: "2:35 PM",
+      date: "Today",
+      isFromMe: false
+    },
+    {
+      id: 3,
+      message: "Perfect timing! I'll start working on them tomorrow morning and should have everything ready by Friday.",
+      timestamp: "9:15 AM",
+      date: "Yesterday",
+      isFromMe: true
+    }
+  ]);
+
+  // Função para enviar resposta
+  const handleSendReply = () => {
+    if (replyMessage.trim()) {
+      const newReply = {
+        id: replies.length + 1,
+        message: replyMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        date: "Today",
+        isFromMe: true
+      };
+      setReplies([...replies, newReply]);
+      setReplyMessage('');
+    }
+  };
 
   // Função para "Won't be able"
   const handleWontBeAble = () => {
@@ -371,111 +410,159 @@ const AnimatedBottomSheet = ({
             {viewMode === 'detail' ? (
               /* Visualização detalhada do nudge */
               <div className="space-y-6 overflow-y-auto max-h-96 px-1">
-                {/* Mensagem completa - oculta quando em modo reagendamento */}
+                {/* Original Message */}
                 {!showReschedule && !showSuccess && (
-                  <div className="space-y-4">
+                  <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 mb-4">
                     <div className="text-white text-base leading-relaxed">
                       {selectedNudge?.fullMessage || selectedNudge?.message}
                     </div>
+                    
+                    {/* Attachments */}
+                    {selectedNudge?.attachments && selectedNudge.attachments.length > 0 && (
+                      <div className="space-y-3 mt-4">
+                        <h4 className="text-white text-sm font-medium">Attachments</h4>
+                        <div className="space-y-2">
+                          {selectedNudge.attachments.map((attachment, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-3 p-3 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-colors cursor-pointer"
+                            >
+                              <FileText className="h-5 w-5 text-neutral-400" />
+                              <span className="text-white text-sm flex-1">{attachment}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {/* Anexos - ocultos quando em modo reagendamento */}
-                {!showReschedule && !showSuccess && selectedNudge?.attachments && selectedNudge.attachments.length > 0 && (
-                  <div className="space-y-3">
-                    <h4 className="text-white text-sm font-medium">Attachments</h4>
-                    <div className="space-y-2">
-                      {selectedNudge.attachments.map((attachment, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center space-x-3 p-3 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-colors cursor-pointer"
-                        >
-                          <FileText className="h-5 w-5 text-neutral-400" />
-                          <span className="text-white text-sm flex-1">{attachment}</span>
-                        </div>
-                      ))}
+                {/* Replies Section */}
+                {!showReschedule && !showSuccess && (
+                  <div className="space-y-4">
+                    <h4 className="text-white text-sm font-medium border-b border-neutral-700 pb-2">Replies</h4>
+                    <div className="space-y-3 max-h-48 overflow-y-auto">
+                      {replies.map((reply, index) => {
+                        const showDate = index === 0 || replies[index - 1].date !== reply.date;
+                        return (
+                          <div key={reply.id}>
+                            {showDate && (
+                              <div className="text-center text-xs text-neutral-500 my-2">
+                                {reply.date}
+                              </div>
+                            )}
+                            <div className={`flex ${reply.isFromMe ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-xs px-3 py-2 border border-neutral-700 ${
+                                reply.isFromMe 
+                                  ? 'bg-neutral-800 rounded-tl-lg rounded-tr-lg rounded-bl-lg' 
+                                  : 'bg-neutral-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                              }`}>
+                                <p className="text-white text-sm">{reply.message}</p>
+                                <p className="text-xs text-neutral-400 mt-1">{reply.timestamp}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  </div>
-                )}
-
-                {/* Botões de ação */}
-                <div className="space-y-3 pt-4 border-t border-neutral-700">
-                  {showSuccess ? (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Check className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-white text-lg font-medium mb-2">Reschedule Request Sent!</h3>
-                      <p className="text-neutral-400 text-sm">Your alternative time suggestion has been sent successfully.</p>
-                    </div>
-                  ) : showReschedule ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <button
-                          onClick={backFromReschedule}
-                          className="p-1 text-gray-400 hover:text-white transition-colors"
-                        >
-                          <ArrowLeft className="h-5 w-5" />
-                        </button>
-                        <h3 className="text-white text-lg font-medium">Suggest Alternative Time</h3>
-                      </div>
-                      
-                      <div className="space-y-3 px-1">
-                        <div>
-                          <label className="block text-white text-sm font-medium mb-2">Select Date</label>
-                          <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="block text-white text-sm font-medium mb-2">Select Time Range</label>
-                          <select
-                            value={selectedTimeRange}
-                            onChange={(e) => setSelectedTimeRange(e.target.value)}
-                            className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                          >
-                            <option value="">Choose a time range</option>
-                            <option value="morning">Morning (9:00 - 12:00)</option>
-                            <option value="afternoon">Afternoon (13:00 - 17:00)</option>
-                            <option value="evening">Evening (18:00 - 21:00)</option>
-                          </select>
-                        </div>
-                        
-                        <button
-                          onClick={handleConfirmReschedule}
-                          disabled={!selectedDate || !selectedTimeRange}
-                          className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors ${
-                            selectedDate && selectedTimeRange
-                              ? 'bg-white hover:bg-gray-100 text-black'
-                              : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
-                          }`}
-                        >
-                          <Send className="h-5 w-5" />
-                          <span className="font-medium">Send Alternative Time</span>
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <button className="w-full flex items-center justify-center space-x-2 h-12 bg-white hover:bg-gray-100 rounded-lg transition-colors">
-                        <ThumbsUp className="h-5 w-5 text-black" />
-                        <span className="text-black font-medium">Add to my To-Do</span>
+                    
+                    {/* Action Buttons */}
+                    <div className="space-y-3 pt-4 border-t border-neutral-700">
+                      <button className="w-full flex items-center justify-center space-x-2 h-12 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors">
+                        <ThumbsUp className="h-5 w-5 text-white" />
+                        <span className="text-white font-medium">Add to my To-Do</span>
                       </button>
-                      
-                      <button 
-                        onClick={handleWontBeAble}
-                        className="w-full flex items-center justify-center space-x-2 h-12 bg-transparent border border-neutral-600 hover:bg-neutral-700 rounded-lg transition-colors"
+                    </div>
+                    
+                    {/* Reply Input */}
+                    <div className="flex space-x-2 pt-3">
+                      <input
+                        type="text"
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        placeholder="Type your reply..."
+                        className="flex-1 bg-transparent border border-neutral-700 rounded-lg px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendReply()}
+                      />
+                      <button
+                        onClick={handleSendReply}
+                        disabled={!replyMessage.trim()}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                          replyMessage.trim()
+                            ? 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600'
+                            : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+                        }`}
                       >
-                        <span className="text-white font-medium">Won't be able</span>
+                        <Send className="h-4 w-4" />
                       </button>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+
+                {/* Reschedule and Success states remain the same */}
+                {showSuccess && (
+                  <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Check className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="text-white text-lg font-medium mb-2">Reschedule Request Sent!</h3>
+                    <p className="text-neutral-400 text-sm">Your alternative time suggestion has been sent successfully.</p>
+                  </div>
+                )}
+
+                {showReschedule && (
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <button
+                        onClick={backFromReschedule}
+                        className="p-1 text-gray-400 hover:text-white transition-colors"
+                      >
+                        <ArrowLeft className="h-5 w-5" />
+                      </button>
+                      <h3 className="text-white text-lg font-medium">Suggest Alternative Time</h3>
+                    </div>
+                    
+                    <div className="space-y-3 px-1">
+                      <div>
+                        <label className="block text-white text-sm font-medium mb-2">Select Date</label>
+                        <input
+                          type="date"
+                          value={selectedDate}
+                          onChange={(e) => setSelectedDate(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-white text-sm font-medium mb-2">Select Time Range</label>
+                        <select
+                          value={selectedTimeRange}
+                          onChange={(e) => setSelectedTimeRange(e.target.value)}
+                          className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                        >
+                          <option value="">Choose a time range</option>
+                          <option value="morning">Morning (9:00 - 12:00)</option>
+                          <option value="afternoon">Afternoon (13:00 - 17:00)</option>
+                          <option value="evening">Evening (18:00 - 21:00)</option>
+                        </select>
+                      </div>
+                      
+                      <button
+                        onClick={handleConfirmReschedule}
+                        disabled={!selectedDate || !selectedTimeRange}
+                        className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors ${
+                          selectedDate && selectedTimeRange
+                            ? 'bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600'
+                            : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+                        }`}
+                      >
+                        <Send className="h-5 w-5" />
+                        <span className="font-medium">Send Alternative Time</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               /* Conteúdo das tabs quando no modo lista */
@@ -572,15 +659,15 @@ const AnimatedBottomSheet = ({
                       disabled={!message.trim() || selectedUsers.length === 0}
                       className={`w-full h-9 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent ${
                         !message.trim() || selectedUsers.length === 0
-                          ? 'bg-white bg-opacity-25 cursor-not-allowed'
-                          : 'bg-white hover:bg-gray-100'
+                          ? 'bg-neutral-700 cursor-not-allowed'
+                          : 'bg-neutral-800 hover:bg-neutral-700 border border-neutral-600'
                       }`}
                     >
                       <Send className={`h-5 w-5 ${
-                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-black'
+                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-white'
                       }`} />
                       <span className={`font-medium ${
-                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-black'
+                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-white'
                       }`}>Send Nudge</span>
                     </button>
                   </div>

@@ -1,30 +1,27 @@
-Reminder 
-- [x] Reminders can be sorted based on recent or oldest or matter of importance
-- [x] Also person should be able to add time associated to specific reminder and @ people- [x] Overview tabs - Says their title but it should what they are currently working on
+To-Do List Page
+Purpose: Keep tasks lightweight, context-aware, and synced with workflow.
+> Context-Aware Tasks (Smart Capture)
+- [x] Tasks from Nudges auto-inherit: attached files/links, sender, due date/time.
+- [x] No manual copy-paste.
 
-Groups
-- [x] On groups tab, clicking on it, it shows quick nudge. I assume this quick nudge is for the group. So we need to create a vision on the bottom sheet nudges and nudges page to show the group nudges.
+> Assignments & Mentions
+- [x] Tag individuals (@Alex) or teams (@Design).
 
-Status bar
-- [x] It should allow to click and drag, to see the ones hidden. While hovering the status card, it shouldn't show the three dots on the corners.
+> Shared Task Blocks (Temporary)
+- [x] Short-lived team lists (e.g., "Bug Fix List – Sprint Ends Friday").
 
-Sort 
-- [x] Date created not necessary, newest and oldest
-- [x] Change Name (A-Z) (Z-A) to Alphabetical (A-Z) (Z-A)
+> Catch-Up Mode
+- [x] Summarizes changes for offline users instead of flooding notifications. When changing the status to offline, the user can see the changes in the catch-up modal that appears when they switch the status to something else then offline. The catch-up modal shows the changes in a list format with the task name, assignee, due date, and priority. The user can click on the task to see more details.
 
-Nudge (Sort)
-- [x] Sort needs to be based on recent and priority, so it needs to create a badge on the nudge card (similar to the ones used on dashboard user card) for priority.
-- [x] Remove date created, Change Name (A-Z) (Z-A) to Alphabetical (A-Z) (Z-A). 
-- [x] Add priority
+> Nudge Integration
+- [x] One-click "Add to To-Do" or "Assign Task" directly from Nudges, both bottom sheet and the nudge page
+- [x] Role-based permissions (managers assign, peers suggest).
 
-Schedule
-- [x] Remove the top bar with the 4 widgets
-- [x] Change the position between team members (on left) and the user's selected schedule (on right)
-- [x] Remove the role and status column, add the role below the user's name
+> Organization & Search ✅
+- [x] Personal/shared folders, search by keyword, priority, assignee, on the search component (create on the left side of the dropdown sort date)
 
-Right side - All pages
-- [x] Add a 24px tailwind equivalente to the right side on all pages
-- [x] All the selected content the goes on the right, must have at least 48px on the bottom, because of the bottom sheet component, so it doesn't cover it
+> Quick Actions & Comments ✅
+- [x] Quick assigns, lightweight task comments, view tracking, this must be on the view component of the task
 
-Sort & Esc
-- [x] When selecting somenthing that changes the right sidebar content, the esc key should go back to the default view of the right sidebar
+> Lightweight Progress Tracking ✅
+- [x] Simple checkmarks or % complete
