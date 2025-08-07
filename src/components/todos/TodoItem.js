@@ -13,10 +13,10 @@ const TodoItem = ({
   const dropdownRef = useRef(null);
 
   const priorities = [
-    { value: 'High', label: 'High', color: 'text-red-500', borderColor: 'border-red-500' },
-    { value: 'Medium', label: 'Medium', color: 'text-yellow-500', borderColor: 'border-yellow-500' },
-    { value: 'Low', label: 'Low', color: 'text-green-500', borderColor: 'border-green-500' },
-    { value: 'None', label: 'None', color: 'text-neutral-500', borderColor: 'border-neutral-500' }
+    { value: 'High', label: 'High', text: 'text-red-400', bg: 'bg-red-500/10' },
+    { value: 'Medium', label: 'Medium', text: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+    { value: 'Low', label: 'Low', text: 'text-green-400', bg: 'bg-green-500/10' },
+    { value: 'None', label: 'None', text: 'text-neutral-400', bg: 'bg-neutral-500/10' }
   ];
 
   const currentPriority = priorities.find(p => p.value === (todo.priority || 'None'));
@@ -103,7 +103,7 @@ const TodoItem = ({
               <div className="relative priority-badge" ref={dropdownRef}>
                 <button
                   onClick={handlePriorityClick}
-                  className={`flex items-center space-x-1 px-2 py-1 border rounded text-xs font-medium transition-colors hover:opacity-80 ${currentPriority.color} ${currentPriority.borderColor}`}
+                  className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:opacity-80 ${currentPriority.text} ${currentPriority.bg}`}
                 >
                   <span>{currentPriority.label}</span>
                   <ChevronDown className="w-3 h-3" />
@@ -117,7 +117,7 @@ const TodoItem = ({
                         onClick={() => handlePrioritySelect(priority)}
                         className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-white hover:bg-neutral-800 transition-colors first:rounded-t-lg last:rounded-b-lg"
                       >
-                        <div className={`w-3 h-3 rounded border ${priority.borderColor} ${priority.color.replace('text-', 'bg-')}`}></div>
+                        <div className={`w-3 h-3 rounded ${priority.text} ${priority.bg}`}></div>
                         <span>{priority.label}</span>
                       </button>
                     ))}

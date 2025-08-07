@@ -165,15 +165,15 @@ const Schedule = () => {
   // Helper function to get status badge styling
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'Focus': { text: 'text-purple-500' },
-      'Available': { text: 'text-green-500' },
-      'Meeting': { text: 'text-blue-500' }
+      'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
+      'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
+      'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' }
     };
     
     const config = statusConfig[status] || statusConfig['Available'];
     
     return (
-      <div className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium border border-neutral-700 ${config.text}`}>
+      <div className={`px-2 py-1 rounded text-xs font-medium ${config.text} ${config.bg}`}>
         {status}
       </div>
     );

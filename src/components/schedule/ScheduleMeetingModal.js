@@ -87,7 +87,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
               value={meetingTitle}
               onChange={(e) => setMeetingTitle(e.target.value)}
               placeholder="Enter meeting title"
-              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
             />
           </div>
 
@@ -104,7 +104,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
                   onClick={() => setSelectedSlot(slot)}
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     selectedSlot?.id === slot.id
-                      ? 'border-cyan-500 bg-cyan-500/10'
+                      ? 'border-neutral-500 bg-neutral-500/10'
                       : 'border-neutral-600 hover:border-neutral-500'
                   }`}
                 >
@@ -137,7 +137,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
                   onClick={() => toggleAttendee(attendee)}
                   className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
                     selectedAttendees.find(a => a.id === attendee.id)
-                      ? 'border-cyan-500 bg-cyan-500/10'
+                      ? 'border-neutral-500 bg-neutral-500/10'
                       : 'border-neutral-600 hover:border-neutral-500'
                   }`}
                 >
@@ -155,7 +155,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
                     </div>
                   </div>
                   {selectedAttendees.find(a => a.id === attendee.id) && (
-                    <div className="w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center">
+                    <div className="w-5 h-5 bg-neutral-500 rounded-full flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full"></div>
                     </div>
                   )}
@@ -175,7 +175,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
               value={meetingLocation}
               onChange={(e) => setMeetingLocation(e.target.value)}
               placeholder="Meeting room, video call link, etc."
-              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
             />
           </div>
 
@@ -189,7 +189,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
               onChange={(e) => setMeetingDescription(e.target.value)}
               placeholder="Meeting agenda, notes, etc."
               rows={3}
-              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none"
+              className="w-full px-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-500 resize-none"
             />
           </div>
         </div>
@@ -205,7 +205,7 @@ const ScheduleMeetingModal = ({ isOpen, onClose, suggestedSlots = [] }) => {
           <button
             onClick={handleScheduleMeeting}
             disabled={!selectedSlot || !meetingTitle.trim()}
-            className="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Schedule Meeting
           </button>

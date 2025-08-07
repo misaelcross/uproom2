@@ -14,13 +14,13 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
   const getPriorityBadge = (priority) => {
     switch (priority) {
       case 'high':
-        return { color: 'text-red-500', text: 'High' };
+        return { text: 'text-red-400', bg: 'bg-red-500/10', label: 'High' };
       case 'normal':
-        return { color: 'text-blue-500', text: 'Normal' };
+        return { text: 'text-blue-400', bg: 'bg-blue-500/10', label: 'Normal' };
       case 'low':
-        return { color: 'text-gray-500', text: 'Low' };
+        return { text: 'text-gray-400', bg: 'bg-gray-500/10', label: 'Low' };
       default:
-        return { color: 'text-blue-500', text: 'Normal' };
+        return { text: 'text-blue-400', bg: 'bg-blue-500/10', label: 'Normal' };
     }
   };
 
@@ -85,8 +85,8 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
       {/* Badge de prioridade e notificação */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={`border border-neutral-700 rounded px-2 pb-1 ${getPriorityBadge(nudge.priority).color}`}>
-            <span className="text-xs font-medium">{getPriorityBadge(nudge.priority).text}</span>
+          <div className={`px-2 py-1 rounded text-xs font-medium ${getPriorityBadge(nudge.priority).text} ${getPriorityBadge(nudge.priority).bg}`}>
+            <span>{getPriorityBadge(nudge.priority).label}</span>
           </div>
           {!nudge.isRead && (
             <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
