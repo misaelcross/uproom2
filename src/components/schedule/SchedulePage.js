@@ -292,267 +292,270 @@ const SchedulePage = ({ onNavigate }) => {
 
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
-            <div className="flex-1 overflow-y-auto">
-            {selectedUser ? (
-              /* User Schedule - Full Width */
-              <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
-                {/* Header do Schedule */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={selectedUser.avatar}
-                      alt={selectedUser.name}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <div>
-                      <h3 className="text-white font-medium">{selectedUser.name}</h3>
-                      <p className="text-neutral-400 text-sm">{selectedUser.title}</p>
+            {/* Content Area - Team Members List or User Schedule */}
+            <div className="flex-1 overflow-y-auto min-h-0 ">
+              {selectedUser ? (
+                /* User Schedule - Full Width */
+                <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
+                  {/* Header do Schedule */}
+                  <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={selectedUser.avatar}
+                        alt={selectedUser.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <div>
+                        <h3 className="text-white font-medium">{selectedUser.name}</h3>
+                        <p className="text-neutral-400 text-sm">{selectedUser.title}</p>
+                      </div>
                     </div>
+                    <button
+                      onClick={() => setSelectedUser(null)}
+                      className="text-neutral-400 hover:text-white text-sm"
+                    >
+                      ✕
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setSelectedUser(null)}
-                    className="text-neutral-400 hover:text-white text-sm"
-                  >
-                    ✕
-                  </button>
-                </div>
 
-                {/* Conteúdo do Schedule */}
-                <div className="flex-1 overflow-y-auto px-6 pb-6">
-                  <div className="space-y-1">
-                    {generateUserSchedule(selectedUser).map((dayData) => (
-                      <div key={dayData.day} className="flex gap-4 py-4 border-b border-neutral-700">
-                        {/* Day Column */}
-                        <div className="flex flex-col items-center w-[40px]">
-                          <div className="text-white text-xl font-semibold">{dayData.day}</div>
-                          <div className="text-neutral-400 text-xs">{dayData.dayName}</div>
-                        </div>
+                  {/* Conteúdo do Schedule */}
+                  <div className="flex-1 overflow-y-auto px-6 pb-6">
+                    <div className="space-y-1">
+                      {generateUserSchedule(selectedUser).map((dayData) => (
+                        <div key={dayData.day} className="flex gap-4 py-4 border-b border-neutral-700">
+                          {/* Day Column */}
+                          <div className="flex flex-col items-center w-[40px]">
+                            <div className="text-white text-xl font-semibold">{dayData.day}</div>
+                            <div className="text-neutral-400 text-xs">{dayData.dayName}</div>
+                          </div>
 
-                        {/* Events Column */}
-                        <div className="flex-1 space-y-3">
-                          {dayData.events.map((event) => (
-                            <div
-                              key={event.id}
-                              className={`rounded-lg p-3 ${
-                                event.isCurrent
-                                  ? 'bg-cyan-600'
-                                  : 'border border-neutral-700 bg-transparent'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                  <div className={`text-sm font-medium ${
-                                    event.isCurrent ? 'text-cyan-200' : 'text-neutral-500'
-                                  }`}>
-                                    {event.title}
-                                  </div>
-                                  <div className="text-white text-xs">{event.time}</div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {event.avatar && (
-                                    <img 
-                                      src={event.avatar} 
-                                      alt="Avatar" 
-                                      className="w-6 h-6 rounded-full object-cover"
-                                    />
-                                  )}
-                                  {event.additionalPeople && (
-                                    <span className={`text-sm ${
-                                      event.isCurrent ? 'text-cyan-200' : 'text-neutral-500'
+                          {/* Events Column */}
+                          <div className="flex-1 space-y-3">
+                            {dayData.events.map((event) => (
+                              <div
+                                key={event.id}
+                                className={`rounded-lg p-3 ${
+                                  event.isCurrent
+                                    ? 'bg-neutral-600'
+                                    : 'border border-neutral-700 bg-transparent'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className={`text-sm font-medium ${
+                                      event.isCurrent ? 'text-neutral-200' : 'text-neutral-500'
                                     }`}>
-                                      {event.additionalPeople}
-                                    </span>
-                                  )}
+                                      {event.title}
+                                    </div>
+                                    <div className="text-white text-xs">{event.time}</div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {event.avatar && (
+                                      <img 
+                                        src={event.avatar} 
+                                        alt="Avatar" 
+                                        className="w-6 h-6 rounded-full object-cover"
+                                      />
+                                    )}
+                                    {event.additionalPeople && (
+                                      <span className={`text-sm ${
+                                        event.isCurrent ? 'text-neutral-200' : 'text-neutral-500'
+                                      }`}>
+                                        {event.additionalPeople}
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Main Content - Team Members or Groups based on active tab */
-              <div className="border border-neutral-700 rounded-lg overflow-hidden">
-                <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-                  <h2 className="text-white text-xl font-semibold">
-                    {activeTopTab === 'groups' ? 'Groups' : 'Team Members'}
-                  </h2>
-                  
-                  {/* Search Input */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder={activeTopTab === 'groups' ? 'Search groups...' : 'Search members...'}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                    />
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                  </div>
-                </div>
-
-                {/* Content List */}
-                <div className="divide-y divide-neutral-700">
-                  {activeTopTab === 'groups' ? (
-                    /* Groups List */
-                    getFilteredAndSortedData().map((group) => (
-                      <div
-                        key={group.id}
-                        className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                        onClick={() => console.log('Group selected:', group)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <div className={`w-10 h-10 ${group.color} rounded-lg flex items-center justify-center`}>
-                              <span className="text-white font-semibold text-sm">
-                                {group.name.charAt(0)}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-white font-medium">{group.name}</div>
-                            <div className="text-neutral-400 text-sm">{group.description}</div>
-                          </div>
-                          <div className="text-neutral-400 text-sm">
-                            {group.members.length} members
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    /* Team Members List */
-                    getFilteredAndSortedData().map((user) => {
-                      // Status functions (copied from UserCard)
-                      const getStatusColor = (availability) => {
-                        switch (availability) {
-                          case 'Available': return 'text-green-500';
-                          case 'In meeting': return 'text-blue-500';
-                          case 'Out for Lunch': return 'text-yellow-500';
-                          case 'Focus': return 'text-purple-500';
-                          case 'Emergency': return 'text-red-500';
-                          case 'Away': return 'text-orange-500';
-                          case 'Offline': return 'text-gray-500';
-                          default: return 'text-green-500';
-                        }
-                      };
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Team Members List - When no user is selected */
+                <div className="border border-neutral-700 rounded-lg overflow-hidden h-full">
+                  <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
+                    <h2 className="text-white text-xl font-semibold">
+                      {activeTopTab === 'groups' ? 'Groups' : 'Team Members'}
+                    </h2>
+                    
+                    {/* Search Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder={activeTopTab === 'groups' ? 'Search groups...' : 'Search members...'}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
+                      />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+                    </div>
+                  </div>
 
-                      const getStatusDotColor = (availability) => {
-                        switch (availability) {
-                          case 'Available': return 'bg-green-500';
-                          case 'In meeting': return 'bg-blue-500';
-                          case 'Out for Lunch': return 'bg-yellow-500';
-                          case 'Focus': return 'bg-purple-500';
-                          case 'Emergency': return 'bg-red-500';
-                          case 'Away': return 'bg-orange-500';
-                          case 'Offline': return 'bg-gray-500';
-                          default: return 'bg-green-500';
-                        }
-                      };
-
-                      return (
+                  {/* Content List */}
+                  <div className="divide-y divide-neutral-700">
+                    {activeTopTab === 'groups' ? (
+                      /* Groups List */
+                      getFilteredAndSortedData().map((group) => (
                         <div
-                          key={user.id}
+                          key={group.id}
                           className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                          onClick={() => handleUserSelect(user)}
+                          onClick={() => console.log('Group selected:', group)}
                         >
                           <div className="flex items-center gap-3">
                             <div className="relative">
-                              <img
-                                src={user.avatar}
-                                alt={user.name}
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
-                              <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
+                              <div className={`w-10 h-10 ${group.color} rounded-lg flex items-center justify-center`}>
+                                <span className="text-white font-semibold text-sm">
+                                  {group.name.charAt(0)}
+                                </span>
+                              </div>
                             </div>
-                            <div>
-                              <div className="text-white font-medium">{user.name}</div>
-                              <div className="text-neutral-400 text-sm">{user.title}</div>
+                            <div className="flex-1">
+                              <div className="text-white font-medium">{group.name}</div>
+                              <div className="text-neutral-400 text-sm">{group.description}</div>
+                            </div>
+                            <div className="text-neutral-400 text-sm">
+                              {group.members.length} members
                             </div>
                           </div>
                         </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-            )}
-            </div>
-          </div>
+                      ))
+                    ) : (
+                      /* Team Members List */
+                      getFilteredAndSortedData().map((user) => {
+                        const getStatusDotColor = (availability) => {
+                          switch (availability) {
+                            case 'Available': return 'bg-green-500';
+                            case 'In meeting': return 'bg-blue-500';
+                            case 'Out for Lunch': return 'bg-yellow-500';
+                            case 'Focus': return 'bg-purple-500';
+                            case 'Emergency': return 'bg-red-500';
+                            case 'Away': return 'bg-orange-500';
+                            case 'Offline': return 'bg-gray-500';
+                            default: return 'bg-green-500';
+                          }
+                        };
 
-          {/* Right Sidebar - Team Members List or Calendar */}
-          <div className="w-80 space-y-6 pb-12">
-            {selectedUser ? (
-              /* Team Members List - When user is selected */
-              <div className="border border-neutral-700 rounded-lg overflow-hidden">
-                <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-                  <h2 className="text-white text-xl font-semibold">Team Members</h2>
-                  
-                  {/* Search Input */}
-                  <div className="relative">
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                    />
-                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
+                        return (
+                          <div
+                            key={user.id}
+                            className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                            onClick={() => handleUserSelect(user)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <img
+                                  src={user.avatar}
+                                  alt={user.name}
+                                  className="w-10 h-10 rounded-full object-cover"
+                                />
+                                <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
+                              </div>
+                              <div>
+                                <div className="text-white font-medium">{user.name}</div>
+                                <div className="text-neutral-400 text-sm">{user.title}</div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Team Members List */}
-                <div className="divide-y divide-neutral-700 max-h-96 overflow-y-auto">
-                  {getFilteredAndSortedData().map((user) => {
-                    const getStatusDotColor = (availability) => {
-                      switch (availability) {
-                        case 'Available': return 'bg-green-500';
-                        case 'In meeting': return 'bg-blue-500';
-                        case 'Out for Lunch': return 'bg-yellow-500';
-                        case 'Focus': return 'bg-purple-500';
-                        case 'Emergency': return 'bg-red-500';
-                        case 'Away': return 'bg-orange-500';
-                        case 'Offline': return 'bg-gray-500';
-                        default: return 'bg-green-500';
-                      }
-                    };
-
-                    return (
-                      <div
-                        key={user.id}
-                        className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
-                          selectedUser?.id === user.id ? 'bg-neutral-800' : ''
-                        }`}
-                        onClick={() => handleUserSelect(user)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="relative">
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                            <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(user.availability)} rounded-full border border-gray-900`}></div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-white font-medium text-sm truncate">{user.name}</div>
-                            <div className="text-neutral-400 text-xs truncate">{user.title}</div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+            {/* Right Column - w-80 (same as dashboard) */}
+            <div className="w-80 flex flex-col gap-6 min-h-0">
+              {/* Calendar at the top */}
+              <div className="w-full flex-shrink-0">
+                <MonthCalendar 
+                  selectedDate={selectedDate}
+                  onDateSelect={handleDateSelect}
+                />
               </div>
-            ) : null}
 
-            {/* Calendário */}
-            <MonthCalendar 
-              selectedDate={selectedDate}
-              onDateSelect={handleDateSelect}
-            />
+              {/* Team Members List or Empty State */}
+              <div className="flex-1 min-h-0 flex flex-col">
+                {selectedUser ? (
+                  /* Team Members List - When user is selected */
+                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
+                    <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
+                      <h2 className="text-white text-lg font-semibold">Team Members</h2>
+                      
+                      {/* Search Input */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
+                        />
+                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
+                      </div>
+                    </div>
+
+                    {/* Team Members List */}
+                     <div className="divide-y divide-neutral-700 overflow-y-auto flex-1 min-h-0">
+                       {getFilteredAndSortedData().map((user) => {
+                        const getStatusDotColor = (availability) => {
+                          switch (availability) {
+                            case 'Available': return 'bg-green-500';
+                            case 'In meeting': return 'bg-blue-500';
+                            case 'Out for Lunch': return 'bg-yellow-500';
+                            case 'Focus': return 'bg-purple-500';
+                            case 'Emergency': return 'bg-red-500';
+                            case 'Away': return 'bg-orange-500';
+                            case 'Offline': return 'bg-gray-500';
+                            default: return 'bg-green-500';
+                          }
+                        };
+
+                        return (
+                          <div
+                            key={user.id}
+                            className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
+                              selectedUser?.id === user.id ? 'bg-neutral-800' : ''
+                            }`}
+                            onClick={() => handleUserSelect(user)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <img
+                                  src={user.avatar}
+                                  alt={user.name}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                                <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(user.availability)} rounded-full border border-gray-900`}></div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-white font-medium text-sm truncate">{user.name}</div>
+                                <div className="text-neutral-400 text-xs truncate">{user.title}</div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  /* Empty State */
+                  <div className="border border-neutral-700 rounded-lg h-full flex flex-col items-center justify-center">
+                    <div className="text-center">
+                      <Calendar className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
+                      <h3 className="text-white text-lg font-medium mb-2">Select a Team Member</h3>
+                      <p className="text-neutral-400 text-sm max-w-sm">
+                        Choose a team member from the list to view their schedule and see the team list here.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

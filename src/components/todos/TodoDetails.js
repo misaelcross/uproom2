@@ -379,7 +379,7 @@ const TodoDetails = ({
                 <div className="space-y-2">
                   {todo.sourceNudge.links.map((link, index) => (
                     <div key={index} className="p-2 bg-neutral-700 rounded">
-                      <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 text-sm">
+                      <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-300 text-sm">
                         {link.title || link.url}
                       </a>
                     </div>
@@ -694,7 +694,7 @@ const TodoDetails = ({
                             }
                           }}
                           className={`flex items-center space-x-2 p-2 hover:bg-neutral-600 rounded cursor-pointer ${
-                            isSelected ? 'bg-blue-900/30 border border-blue-600' : ''
+                            isSelected ? 'bg-neutral-900/30 border border-neutral-600' : ''
                           }`}
                         >
                           <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
@@ -703,7 +703,7 @@ const TodoDetails = ({
                             <p className="text-neutral-400 text-xs">{user.title}</p>
                           </div>
                           {isSelected && (
-                            <Check className="w-4 h-4 text-blue-400" />
+                            <Check className="w-4 h-4 text-neutral-400" />
                           )}
                         </div>
                       );

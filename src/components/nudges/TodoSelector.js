@@ -146,7 +146,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setIsDropdownOpen(true)}
-            className="w-full border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            className="w-full border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:border-transparent"
           />
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
         </div>
@@ -168,9 +168,9 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                   onClick={() => setShowCreateNew(true)}
                   className="w-full flex items-center space-x-3 p-3 hover:bg-neutral-700 transition-colors text-left border-b border-neutral-700"
                 >
-                  <Plus className="w-4 h-4 text-cyan-400" />
+                  <Plus className="w-4 h-4 text-neutral-400" />
                   <div className="flex-1">
-                    <div className="text-cyan-400 text-sm font-medium">Create new todo</div>
+                    <div className="text-neutral-400 text-sm font-medium">Create new todo</div>
                     <div className="text-neutral-400 text-xs">"{searchTerm}"</div>
                   </div>
                 </button>
@@ -226,14 +226,14 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                 value={newTodoTitle}
                 onChange={(e) => setNewTodoTitle(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleCreateNewTodo()}
-                className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white placeholder-neutral-500 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 mb-3"
+                className="w-full border border-neutral-600 rounded-lg px-3 py-2 text-white placeholder-neutral-500 bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-neutral-500 mb-3"
                 autoFocus
               />
               <div className="flex space-x-2">
                 <button
                   onClick={handleCreateNewTodo}
                   disabled={!newTodoTitle.trim()}
-                  className="flex-1 bg-cyan-600 hover:bg-cyan-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="flex-1 bg-neutral-600 hover:bg-neutral-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                 >
                   Create
                 </button>
@@ -270,7 +270,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                   <div className="flex-1 min-w-0">
                     <div className="text-white text-sm font-medium truncate">
                       {todo.title}
-                      {todo.isNew && <span className="ml-2 text-xs text-cyan-400">(New)</span>}
+                      {todo.isNew && <span className="ml-2 text-xs text-neutral-400">(New)</span>}
                     </div>
                     <div className="text-neutral-400 text-xs truncate">{todo.project}</div>
                   </div>

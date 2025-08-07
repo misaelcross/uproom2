@@ -183,7 +183,7 @@ const UserDetails = ({ user, onBack }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Type your message..."
-              className="w-full bg-transparent border border-neutral-600 rounded-lg px-4 py-3 text-white placeholder-neutral-400 resize-none focus:outline-none focus:border-blue-500 transition-colors min-h-[44px] overflow-hidden"
+              className="w-full bg-transparent border border-neutral-600 rounded-lg px-4 py-3 text-white placeholder-neutral-400 resize-none focus:outline-none focus:border-neutral-500 transition-colors min-h-[44px] overflow-hidden"
               rows="1"
               style={{ height: 'auto' }}
             />
@@ -222,7 +222,7 @@ const UserDetails = ({ user, onBack }) => {
                 className={({ selected }) =>
                   classNames(
                     'w-full rounded-lg text-sm font-medium leading-5 h-7 flex items-center justify-center',
-                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                    'focus:outline-none',
                     selected
                       ? 'bg-neutral-800 text-white shadow'
                       : 'text-neutral-400 hover:bg-white/[0.12] hover:text-white'
@@ -240,7 +240,7 @@ const UserDetails = ({ user, onBack }) => {
               <div className="bg-neutral-900 rounded-lg p-4">
                 {/* Primeira linha: Ícone, Título e Duração */}
                 <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 bg-neutral-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <Eye className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1">
@@ -314,14 +314,14 @@ const UserDetails = ({ user, onBack }) => {
                           key={event.id}
                           className={`rounded-lg p-3 ${
                             event.isCurrent
-                              ? 'bg-cyan-600'
+                              ? 'bg-gray-600'
                               : 'border border-neutral-700 bg-transparent'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
                               <div className={`text-sm font-medium ${
-                                event.isCurrent ? 'text-cyan-200' : 'text-neutral-500'
+                                event.isCurrent ? 'text-gray-200' : 'text-neutral-500'
                               }`}>
                                 {event.title}
                               </div>
@@ -337,13 +337,13 @@ const UserDetails = ({ user, onBack }) => {
                               )}
                               {event.additionalPeople && (
                                 <span className={`text-xs ${
-                                  event.isCurrent ? 'text-cyan-200' : 'text-neutral-500'
+                                  event.isCurrent ? 'text-gray-200' : 'text-neutral-500'
                                 }`}>
                                   {event.additionalPeople}
                                 </span>
                               )}
                               <MoreVertical className={`w-4 h-4 ${
-                                event.isCurrent ? 'text-cyan-200' : 'text-neutral-500'
+                                event.isCurrent ? 'text-gray-200' : 'text-neutral-500'
                               }`} />
                             </div>
                           </div>

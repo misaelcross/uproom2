@@ -464,31 +464,14 @@ const TodosPage = ({ onNavigate }) => {
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full">
-              <TodoHeader
-              selectedPeriod={selectedPeriod}
-              setSelectedPeriod={setSelectedPeriod}
-              showPeriodDropdown={showPeriodDropdown}
-              setShowPeriodDropdown={setShowPeriodDropdown}
-              selectedGroup={selectedGroup}
-              catchUpMode={catchUpMode}
-              setCatchUpMode={setCatchUpMode}
-              missedTodosCount={getMissedTodosCount()}
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              showFilters={showFilters}
-              setShowFilters={setShowFilters}
-            />
-
-            <div className="flex-1 overflow-y-auto">
               <TodoList
-                todos={getFilteredTodos()}
-                onToggleComplete={toggleTodoComplete}
-                onToggleStar={toggleStarred}
-                onDelete={deleteTodo}
-                onSelect={setSelectedTodo}
-                onUpdatePriority={updateTodoPriority}
-              />
-            </div>
+              todos={getFilteredTodos()}
+              onToggleComplete={toggleTodoComplete}
+              onToggleStar={toggleStarred}
+              onDelete={deleteTodo}
+              onSelect={setSelectedTodo}
+              onUpdatePriority={updateTodoPriority}
+            />
 
             <AddTodoInput
               newTodoText={newTodoText}

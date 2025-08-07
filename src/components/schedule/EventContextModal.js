@@ -102,12 +102,12 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'High': return 'text-red-400';
-      case 'Medium': return 'text-yellow-400';
-      case 'Low': return 'text-green-400';
-      case 'high': return 'text-red-400';
-      case 'normal': return 'text-blue-400';
-      default: return 'text-neutral-400';
+      case 'High': return { text: 'text-red-400', bg: 'bg-red-500/10' };
+      case 'Medium': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };
+      case 'Low': return { text: 'text-green-400', bg: 'bg-green-500/10' };
+      case 'high': return { text: 'text-red-400', bg: 'bg-red-500/10' };
+      case 'normal': return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
+      default: return { text: 'text-neutral-400', bg: 'bg-neutral-500/10' };
     }
   };
 
@@ -139,7 +139,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                 onClick={() => setActiveTab('tasks')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   activeTab === 'tasks'
-                    ? 'text-cyan-400 border-b-2 border-cyan-400'
+                    ? 'text-neutral-400 border-b-2 border-neutral-400'
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
@@ -150,7 +150,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                 onClick={() => setActiveTab('nudges')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   activeTab === 'nudges'
-                    ? 'text-cyan-400 border-b-2 border-cyan-400'
+                    ? 'text-neutral-400 border-b-2 border-neutral-400'
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
@@ -161,7 +161,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                 onClick={() => setActiveTab('files')}
                 className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
                   activeTab === 'files'
-                    ? 'text-cyan-400 border-b-2 border-cyan-400'
+                    ? 'text-neutral-400 border-b-2 border-neutral-400'
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
@@ -179,7 +179,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={`Search ${activeTab}...`}
-                  className="w-full pl-10 pr-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  className="w-full pl-10 pr-3 py-2 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-500"
                 />
               </div>
             </div>
@@ -192,7 +192,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                   onClick={() => toggleItemSelection('tasks', task)}
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     selectedItems.tasks.find(t => t.id === task.id)
-                      ? 'border-cyan-500 bg-cyan-500/10'
+                      ? 'border-neutral-500 bg-neutral-500/10'
                       : 'border-neutral-600 hover:border-neutral-500'
                   }`}
                 >
@@ -203,7 +203,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                         Assigned to {task.assignee}
                       </div>
                     </div>
-                    <div className={`text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                    <div className={`px-2 py-1 rounded text-xs font-medium ${getPriorityColor(task.priority).text} ${getPriorityColor(task.priority).bg}`}>
                       {task.priority}
                     </div>
                   </div>
@@ -216,7 +216,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                   onClick={() => toggleItemSelection('nudges', nudge)}
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     selectedItems.nudges.find(n => n.id === nudge.id)
-                      ? 'border-cyan-500 bg-cyan-500/10'
+                      ? 'border-neutral-500 bg-neutral-500/10'
                       : 'border-neutral-600 hover:border-neutral-500'
                   }`}
                 >
@@ -236,7 +236,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                   onClick={() => toggleItemSelection('files', file)}
                   className={`p-3 rounded-lg border cursor-pointer transition-all ${
                     selectedItems.files.find(f => f.id === file.id)
-                      ? 'border-cyan-500 bg-cyan-500/10'
+                      ? 'border-neutral-500 bg-neutral-500/10'
                       : 'border-neutral-600 hover:border-neutral-500'
                   }`}
                 >
@@ -350,7 +350,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
               </button>
               <button
                 onClick={handleSave}
-                className="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition-colors"
+                className="px-6 py-2 bg-neutral-600 text-white rounded-lg hover:bg-neutral-700 transition-colors"
               >
                 Save Context
               </button>
