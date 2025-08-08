@@ -123,22 +123,39 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
         {sortDropdownOpen && (
           <div className="absolute top-full left-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 min-w-[200px]">
             <div className="py-1">
-              {sortOptions.map((option, index) => (
+              {/* Sort Options */}
+              <div className="py-1">
                 <button
-                  key={index}
-                  onClick={() => handleSortSelect(option)}
-                  className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between ${
-                    selectedSort === option 
-                      ? 'bg-neutral-700 text-white' 
-                      : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-                  }`}
+                  onClick={() => handleSortSelect('Sender')}
+                  className="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
                 >
-                  <span>{option}</span>
-                  {selectedSort === option && (
-                    <Check className="h-4 w-4 text-white" />
-                  )}
+                  Sender
                 </button>
-              ))}
+                <button
+                  onClick={() => handleSortSelect('Type')}
+                  className="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                >
+                  Type
+                </button>
+                <button
+                  onClick={() => handleSortSelect('Priority')}
+                  className="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                >
+                  Priority
+                </button>
+                <button
+                  onClick={() => handleSortSelect('Drafts')}
+                  className="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                >
+                  Drafts
+                </button>
+                <button
+                  onClick={() => handleSortSelect('Archived')}
+                  className="w-full text-left px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-700 hover:text-white transition-colors"
+                >
+                  Archived
+                </button>
+              </div>
             </div>
           </div>
         )}

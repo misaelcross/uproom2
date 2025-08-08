@@ -8,11 +8,13 @@ import {
   BarChart3,
   Users,
   User,
-  CheckSquare
+  CheckSquare,
+  Save
 } from 'lucide-react';
 import PollSurveyModal from './PollSurveyModal';
 import GroupSelector from './GroupSelector';
 import TodoSelector from './TodoSelector';
+import useNudgeStore from '../../store/nudgeStore';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
@@ -36,6 +38,8 @@ const CreateNudgeView = ({ onCancel }) => {
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedTodos, setSelectedTodos] = useState([]);
 
+  // Hook do store de nudges
+  const { saveDraft } = useNudgeStore();
   // Filtrar usuários baseado na pesquisa
   const filteredUsers = useMemo(() => {
     if (!searchTerm.trim()) return [];
@@ -88,6 +92,37 @@ const CreateNudgeView = ({ onCancel }) => {
       console.log('Sending nudge:', nudgeData);
       // Aqui você pode adicionar a lógica para enviar o nudge
       // Limpar formulário após envio
+      setSelectedUsers([]);
+      setSelectedGroups([]);
+      setSelectedTodos([]);
+      setMessage('');
+      setSearchTerm('');
+      setAttachedPoll(null);
+      setIsAnnouncementMode(false);
+      if (onCancel) onCancel();
+    }
+  };
+
+  // Função para salvar como rascunho
+  const handleSaveAsDraft = () => {
+    const hasContent = message.trim() || attachedPoll || selectedUsers.length > 0 || selectedGroups.length > 0 || selectedTodos.length > 0;
+    
+    if (hasContent) {
+      const draftData = {
+        selectedUsers: isAnnouncementMode ? [] : selectedUsers,
+        selectedGroups: isAnnouncementMode ? selectedGroups : [],
+        selectedTodos,
+        message,
+        attachedPoll,
+        type: attachedPoll ? 'poll' : isAnnouncementMode ? 'announcement' : 'message',
+        isAnnouncement: isAnnouncementMode,
+        title: message.trim() ? message.substring(0, 50) + (message.length > 50 ? '...' : '') : 'Untitled Draft'
+      };
+      
+      saveDraft(draftData);
+      console.log('Draft saved:', draftData);
+      
+      // Limpar formulário após salvar rascunho
       setSelectedUsers([]);
       setSelectedGroups([]);
       setSelectedTodos([]);
@@ -296,7 +331,28 @@ const CreateNudgeView = ({ onCancel }) => {
       </div>
 
       {/* Footer with Send Button */}
-      <div className="p-6 border-t border-neutral-700">
+      <div className="p-6 border-t border-neutral-700 space-y-3">
+        {/* Save as Draft Button */}
+        <button
+          onClick={handleSaveAsDraft}
+          disabled={!message.trim() && !attachedPoll && selectedUsers.length === 0 && selectedGroups.length === 0 && selectedTodos.length === 0}
+          className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:border-transparent ${
+            !message.trim() && !attachedPoll && selectedUsers.length === 0 && selectedGroups.length === 0 && selectedTodos.length === 0
+              ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+              : 'bg-transparent hover:bg-neutral-800 text-neutral-300 border border-neutral-600 hover:border-neutral-500'
+          }`}
+        >
+          <Save className={`h-5 w-5 ${
+            !message.trim() && !attachedPoll && selectedUsers.length === 0 && selectedGroups.length === 0 && selectedTodos.length === 0 ? 'text-neutral-400' : 'text-neutral-300'
+          }`} />
+          <span className={`font-medium ${
+            !message.trim() && !attachedPoll && selectedUsers.length === 0 && selectedGroups.length === 0 && selectedTodos.length === 0 ? 'text-neutral-400' : 'text-neutral-300'
+          }`}>
+            Save as Draft
+          </span>
+        </button>
+
+        {/* Send Button */}
         <button
           onClick={handleSendNudge}
           disabled={(!message.trim() && !attachedPoll) || (isAnnouncementMode ? selectedGroups.length === 0 : selectedUsers.length === 0)}

@@ -5,6 +5,7 @@ import {
   ChevronUp,
   Search,
   Send,
+  Save,
   Paperclip,
   Link,
   X,
@@ -661,20 +662,39 @@ const AnimatedBottomSheet = ({
                       </button>
                     </div>
 
+                    {/* Save as Draft Button */}
+                    <button
+                      disabled={!message.trim() && selectedUsers.length === 0}
+                      className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:border-transparent ${
+                        !message.trim() && selectedUsers.length === 0
+                          ? 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+                          : 'bg-transparent hover:bg-neutral-800 text-neutral-300 border border-neutral-600 hover:border-neutral-500'
+                      }`}
+                    >
+                      <Save className={`h-5 w-5 ${
+                        !message.trim() && selectedUsers.length === 0 ? 'text-neutral-400' : 'text-neutral-300'
+                      }`} />
+                      <span className={`font-medium ${
+                        !message.trim() && selectedUsers.length === 0 ? 'text-neutral-400' : 'text-neutral-300'
+                      }`}>
+                        Save as Draft
+                      </span>
+                    </button>
+
                     {/* Send Button */}
                     <button
                       disabled={!message.trim() || selectedUsers.length === 0}
-                      className={`w-full h-9 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent ${
+                      className={`w-full h-12 flex items-center justify-center space-x-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent ${
                         !message.trim() || selectedUsers.length === 0
                           ? 'bg-neutral-700 cursor-not-allowed'
                           : 'bg-neutral-800 hover:bg-neutral-700 border border-neutral-600'
                       }`}
                     >
                       <Send className={`h-5 w-5 ${
-                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-white'
+                        !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
                       }`} />
                       <span className={`font-medium ${
-                        !message.trim() || selectedUsers.length === 0 ? 'text-gray-400' : 'text-white'
+                        !message.trim() || selectedUsers.length === 0 ? 'text-neutral-400' : 'text-white'
                       }`}>Send Nudge</span>
                     </button>
                   </div>
