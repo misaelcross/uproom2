@@ -1,13 +1,13 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { X, Zap, Edit, ChevronUp, Search, Send } from 'lucide-react';
+import { X, Zap } from 'lucide-react';
 
 const BottomSheet = ({ 
   isOpen, 
   onClose, 
   title = "Nudges", 
   children,
-  maxWidth = "400px",
+  maxWidth = "300px",
   maxHeight = "60vh",
   badgeCount = 1
 }) => {
@@ -44,7 +44,7 @@ const BottomSheet = ({
                 style={{ 
                   maxWidth: maxWidth,
                   maxHeight: maxHeight,
-                  minWidth: "320px"
+                  minWidth: "200px"
                 }}
               >
                 {/* Header */}

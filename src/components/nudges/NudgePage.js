@@ -10,6 +10,7 @@ import ActionBarNudges from './ActionBarNudges';
 import UserDetails from '../dashboard/UserDetails';
 import GroupNudgesView from './GroupNudgesView';
 import { usersData } from '../../data/usersData';
+import useNudgeStore from '../../store/nudgeStore';
 
 // Dados fake dos nudges
 const nudgesData = [
@@ -110,8 +111,16 @@ const nudgesData = [
 ];
 
 function NudgePage({ onNavigate }) {
-  const [selectedNudge, setSelectedNudge] = useState(null);
-  const [nudges, setNudges] = useState(nudgesData);
+  // Estado global dos nudges
+  const { 
+    nudges, 
+    selectedNudgeId, 
+    setSelectedNudge, 
+    markAsRead 
+  } = useNudgeStore();
+  
+  // Estados locais
+  const [localNudges, setLocalNudges] = useState(nudgesData);
   const [usersWithIcons, setUsersWithIcons] = useState([]);
   const [sortBy, setSortBy] = useState('Recent');
   const [topTabActive, setTopTabActive] = useState('received');
@@ -145,25 +154,18 @@ function NudgePage({ onNavigate }) {
       randomIcons: generateRandomIcons()
     }));
     setUsersWithIcons(usersWithRandomIcons);
-    
-    // Selecionar o primeiro nudge por padrão
-    if (nudgesData.length > 0) {
-      setSelectedNudge(nudgesData[0]);
-      // Marcar como lido
-      setNudges(prev => prev.map(nudge => 
-        nudge.id === nudgesData[0].id ? { ...nudge, isRead: true } : nudge
-      ));
-    }
   }, []);
 
-  // Função para selecionar nudge
+  // Função para selecionar nudge - agora usa o store global
   const handleNudgeSelect = (nudge) => {
-    setSelectedNudge(nudge);
-    // Marcar como lido
-    setNudges(prev => prev.map(n => 
-      n.id === nudge.id ? { ...n, isRead: true } : n
-    ));
+    setSelectedNudge(nudge.id);
+    markAsRead(nudge.id);
   };
+
+  // Obter o nudge selecionado do store global ou dos dados locais
+  const selectedNudge = selectedNudgeId 
+    ? [...nudges, ...localNudges].find(n => n.id === selectedNudgeId)
+    : localNudges[0]; // Fallback para o primeiro nudge local
 
   // Função para lidar com mudança de ordenação
   const handleSortChange = (sortOption) => {
@@ -175,10 +177,12 @@ function NudgePage({ onNavigate }) {
     console.log('User selected:', user);
   };
 
+  // Combinar nudges globais e locais
+  const allNudges = [...nudges, ...localNudges];
+
   // Função para iniciar criação de nudge
   const handleCreateNudge = () => {
     setIsCreatingNudge(true);
-    setSelectedNudge(null); // Limpar seleção de nudge
   };
 
   // Função para cancelar criação de nudge
@@ -241,20 +245,11 @@ function NudgePage({ onNavigate }) {
 
   // Quick action: Mark nudge as complete
   const handleMarkNudgeComplete = (nudge) => {
-    setNudges(prev => prev.map(n => 
+    setLocalNudges(prev => prev.map(n => 
       n.id === nudge.id 
         ? { ...n, isCompleted: true, completedAt: new Date().toISOString() }
         : n
     ));
-    
-    // If this was the selected nudge, update it too
-    if (selectedNudge?.id === nudge.id) {
-      setSelectedNudge(prev => ({ 
-        ...prev, 
-        isCompleted: true, 
-        completedAt: new Date().toISOString() 
-      }));
-    }
     
     console.log('Marked nudge as complete:', nudge.id);
   };
@@ -271,7 +266,7 @@ function NudgePage({ onNavigate }) {
     const snoozeUntil = new Date();
     snoozeUntil.setHours(snoozeUntil.getHours() + 1); // Snooze for 1 hour
     
-    setNudges(prev => prev.map(n => 
+    setLocalNudges(prev => prev.map(n => 
       n.id === nudge.id 
         ? { ...n, isSnoozed: true, snoozeUntil: snoozeUntil.toISOString() }
         : n
@@ -283,23 +278,18 @@ function NudgePage({ onNavigate }) {
 
   // Quick action: Archive nudge
   const handleArchiveNudge = (nudge) => {
-    setNudges(prev => prev.map(n => 
+    setLocalNudges(prev => prev.map(n => 
       n.id === nudge.id 
         ? { ...n, isArchived: true, archivedAt: new Date().toISOString() }
         : n
     ));
-    
-    // If this was the selected nudge, clear selection
-    if (selectedNudge?.id === nudge.id) {
-      setSelectedNudge(null);
-    }
     
     console.log('Archived nudge:', nudge.id);
   };
 
   // Função para ordenar nudges
   const getSortedNudges = () => {
-    let sortedNudges = [...nudges];
+    let sortedNudges = [...allNudges];
     
     switch (sortBy) {
       case 'Priority':
@@ -393,10 +383,9 @@ function NudgePage({ onNavigate }) {
                   nudge={selectedNudge}
                   onUserClick={handleUserClick}
                   onUpdate={(updatedNudge) => {
-                    setNudges(prev => prev.map(n => 
+                    setLocalNudges(prev => prev.map(n => 
                       n.id === updatedNudge.id ? updatedNudge : n
                     ));
-                    setSelectedNudge(updatedNudge);
                   }}
                 />
               ) : (

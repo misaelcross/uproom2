@@ -13,6 +13,7 @@ import {
   ThumbsUp,
   FileText
 } from 'lucide-react';
+import useNudgeStore from '../../store/nudgeStore';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
@@ -187,11 +188,20 @@ const AnimatedBottomSheet = ({
     ));
   };
 
+  // Store global
+  const { 
+    nudges: globalNudges, 
+    setSelectedNudge: setGlobalSelectedNudge, 
+    openLeftPanel,
+    markAsRead: globalMarkAsRead
+  } = useNudgeStore();
+
   // Função para abrir visualização do nudge
   const openNudgeDetail = (nudge) => {
-    setSelectedNudge(nudge);
-    setViewMode('detail');
-    markAsRead(nudge.id);
+    // Definir no store global e abrir painel secundário
+    setGlobalSelectedNudge(nudge.id);
+    openLeftPanel();
+    globalMarkAsRead(nudge.id);
   };
 
   // Função para voltar à lista de nudges
@@ -201,7 +211,7 @@ const AnimatedBottomSheet = ({
   };
 
   // Contar nudges não lidos
-  const unreadCount = nudges.filter(nudge => !nudge.isRead).length;
+  const unreadCount = globalNudges.filter(nudge => !nudge.isRead).length;
 
   // Filtrar usuários baseado na pesquisa
   const filteredUsers = useMemo(() => {
@@ -240,7 +250,7 @@ const AnimatedBottomSheet = ({
   // Animação para o container principal
   const containerAnimation = useSpring({
     height: calculateDynamicHeight(),
-    width: isOpen ? 400 : 300,
+    width: 350,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     borderBottomLeftRadius: isOpen ? 16 : 0,
@@ -675,12 +685,12 @@ const AnimatedBottomSheet = ({
               ) : (
                 /* Tab Received */
                 <div className="space-y-3 overflow-y-auto max-h-96">
-                  {nudges.length === 0 ? (
+                  {globalNudges.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-neutral-400 text-sm">No nudges received yet</div>
                     </div>
                   ) : (
-                    nudges.map((nudge) => (
+                    globalNudges.map((nudge) => (
                       <div
                         key={nudge.id}
                         className={`p-4 rounded-lg border transition-all cursor-pointer hover:bg-neutral-700 ${
@@ -694,14 +704,11 @@ const AnimatedBottomSheet = ({
                           {/* Avatar com status indicator */}
                           <div className="relative flex-shrink-0">
                             <img
-                              src={nudge.sender.avatar}
-                              alt={nudge.sender.name}
+                              src={nudge.senderAvatar}
+                              alt={nudge.senderName}
                               className="w-10 h-10 rounded-full"
                             />
-                            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-800 ${
-                              nudge.sender.status === 'online' ? 'bg-green-500' : 
-                              nudge.sender.status === 'away' ? 'bg-orange-500' : 'bg-gray-500'
-                            }`} />
+                            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-800 bg-green-500" />
                           </div>
 
                           {/* Conteúdo da mensagem */}
@@ -710,7 +717,7 @@ const AnimatedBottomSheet = ({
                               <h4 className={`text-sm font-medium ${
                                 nudge.isRead ? 'text-neutral-300' : 'text-white'
                               }`}>
-                                {nudge.sender.name}
+                                {nudge.senderName}
                               </h4>
                               <span className="text-xs text-neutral-400 flex-shrink-0">
                                 {nudge.timestamp}
