@@ -75,13 +75,13 @@ const TodoItem = ({
         {/* Checkbox */}
         <button
           onClick={handleCheckboxClick}
-          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+          className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
             todo.completed 
-              ? 'bg-green-500 border-green-500' 
+              ? 'bg-white border-white' 
               : 'border-neutral-400 hover:border-white'
           }`}
         >
-          {todo.completed && <Check className="w-3 h-3 text-white" />}
+          {todo.completed && <Check className="w-3 h-3 text-black" />}
         </button>
 
         {/* Content */}
@@ -141,24 +141,8 @@ const TodoItem = ({
             </div>
           </div>
           
-          {/* Steps indicator with progress bar */}
-          {todo.steps && todo.steps.length > 0 && (
-            <div className="mt-2 space-y-1">
-              <div className="flex items-center justify-between text-sm text-neutral-400">
-                <span>Tasks</span>
-                <span>{todo.steps.filter(step => step.completed).length} of {todo.steps.length}</span>
-              </div>
-              <div className="w-full bg-neutral-700 rounded-full h-1.5">
-                <div 
-                  className="bg-green-500 h-1.5 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${(todo.steps.filter(step => step.completed).length / todo.steps.length) * 100}%` 
-                  }}
-                ></div>
-              </div>
-            </div>
-          )}
-
+          {/* Removed Steps indicator with progress bar - as requested */}
+          
           {/* Additional info: Comments, Assignees, Duration */}
           {(todo.comments?.length > 0 || todo.assignees?.length > 0 || todo.duration) && (
             <div className="mt-2 space-y-1">

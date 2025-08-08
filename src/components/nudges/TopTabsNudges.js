@@ -6,34 +6,44 @@ const TopTabsNudges = ({ activeTab, setActiveTab }) => {
       {/* Tabs */}
       <div className="flex space-x-2 bg-neutral-800 p-1 rounded-lg mb-4 w-fit">
         <button
-          onClick={() => setActiveTab('received')}
+          onClick={() => setActiveTab('all')}
           className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'received'
+            activeTab === 'all'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Received
+          All
         </button>
         <button
-          onClick={() => setActiveTab('sent')}
+          onClick={() => setActiveTab('unread')}
           className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'sent'
+            activeTab === 'unread'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Sent
+          Unread
         </button>
         <button
-          onClick={() => setActiveTab('groups')}
+          onClick={() => setActiveTab('priority')}
           className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'groups'
+            activeTab === 'priority'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Groups
+          High Priority
+        </button>
+        <button
+          onClick={() => setActiveTab('polls')}
+          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+            activeTab === 'polls'
+              ? 'bg-neutral-700 text-white'
+              : 'bg-transparent text-neutral-400 hover:text-gray-300'
+          }`}
+        >
+          Polls
         </button>
       </div>
     </div>

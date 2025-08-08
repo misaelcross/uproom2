@@ -10,7 +10,7 @@ import { usersData } from '../../data/usersData';
 const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Recent');
+  const [selectedSort, setSelectedSort] = useState('Sender');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
@@ -33,10 +33,9 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
 
   // Opções de ordenação para nudges
   const sortOptions = [
-    'Recent',
-    'Priority',
-    'Alphabetical (A-Z)',
-    'Alphabetical (Z-A)'
+    'Sender',
+    'Type',
+    'Priority'
   ];
 
   // Fechar dropdown quando clicar fora

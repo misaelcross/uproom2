@@ -207,14 +207,14 @@ const TodoDetails = ({
           <div className="flex items-center space-x-3">
             <button
               onClick={() => onToggleComplete(todo.id)}
-              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+              className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
                 todo.completed
-                  ? 'bg-neutral-800 border-neutral-600'
+                  ? 'bg-white border-white'
                   : 'border-neutral-400 hover:border-white'
               }`}
             >
               {todo.completed && (
-                <Check className="w-3 h-3 text-white" />
+                <Check className="w-3 h-3 text-black" />
               )}
             </button>
             
@@ -404,7 +404,7 @@ const TodoDetails = ({
             <div className="space-y-2">
               <div className="w-full bg-neutral-700 rounded-full h-2">
                 <div 
-                  className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                  className="bg-white h-2 rounded-full transition-all duration-300"
                   style={{ 
                     width: `${(completedSteps / totalSteps) * 100}%` 
                   }}

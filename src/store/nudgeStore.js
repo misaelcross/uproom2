@@ -10,8 +10,11 @@ const useNudgeStore = create((set, get) => ({
       senderAvatar: 'https://images.pexels.com/photos/1576482/pexels-photo-1576482.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
       message: 'Hi! Could you review the document I sent yesterday? I need your feedback by tomorrow morning to finalize the presentation.',
       timestamp: '2h',
+      type: 'message',
       priority: 'high',
       isRead: false,
+      isPinned: false,
+      isHighPriority: false,
       attachments: [
         {
           id: 'att-1',
@@ -40,8 +43,11 @@ const useNudgeStore = create((set, get) => ({
       senderAvatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
       message: 'Hey! Can you review the latest design changes? I need your feedback before the client meeting tomorrow.',
       timestamp: '1h',
+      type: 'message',
       priority: 'high',
       isRead: false,
+      isPinned: false,
+      isHighPriority: false,
       attachments: [
         { name: 'DocumentationXPS.pdf' },
         { name: 'PrintScreen1.png' },
@@ -57,10 +63,36 @@ const useNudgeStore = create((set, get) => ({
       senderAvatar: 'https://randomuser.me/api/portraits/men/46.jpg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
       message: 'The client feedback is in! Let\'s review it together and plan next steps.',
       timestamp: '5d',
+      type: 'message',
       priority: 'high',
       isRead: true,
+      isPinned: false,
+      isHighPriority: false,
       attachments: [],
       replies: []
+    },
+    {
+      id: 'poll-1',
+      senderId: 'user-13',
+      senderName: 'Michael Torres',
+      senderTitle: 'Scrum Master',
+      senderAvatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Poll: What time works best for our daily standup?',
+      fullMessage: 'Poll: What time works best for our daily standup? Please vote so we can find the best time for everyone.',
+      timestamp: '3h',
+      type: 'poll',
+      priority: 'normal',
+      isRead: false,
+      isPinned: false,
+      isHighPriority: false,
+      attachments: [],
+      replies: [],
+      pollOptions: [
+        { text: "9:00 AM", percentage: 35 },
+        { text: "9:30 AM", percentage: 40 },
+        { text: "10:00 AM", percentage: 20 },
+        { text: "10:30 AM", percentage: 5 }
+      ]
     }
   ],
   
@@ -83,6 +115,34 @@ const useNudgeStore = create((set, get) => ({
   markAsRead: (nudgeId) => set((state) => ({
     nudges: state.nudges.map(nudge => 
       nudge.id === nudgeId ? { ...nudge, isRead: true } : nudge
+    )
+  })),
+
+  markAsUnread: (nudgeId) => set((state) => ({
+    nudges: state.nudges.map(nudge => 
+      nudge.id === nudgeId ? { ...nudge, isRead: false } : nudge
+    )
+  })),
+
+  togglePin: (nudgeId) => set((state) => ({
+    nudges: state.nudges.map(nudge => 
+      nudge.id === nudgeId ? { 
+        ...nudge, 
+        isPinned: !nudge.isPinned,
+        pinnedAt: !nudge.isPinned ? new Date().toISOString() : null
+      } : nudge
+    )
+  })),
+
+  markAsResolved: (nudgeId) => set((state) => ({
+    nudges: state.nudges.map(nudge => 
+      nudge.id === nudgeId ? { ...nudge, isRead: true, isResolved: true, resolvedAt: new Date().toISOString() } : nudge
+    )
+  })),
+
+  togglePriority: (nudgeId) => set((state) => ({
+    nudges: state.nudges.map(nudge => 
+      nudge.id === nudgeId ? { ...nudge, isHighPriority: !nudge.isHighPriority } : nudge
     )
   })),
   
