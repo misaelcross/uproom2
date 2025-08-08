@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Paperclip, Send, Plus } from 'lucide-react';
+import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-react';
+import FloatingUserCard from '../shared/FloatingUserCard';
 
 const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [replyMessage, setReplyMessage] = useState('');
   const [replies, setReplies] = useState([
     {
       id: 1,
@@ -27,6 +26,12 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
       isFromMe: true
     }
   ]);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedPollOption, setSelectedPollOption] = useState(null);
+  const [showPollResults, setShowPollResults] = useState(false);
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const getStatusDotColor = (status) => {
     switch (status) {
@@ -61,9 +66,83 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
   };
 
   const handleSenderClick = () => {
-    if (onUserClick && nudge?.sender) {
-      onUserClick(nudge.sender);
+    if (onUserClick && nudge?.senderName) {
+      onUserClick({
+        name: nudge.senderName,
+        title: nudge.senderTitle,
+        avatar: nudge.senderAvatar
+      });
     }
+  };
+
+  const handlePollOptionClick = (optionIndex) => {
+    setSelectedPollOption(optionIndex);
+    setShowPollResults(true);
+  };
+
+  const handleUserMentionHover = (user, event) => {
+    setHoveredUser(user);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleUserMentionLeave = () => {
+    setHoveredUser(null);
+  };
+
+  const handleUserMentionClick = (user) => {
+    if (onUserClick) {
+      onUserClick(user);
+    }
+  };
+
+  // Função para renderizar texto com menções de usuário
+  const renderTextWithMentions = (text) => {
+    // Simular dados de usuários mencionados (em um app real, isso viria de props ou contexto)
+    const mentionedUsers = [
+      { name: "Sarah Johnson", id: "user-1", title: "Frontend Developer", avatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
+      { name: "Mike Chen", id: "user-2", title: "Backend Developer", avatar: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" }
+    ];
+
+    // Regex para encontrar menções @username
+    const mentionRegex = /@(\w+(?:\s+\w+)*)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Adicionar texto antes da menção
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      const mentionName = match[1];
+      const user = mentionedUsers.find(u => u.name.toLowerCase().includes(mentionName.toLowerCase()));
+      
+      if (user) {
+        parts.push(
+          <span
+            key={match.index}
+            className="font-semibold text-white hover:text-neutral-200 cursor-pointer transition-colors"
+            onMouseEnter={(e) => handleUserMentionHover(user, e)}
+            onMouseLeave={handleUserMentionLeave}
+            onClick={() => handleUserMentionClick(user)}
+          >
+            @{mentionName}
+          </span>
+        );
+      } else {
+        parts.push(`@${mentionName}`);
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Adicionar texto restante
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
   };
 
   if (!nudge) {
@@ -95,21 +174,30 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         >
           <div className="relative">
             <img 
-              src={nudge.sender.avatar} 
-              alt={`${nudge.sender.name} Profile`} 
+              src={nudge.senderAvatar} 
+              alt={`${nudge.senderName} Profile`} 
               className="w-12 h-12 rounded-full object-cover"
             />
-            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(nudge.sender.status)} rounded-full border-2 border-neutral-900`}></div>
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor('online')} rounded-full border-2 border-neutral-900`}></div>
           </div>
           <div className="flex-1">
-            <h2 className="text-white text-xl font-semibold">{nudge.sender.name}</h2>
-            <p className="text-neutral-400 text-sm">{nudge.sender.title}</p>
+            <h2 className="text-white text-xl font-semibold">{nudge.senderName}</h2>
+            <p className="text-neutral-400 text-sm">{nudge.senderTitle}</p>
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 p-6 overflow-y-auto">
+        {/* High Priority Badge */}
+        {nudge.isHighPriority && (
+          <div className="mb-4 flex justify-center">
+            <div className="inline-block px-2 py-1 rounded text-xs font-medium text-red-400 bg-red-500/10">
+              High priority
+            </div>
+          </div>
+        )}
+
         {/* Original Message - Reddit-style post */}
         <div className="mb-6 p-4 bg-neutral-800 rounded-lg border border-neutral-700">
           {/* Timestamp - Centered */}
@@ -119,20 +207,97 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
 
           {/* Message */}
           <div className="mb-4">
-            <p className="text-neutral-300 leading-relaxed">
-              {nudge.fullMessage || nudge.message}
-            </p>
+            <div className="text-neutral-300 leading-relaxed">
+              {renderTextWithMentions(nudge.fullMessage || nudge.message)}
+            </div>
           </div>
 
           {/* Attachments */}
           {nudge.attachments && nudge.attachments.length > 0 && (
-            <div className="space-y-2">
+            <div className="space-y-2 mb-4">
               {nudge.attachments.map((attachment, index) => (
                 <div key={index} className="flex items-center gap-3 p-3 rounded-lg border border-neutral-600">
                   <Paperclip className="w-4 h-4 text-neutral-400" />
-                  <span className="text-neutral-300 text-sm">{attachment}</span>
+                  <span className="text-neutral-300 text-sm">{attachment.name || attachment}</span>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* To-Do Link */}
+          {nudge.todoLink && (
+            <div className="mb-4">
+              <div className="flex items-center gap-3 p-3 rounded-lg border border-neutral-600 hover:border-neutral-500 hover:bg-neutral-700 transition-colors cursor-pointer">
+                <CheckSquare className="w-4 h-4 text-blue-400" />
+                <div className="flex-1">
+                  <span className="text-neutral-300 text-sm">{nudge.todoLink.title}</span>
+                  <div className="text-neutral-500 text-xs mt-1">To-Do • {nudge.todoLink.status}</div>
+                </div>
+                <Link2 className="w-4 h-4 text-neutral-400" />
+              </div>
+            </div>
+          )}
+
+          {/* Poll Options */}
+          {nudge.type === 'poll' && nudge.pollOptions && (
+            <div className="mt-4 space-y-3">
+              <h4 className="text-neutral-300 font-medium text-sm">Poll Options:</h4>
+              {!showPollResults ? (
+                // Show clickable options
+                <div className="space-y-2">
+                  {nudge.pollOptions.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handlePollOptionClick(index)}
+                      className="w-full text-left p-3 rounded-lg border border-neutral-600 hover:border-neutral-500 hover:bg-neutral-700 transition-colors text-neutral-300"
+                    >
+                      {option.text}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                // Show results with percentages
+                <div className="space-y-2">
+                  {nudge.pollOptions.map((option, index) => {
+                    const isSelected = selectedPollOption === index;
+                    const percentage = option.percentage || 0;
+                    return (
+                      <div
+                        key={index}
+                        className={`p-3 rounded-lg border ${
+                          isSelected 
+                            ? 'border-blue-500 bg-blue-500/10' 
+                            : 'border-neutral-600'
+                        } relative overflow-hidden`}
+                      >
+                        {/* Progress bar background */}
+                        <div 
+                          className="absolute inset-0 bg-neutral-700/30 transition-all duration-300"
+                          style={{ width: `${percentage}%` }}
+                        />
+                        <div className="relative flex justify-between items-center">
+                          <span className={`text-sm ${isSelected ? 'text-blue-400 font-medium' : 'text-neutral-300'}`}>
+                            {option.text}
+                            {isSelected && ' ✓'}
+                          </span>
+                          <span className="text-neutral-400 text-sm font-medium">
+                            {percentage}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <button
+                    onClick={() => {
+                      setShowPollResults(false);
+                      setSelectedPollOption(null);
+                    }}
+                    className="text-neutral-400 hover:text-neutral-300 text-sm mt-2 transition-colors"
+                  >
+                    ← Back to options
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -211,6 +376,15 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           </div>
         </div>
       </div>
+
+      {/* Floating User Card */}
+      {hoveredUser && (
+        <FloatingUserCard
+          user={hoveredUser}
+          position={mousePosition}
+          onClose={() => setHoveredUser(null)}
+        />
+      )}
     </div>
   );
 };

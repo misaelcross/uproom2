@@ -1,7 +1,24 @@
-import React from 'react';
-import { MoreVertical, Plus, CheckCircle, MessageCircle, Clock, Archive } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff } from 'lucide-react';
 
-const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive }) => {
+const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive, onMarkUnread, onPinNudge, onMarkResolved, onMarkPriority, onMarkRead }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Fechar dropdown ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const getStatusDotColor = (status) => {
     switch (status) {
       case 'online': return 'bg-green-500';
@@ -11,18 +28,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
     }
   };
 
-  const getPriorityBadge = (priority) => {
-    switch (priority) {
-      case 'high':
-        return { text: 'text-red-400', bg: 'bg-red-500/10', label: 'High' };
-      case 'normal':
-        return { text: 'text-blue-400', bg: 'bg-blue-500/10', label: 'Normal' };
-      case 'low':
-        return { text: 'text-gray-400', bg: 'bg-gray-500/10', label: 'Low' };
-      default:
-        return { text: 'text-blue-400', bg: 'bg-blue-500/10', label: 'Normal' };
-    }
-  };
+
 
   // Truncar mensagem para 2 linhas
   const truncateMessage = (text, maxLines = 2) => {
@@ -52,113 +58,135 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
       <div className="flex items-start gap-3 mb-3">
         <div className="relative">
           <img 
-            src={nudge.sender.avatar} 
-            alt={`${nudge.sender.name} Profile`} 
+            src={nudge.senderAvatar} 
+            alt={`${nudge.senderName} Profile`} 
             className="w-9 h-9 rounded-full object-cover"
           />
-          <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(nudge.sender.status)} rounded-full border-2 border-gray-900`}></div>
+          <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor('online')} rounded-full border-2 border-gray-900`}></div>
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-white font-medium text-base">{nudge.sender.name}</h3>
+          <h3 className="text-white font-medium text-base">{nudge.senderName}</h3>
           <div className="flex items-center gap-2">
-            <p className="text-neutral-400 text-sm truncate">{nudge.sender.title}</p>
+            <p className="text-neutral-400 text-sm truncate">{nudge.senderTitle}</p>
             <span className="text-neutral-400 text-sm whitespace-nowrap">• {nudge.timestamp}</span>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative flex items-center gap-2" ref={dropdownRef}>
+          {/* Bookmark icon when pinned */}
+          {nudge.isPinned && (
+            <Bookmark className="w-4 h-4 text-white fill-white" />
+          )}
           <button
             className="p-1 hover:bg-neutral-800 rounded transition-colors"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDropdownOpen(!isDropdownOpen);
+            }}
           >
             <MoreVertical className="w-5 h-5 text-neutral-400" />
           </button>
-        </div>
-      </div>
-
-      {/* Mensagem - truncada em 2 linhas */}
-      <div className="mb-3">
-        <p className="text-white text-sm leading-relaxed">
-          {truncateMessage(nudge.message, 2)}
-        </p>
-      </div>
-
-      {/* Badge de prioridade e notificação */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className={`px-2 py-1 rounded text-xs font-medium ${getPriorityBadge(nudge.priority).text} ${getPriorityBadge(nudge.priority).bg}`}>
-            <span>{getPriorityBadge(nudge.priority).label}</span>
-          </div>
-          {!nudge.isRead && (
-            <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xs font-bold leading-none">1</span>
+          
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div className="absolute right-0 top-8 w-48 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-10">
+              <div className="py-1">
+                {!nudge.isRead ? (
+                  <button
+                    className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDropdownOpen(false);
+                      if (onMarkRead) {
+                        onMarkRead(nudge.id);
+                      }
+                    }}
+                  >
+                    <EyeOff className="w-4 h-4" />
+                    Mark as read
+                  </button>
+                ) : (
+                  <button
+                    className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDropdownOpen(false);
+                      if (onMarkUnread) {
+                        onMarkUnread(nudge.id);
+                      }
+                    }}
+                  >
+                    <Eye className="w-4 h-4" />
+                    Mark as unread
+                  </button>
+                )}
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                    if (onPinNudge) {
+                      onPinNudge(nudge.id);
+                    }
+                  }}
+                >
+                  <Bookmark className="w-4 h-4" />
+                  {nudge.isPinned ? 'Remove pin' : 'Pin nudge'}
+                </button>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                    if (onMarkPriority) {
+                      onMarkPriority(nudge.id);
+                    }
+                  }}
+                >
+                  <Flag className="w-4 h-4" />
+                  {nudge.isHighPriority ? 'Remove priority' : 'Mark as priority'}
+                </button>
+                {!nudge.isRead && (
+                  <button
+                    className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDropdownOpen(false);
+                      if (onMarkResolved) {
+                        onMarkResolved(nudge.id);
+                      }
+                    }}
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    Mark as resolved
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>
-        
-        {/* Quick Actions */}
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          {onReply && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onReply(nudge);
-              }}
-              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
-              title="Reply"
-            >
-              <MessageCircle className="w-4 h-4 text-neutral-400 hover:text-blue-500" />
-            </button>
-          )}
-          {onCreateTodo && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onCreateTodo(nudge);
-              }}
-              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
-              title="Create Todo"
-            >
-              <Plus className="w-4 h-4 text-neutral-400 hover:text-white" />
-            </button>
-          )}
-          {onSnooze && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onSnooze(nudge);
-              }}
-              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
-              title="Snooze"
-            >
-              <Clock className="w-4 h-4 text-neutral-400 hover:text-yellow-500" />
-            </button>
-          )}
-          {onMarkComplete && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onMarkComplete(nudge);
-              }}
-              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
-              title="Mark Complete"
-            >
-              <CheckCircle className="w-4 h-4 text-neutral-400 hover:text-green-500" />
-            </button>
-          )}
-          {onArchive && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onArchive(nudge);
-              }}
-              className="p-1.5 hover:bg-neutral-700 rounded transition-colors"
-              title="Archive"
-            >
-              <Archive className="w-4 h-4 text-neutral-400 hover:text-gray-500" />
-            </button>
-          )}
-        </div>
       </div>
+
+      {/* Mensagem com notificação - truncada em 2 linhas */}
+      <div className="mb-3 flex items-start gap-3">
+        <p className="text-white text-sm leading-relaxed flex-1">
+          {truncateMessage(nudge.message, 2)}
+        </p>
+        {!nudge.isRead && (
+          <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-white text-xs font-bold leading-none">1</span>
+          </div>
+        )}
+      </div>
+
+      {/* High priority badge */}
+      {nudge.isHighPriority && (
+        <div className="flex justify-start">
+          <div className="px-2 py-1 rounded text-xs font-medium text-red-400 bg-red-500/10">
+            High priority
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -46,14 +46,14 @@ const TodoStep = ({ step, onToggleComplete, onDelete, onUpdateDescription }) => 
     <div className="flex items-center space-x-3 group">
       <button
         onClick={() => onToggleComplete(step.id)}
-        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+        className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
           step.completed
-            ? 'bg-neutral-800 border-neutral-600'
+            ? 'bg-white border-white'
             : 'border-neutral-400 hover:border-white'
         }`}
       >
         {step.completed && (
-          <Check className="w-2.5 h-2.5 text-white" />
+          <Check className="w-2.5 h-2.5 text-black" />
         )}
       </button>
       

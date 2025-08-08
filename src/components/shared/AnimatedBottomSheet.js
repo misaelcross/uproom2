@@ -338,17 +338,14 @@ const AnimatedBottomSheet = ({
                   </button>
                   <div className="relative">
                     <img
-                      src={selectedNudge.sender.avatar}
-                      alt={selectedNudge.sender.name}
+                      src={selectedNudge.senderAvatar}
+                      alt={selectedNudge.senderName}
                       className="w-8 h-8 rounded-full"
                     />
-                    <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-800 ${
-                      selectedNudge.sender.status === 'online' ? 'bg-green-500' : 
-                      selectedNudge.sender.status === 'away' ? 'bg-orange-500' : 'bg-gray-500'
-                    }`} />
+                    <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-800 bg-green-500`} />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-white">{selectedNudge.sender.name}</h2>
+                    <h2 className="text-lg font-semibold text-white">{selectedNudge.senderName}</h2>
                     <p className="text-neutral-400 text-sm">{selectedNudge.timestamp}</p>
                   </div>
                 </>
@@ -438,7 +435,7 @@ const AnimatedBottomSheet = ({
                               className="flex items-center space-x-3 p-3 rounded-lg border border-neutral-700 hover:bg-neutral-700 transition-colors cursor-pointer"
                             >
                               <FileText className="h-5 w-5 text-neutral-400" />
-                              <span className="text-white text-sm flex-1">{attachment}</span>
+                              <span className="text-white text-sm flex-1">{attachment.name || attachment}</span>
                             </div>
                           ))}
                         </div>
