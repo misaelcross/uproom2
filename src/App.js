@@ -10,6 +10,7 @@ import RoleGroupDetails from './components/dashboard/RoleGroupDetails';
 import UserGroupsView from './components/dashboard/UserGroupsView';
 import UserGroupDetails from './components/dashboard/UserGroupDetails';
 import AnimatedBottomSheet from './components/shared/AnimatedBottomSheet';
+import SecondaryBottomSheet from './components/shared/SecondaryBottomSheet';
 import NudgePage from './components/nudges/NudgePage';
 import TodosPage from './components/todos/TodosPage';
 import Sidebar from './components/shared/Sidebar';
@@ -18,6 +19,7 @@ import TopTabs from './components/dashboard/TopTabs';
 import LiveNotifications from './components/shared/LiveNotifications';
 import ActionBar from './components/dashboard/ActionBar';
 import { usersData } from './data/usersData';
+import useNudgeStore from './store/nudgeStore';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard'); // 'dashboard' ou 'nudges'
@@ -35,6 +37,9 @@ function App() {
   const [activeTab, setActiveTab] = useState('send');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
+
+  // Hook do store de nudges
+  const { simulateNewNudge } = useNudgeStore();
 
   // Função para reverter sidebar direita para visualização padrão
   const resetRightSidebar = () => {
@@ -211,6 +216,8 @@ function App() {
     setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+
+
   // Se estiver na página de nudges, renderizar NudgePage
   if (currentPage === 'nudges') {
     return <NudgePage onNavigate={setCurrentPage} />;
@@ -320,7 +327,7 @@ function App() {
         </div>
       </div>
 
-      {/* Animated Bottom Sheet */}
+      {/* Animated Bottom Sheet - Principal (Direita) */}
       <AnimatedBottomSheet
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -331,6 +338,9 @@ function App() {
         toggleUserSelection={toggleUserSelection}
         removeSelectedUser={removeSelectedUser}
       />
+
+      {/* Secondary Bottom Sheet - Secundário (Esquerda) */}
+      <SecondaryBottomSheet />
     </div>
   );
 }
