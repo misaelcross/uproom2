@@ -4,14 +4,15 @@ import {
   Filter,
   Users,
   UserPlus,
-  Check
+  Check,
+  ChevronDown
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
 const ActionBar = ({ onUserSelect, onSortChange }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Newest');
+  const [selectedSort, setSelectedSort] = useState('Sort');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
@@ -64,6 +65,17 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
   };
 
   const handleSortSelect = (option) => {
+    // Se clicar no primeiro item (Newest) e ele já estiver selecionado, resetar para "Sort"
+    if (option === 'Newest' && selectedSort === 'Newest') {
+      setSelectedSort('Sort');
+      setSortDropdownOpen(false);
+      console.log('Sort reset to default');
+      if (onSortChange) {
+        onSortChange('Sort');
+      }
+      return;
+    }
+    
     setSelectedSort(option);
     setSortDropdownOpen(false);
     console.log('Sort selected:', option);
@@ -117,10 +129,19 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
       <div className="relative" ref={sortDropdownRef}>
         <button 
           onClick={handleSortClick}
-          className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
+          className={`flex items-center space-x-2 px-4 py-2 border border-neutral-600 rounded-lg transition-colors ${
+            selectedSort !== 'Sort' 
+              ? 'bg-neutral-800 hover:bg-neutral-700' 
+              : 'bg-transparent hover:bg-neutral-700'
+          }`}
         >
           <Filter className="h-4 w-4 text-neutral-300" />
-          <span className="text-neutral-300 text-sm font-medium">Sort</span>
+          <span className="text-neutral-300 text-sm font-medium">
+            {selectedSort === 'Sort' ? 'Sort' : selectedSort}
+          </span>
+          {selectedSort !== 'Sort' && (
+            <ChevronDown className="h-4 w-4 text-neutral-300" />
+          )}
         </button>
         
         {/* Dropdown Menu */}

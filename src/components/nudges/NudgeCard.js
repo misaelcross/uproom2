@@ -168,14 +168,28 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
 
       {/* Mensagem com notificação - truncada em 2 linhas */}
       <div className="mb-3 flex items-start gap-3">
-        <p className="text-white text-sm leading-relaxed flex-1">
-          {truncateMessage(nudge.message, 2)}
-        </p>
-        {!nudge.isRead && (
-          <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-white text-xs font-bold leading-none">1</span>
-          </div>
-        )}
+        {/* Message */}
+        <div className="flex items-start justify-between gap-3">
+          <p 
+            className="text-neutral-300 text-sm leading-relaxed line-clamp-2 flex-1 min-w-0"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              wordBreak: 'break-word'
+            }}
+          >
+            {truncateMessage(nudge.message || nudge.fullMessage)}
+          </p>
+          
+          {/* Notification Badge - Fixed width to prevent text reflow */}
+          {!nudge.isRead && (
+            <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center ml-2">
+              <span className="text-white text-xs font-medium">1</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* High priority badge */}

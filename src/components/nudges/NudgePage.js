@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import NudgeCard from './NudgeCard';
-import NudgeDetails from './NudgeDetails';
-import CreateNudgeView from './CreateNudgeView';
-import Sidebar from '../shared/Sidebar';
+import React, { useState, useEffect, useRef } from 'react';
+import useNudgeStore from '../../store/nudgeStore';
+import { usersData } from '../../data/usersData';
 import FirstColumn from '../shared/FirstColumn';
+import Sidebar from '../shared/Sidebar';
 import TopTabsNudges from './TopTabsNudges';
 import LiveNotifications from '../shared/LiveNotifications';
 import ActionBarNudges from './ActionBarNudges';
+import NudgeCard from './NudgeCard';
+import DraftCard from './DraftCard';
+import NudgeDetails from './NudgeDetails';
+import DraftDetails from './DraftDetails';
+import ArchivedNudgeCard from './ArchivedNudgeCard';
+import ArchivedNudgeDetails from './ArchivedNudgeDetails';
 import UserDetails from '../dashboard/UserDetails';
-import GroupNudgesView from './GroupNudgesView';
-import { usersData } from '../../data/usersData';
-import useNudgeStore from '../../store/nudgeStore';
+import CreateNudgeView from './CreateNudgeView';
+import EmptyState from './EmptyState';
 
 // Dados fake dos nudges
 const nudgesData = [
@@ -173,6 +177,7 @@ function NudgePage({ onNavigate }) {
   // Estado global dos nudges
   const { 
     nudges, 
+    drafts,
     selectedNudgeId, 
     setSelectedNudge, 
     markAsRead,
@@ -189,6 +194,7 @@ function NudgePage({ onNavigate }) {
   const [topTabActive, setTopTabActive] = useState('all');
   const [isCreatingNudge, setIsCreatingNudge] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedArchivedGroup, setSelectedArchivedGroup] = useState(null);
   const [previousView, setPreviousView] = useState(null); // Para controlar o estado anterior
 
   // Função para gerar ícones aleatórios
@@ -248,6 +254,10 @@ function NudgePage({ onNavigate }) {
   // Função para lidar com mudança de ordenação
   const handleSortChange = (sortOption) => {
     setSortBy(sortOption);
+    setSelectedNudge(null);
+    setSelectedUser(null);
+    setSelectedArchivedGroup(null);
+    setIsCreatingNudge(false);
   };
 
   // Função para selecionar usuário da busca
@@ -454,6 +464,30 @@ function NudgePage({ onNavigate }) {
     console.log('Toggled priority for nudge:', nudgeId);
   };
 
+  // Quick Actions for EmptyState
+  const handleCreateNudgeFromEmpty = () => {
+    setIsCreatingNudge(true);
+    setSelectedNudge(null);
+    setSelectedUser(null);
+    setSelectedArchivedGroup(null);
+  };
+
+  const handleCreatePoll = () => {
+    // For now, redirect to create nudge with poll type
+    setIsCreatingNudge(true);
+    setSelectedNudge(null);
+    setSelectedUser(null);
+    setSelectedArchivedGroup(null);
+    console.log('Creating poll...');
+  };
+
+  const handleViewArchivedFromEmpty = () => {
+    setSortBy('Archived');
+    setSelectedNudge(null);
+    setSelectedUser(null);
+    setSelectedArchivedGroup(null);
+  };
+
   // Função para filtrar nudges por aba
   const getFilteredNudges = () => {
     switch (topTabActive) {
@@ -469,8 +503,63 @@ function NudgePage({ onNavigate }) {
     }
   };
 
+  // Function to group archived nudges by user
+  const getArchivedNudgeGroups = () => {
+    const archivedNudges = allNudges.filter(nudge => nudge.isArchived);
+    const groupedByUser = {};
+    
+    archivedNudges.forEach(nudge => {
+      const userId = nudge.senderId;
+      if (!groupedByUser[userId]) {
+        // Encontrar dados do usuário
+        const userData = usersWithIcons.find(u => u.id === userId) || {
+          id: userId,
+          name: nudge.senderName,
+          title: nudge.senderTitle,
+          avatar: nudge.senderAvatar
+        };
+        
+        groupedByUser[userId] = {
+          user: userData,
+          nudges: [],
+          totalCount: 0,
+          lastArchivedAt: null
+        };
+      }
+      
+      groupedByUser[userId].nudges.push(nudge);
+      groupedByUser[userId].totalCount++;
+      
+      // Atualizar último arquivamento
+      const archivedAt = new Date(nudge.archivedAt);
+      if (!groupedByUser[userId].lastArchivedAt || archivedAt > new Date(groupedByUser[userId].lastArchivedAt)) {
+        groupedByUser[userId].lastArchivedAt = nudge.archivedAt;
+      }
+    });
+    
+    // Ordenar nudges dentro de cada grupo por data de arquivamento (mais recente primeiro)
+    Object.values(groupedByUser).forEach(group => {
+      group.nudges.sort((a, b) => new Date(b.archivedAt) - new Date(a.archivedAt));
+    });
+    
+    // Converter para array e ordenar por último arquivamento
+    return Object.values(groupedByUser).sort((a, b) => 
+      new Date(b.lastArchivedAt) - new Date(a.lastArchivedAt)
+    );
+  };
+
   // Função para ordenar nudges
   const getSortedNudges = () => {
+    // Se "Drafts" estiver selecionado, retornar apenas os rascunhos
+    if (sortBy === 'Drafts') {
+      return [...drafts].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    }
+    
+    // If "Archived" is selected, return archived nudge groups
+    if (sortBy === 'Archived') {
+      return getArchivedNudgeGroups();
+    }
+    
     let sortedNudges = [...getFilteredNudges()];
     
     // Primeiro, aplicar a ordenação escolhida pelo usuário
@@ -553,22 +642,38 @@ function NudgePage({ onNavigate }) {
             <div className="flex-1 overflow-y-auto">
               <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
                 {getSortedNudges().map((nudge) => (
-                  <NudgeCard 
-                    key={nudge.id} 
-                    nudge={nudge}
-                    isSelected={selectedNudge?.id === nudge.id}
-                    onClick={() => handleNudgeSelect(nudge)}
-                    onCreateTodo={handleCreateTodoFromNudge}
-                    onMarkComplete={handleMarkNudgeComplete}
-                    onReply={handleReplyToNudge}
-                    onSnooze={handleSnoozeNudge}
-                    onArchive={handleArchiveNudge}
-                    onMarkRead={handleMarkRead}
-                    onMarkUnread={handleMarkAsUnread}
-                    onPinNudge={handlePinNudge}
-                    onMarkResolved={handleMarkAsResolved}
-                    onMarkPriority={handleMarkPriority}
-                  />
+                  sortBy === 'Drafts' ? (
+                    <DraftCard 
+                      key={nudge.id} 
+                      draft={nudge}
+                      isSelected={selectedNudge?.id === nudge.id}
+                      onClick={() => handleNudgeSelect(nudge)}
+                    />
+                  ) : sortBy === 'Archived' ? (
+                    <ArchivedNudgeCard
+                      key={nudge.user.id}
+                      userGroup={nudge}
+                      onClick={() => setSelectedArchivedGroup(nudge)}
+                      isSelected={selectedArchivedGroup?.user?.id === nudge.user.id}
+                    />
+                  ) : (
+                    <NudgeCard 
+                      key={nudge.id} 
+                      nudge={nudge}
+                      isSelected={selectedNudge?.id === nudge.id}
+                      onClick={() => handleNudgeSelect(nudge)}
+                      onCreateTodo={handleCreateTodoFromNudge}
+                      onMarkComplete={handleMarkNudgeComplete}
+                      onReply={handleReplyToNudge}
+                      onSnooze={handleSnoozeNudge}
+                      onArchive={handleArchiveNudge}
+                      onMarkRead={handleMarkRead}
+                      onMarkUnread={handleMarkAsUnread}
+                      onPinNudge={handlePinNudge}
+                      onMarkResolved={handleMarkAsResolved}
+                      onMarkPriority={handleMarkPriority}
+                    />
+                  )
                 ))}
               </div>
             </div>
@@ -582,20 +687,45 @@ function NudgePage({ onNavigate }) {
                 />
               ) : isCreatingNudge ? (
                 <CreateNudgeView onCancel={handleCancelCreateNudge} />
-              ) : selectedNudge ? (
-                <NudgeDetails 
-                  nudge={selectedNudge}
-                  onUserClick={handleUserClick}
-                  onUpdate={(updatedNudge) => {
-                    setLocalNudges(prev => prev.map(n => 
-                      n.id === updatedNudge.id ? updatedNudge : n
-                    ));
+              ) : selectedArchivedGroup ? (
+                <ArchivedNudgeDetails
+                  userGroup={selectedArchivedGroup}
+                  onBack={() => setSelectedArchivedGroup(null)}
+                  onUnarchive={(nudgeId) => {
+                    // Lógica para desarquivar nudge
+                    console.log('Unarchiving nudge:', nudgeId);
+                    // Aqui você implementaria a lógica real de desarquivamento
                   }}
                 />
+              ) : selectedNudge ? (
+                // Verificar se é um draft ou nudge normal
+                sortBy === 'Drafts' ? (
+                  <DraftDetails 
+                    draft={selectedNudge}
+                    onBack={() => setSelectedNudge(null)}
+                    onEdit={() => {
+                      // Implementar lógica de edição se necessário
+                      console.log('Edit draft:', selectedNudge);
+                    }}
+                  />
+                ) : (
+                  <NudgeDetails 
+                    nudge={selectedNudge}
+                    onUserClick={handleUserClick}
+                    onUpdate={(updatedNudge) => {
+                      setLocalNudges(prev => prev.map(n => 
+                        n.id === updatedNudge.id ? updatedNudge : n
+                      ));
+                    }}
+                  />
+                )
               ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  Selecione um nudge para ver os detalhes
-                </div>
+                <EmptyState
+                  onCreateNudge={handleCreateNudgeFromEmpty}
+                  onCreatePoll={handleCreatePoll}
+                  onViewArchived={handleViewArchivedFromEmpty}
+                  sortBy={sortBy}
+                />
               )}
             </div>
           </div>
