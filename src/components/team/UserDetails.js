@@ -10,15 +10,9 @@ import {
   Clock, 
   Shield, 
   User,
-  Settings,
-  Activity,
   CheckCircle,
   XCircle,
   AlertCircle,
-  Key,
-  UserCheck,
-  UserX,
-  MoreHorizontal,
   Check
 } from 'lucide-react';
 
@@ -27,9 +21,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: User },
-    { id: 'permissions', label: 'Permissions', icon: Shield },
-    { id: 'activity', label: 'Activity', icon: Activity },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'permissions', label: 'Permissions', icon: Shield }
   ];
 
   const getStatusIcon = (status) => {
@@ -147,9 +139,6 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
             className="flex items-center justify-center px-3 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-white text-sm transition-colors"
           >
             <Trash2 className="h-4 w-4" />
-          </button>
-          <button className="flex items-center justify-center px-3 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-white text-sm transition-colors">
-            <MoreHorizontal className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -291,24 +280,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
           </div>
         )}
 
-        {activeTab === 'activity' && (
-          <div className="space-y-4">
-            <div className="border border-neutral-700 rounded-lg p-4">
-              <h4 className="text-neutral-400 text-sm font-medium pb-3 mb-3 border-b border-neutral-700">Recent Activity</h4>
-              <div className="space-y-3">
-                {mockActivity.map((activity, index) => (
-                  <div key={index} className="bg-neutral-800 rounded-lg p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-white">{activity.action}</span>
-                      <span className="text-xs text-neutral-400">{activity.timestamp}</span>
-                    </div>
-                    <div className="text-xs text-neutral-400">IP: {activity.ip}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+
 
         {activeTab === 'settings' && (
           <div className="space-y-4">
