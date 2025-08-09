@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, 
   Briefcase, 
@@ -15,7 +15,8 @@ import {
   X,
   Check,
   Clock,
-  Users
+  Users,
+  MoreVertical
 } from 'lucide-react';
 
 const GroupsView = ({ 
@@ -77,6 +78,29 @@ const GroupsView = ({
     setEditGroupName('');
   };
 
+  // State for dropdown menu
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = (groupId, e) => {
+    e.stopPropagation();
+    setOpenDropdown(openDropdown === groupId ? null : groupId);
+  };
+
   if (showCreateGroup) {
     return (
       <div className="p-6 flex-1">
@@ -118,13 +142,13 @@ const GroupsView = ({
           <div className="flex gap-3 pt-4">
             <button
               onClick={() => setShowCreateGroup(false)}
-              className="flex-1 px-4 py-2 border border-neutral-600 rounded-lg text-white hover:bg-neutral-700 transition-colors"
+              className="flex-1 px-4 py-2 border border-neutral-600 rounded-lg text-white hover:bg-neutral-800 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleCreateGroup}
-              className="flex-1 px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 border border-neutral-600 transition-colors"
+              className="flex-1 px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-800 border border-neutral-600 transition-colors"
             >
               Create
             </button>
@@ -141,7 +165,7 @@ const GroupsView = ({
         {groups.map(group => (
           <div key={group.id}>
             <div 
-              className={`flex items-center justify-between p-3 border border-neutral-700 rounded-lg hover:bg-neutral-700 transition-colors cursor-pointer ${
+              className={`flex items-center justify-between p-3 border border-neutral-700 rounded-lg hover:bg-neutral-800 transition-colors cursor-pointer ${
                 selectedGroup?.id === group.id ? 'bg-neutral-800' : ''
               }`}
               onClick={() => onSelectGroup(group)}
@@ -189,39 +213,53 @@ const GroupsView = ({
                     </button>
                   </>
                 ) : (
-                  // Counter with sidebar design - square background
-                  <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
-                    {group.count}
-                  </span>
+                  <>
+                    {/* Counter with sidebar design - square background */}
+                    <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                      {group.count}
+                    </span>
+                    
+                    {/* Three-dot menu */}
+                    <div className="relative" ref={openDropdown === group.id ? dropdownRef : null}>
+                      <button
+                        onClick={(e) => toggleDropdown(group.id, e)}
+                        className="text-neutral-400 hover:text-white transition-colors p-1 hover:bg-neutral-600 rounded"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                      
+                      {/* Dropdown menu */}
+                      {openDropdown === group.id && (
+                        <div className="absolute right-0 top-8 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-10 min-w-[120px]">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              startEdit(group);
+                              setOpenDropdown(null);
+                            }}
+                            className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm first:rounded-t-lg"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDeleteGroup(group.id);
+                              setOpenDropdown(null);
+                            }}
+                            className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-neutral-700 transition-colors text-sm last:rounded-b-lg"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             </div>
-            
-            {/* Accordion-style buttons - only show when group is selected and not editing */}
-            {selectedGroup?.id === group.id && editingGroup !== group.id && (
-              <div className="mt-2 ml-7 space-y-1">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    startEdit(group);
-                  }}
-                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded transition-colors text-sm"
-                >
-                  <Edit3 className="w-4 h-4" />
-                  <span>Edit</span>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteGroup(group.id);
-                  }}
-                  className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-neutral-700 rounded transition-colors text-sm"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>Delete</span>
-                </button>
-              </div>
-            )}
           </div>
         ))}
         

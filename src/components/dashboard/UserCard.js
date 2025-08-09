@@ -26,7 +26,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
     switch (availability) {
       case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10' };
       case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
-      case 'Out for Lunch': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };
+      case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };
       case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10' };
       case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10' };
       case 'Away': return { text: 'text-orange-400', bg: 'bg-orange-500/10' };
@@ -39,7 +39,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
     switch (availability) {
       case 'Available': return 'bg-green-500';
       case 'In meeting': return 'bg-blue-500';
-      case 'Out for Lunch': return 'bg-yellow-500';
+      case 'Break': return 'bg-yellow-500';
       case 'Focus': return 'bg-purple-500';
       case 'Emergency': return 'bg-red-500';
       case 'Away': return 'bg-orange-500';

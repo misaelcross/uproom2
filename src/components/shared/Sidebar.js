@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Calendar, 
   Users, 
@@ -8,17 +8,36 @@ import {
   ChevronDown,
   Check,
   LayoutDashboard,
-  Zap,
   Bell,
   BarChart3,
-  Clock,
-  Edit,
+  Zap,
+  Plus,
   Trash2,
-  ArrowUpDown
+  Clock,
+  Filter,
+  Edit,
+  MessageSquare,
+  CheckSquare,
+  Settings,
+  Building2,
+  UserPlus,
+  BellOff,
+  ChevronRight,
+  User,
+  RefreshCw,
+  LogOut,
+  Activity
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
-const Sidebar = ({ currentPage, onNavigate }) => {
+const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelContent }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [pauseNotificationsSubmenu, setPauseNotificationsSubmenu] = useState(false);
+  const dropdownRef = useRef(null);
+  const avatarButtonRef = useRef(null);
+  
+  // Assumindo que o primeiro usuário é o usuário atual
+  const currentUser = usersData[0];
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [currentStatus, setCurrentStatus] = useState('Available');
@@ -57,16 +76,46 @@ const Sidebar = ({ currentPage, onNavigate }) => {
   const [selectedStatusOption, setSelectedStatusOption] = useState(null);
   const [showStatusError, setShowStatusError] = useState(false);
 
+  // Pause notifications options
+  const pauseOptions = [
+    { label: '30 minutes', value: '30min' },
+    { label: '1 hour', value: '1h' },
+    { label: '2 hours', value: '2h' },
+    { label: 'Until tomorrow', value: 'tomorrow' },
+    { label: 'Until next week', value: 'nextweek' }
+  ];
+
   // Status options
   const statusOptions = [
     { name: 'Available', color: 'bg-green-500', dotColor: 'bg-green-500' },
     { name: 'Focus', color: 'bg-purple-500', dotColor: 'bg-purple-500' },
-    { name: 'In Meeting', color: 'bg-blue-500', dotColor: 'bg-blue-500' },
+    { name: 'In meeting', color: 'bg-blue-500', dotColor: 'bg-blue-500' },
     { name: 'Emergency', color: 'bg-red-500', dotColor: 'bg-red-500' },
-    { name: 'Out for Lunch', color: 'bg-yellow-500', dotColor: 'bg-yellow-500' },
+    { name: 'Break', color: 'bg-yellow-500', dotColor: 'bg-yellow-500' },
     { name: 'Away', color: 'bg-orange-500', dotColor: 'bg-orange-500' },
     { name: 'Offline', color: 'bg-gray-500', dotColor: 'bg-gray-500' }
   ];
+
+  // useEffect para fechar dropdown quando clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Se clicou no botão do avatar, não fazer nada (deixar o onClick do botão lidar)
+      if (avatarButtonRef.current && avatarButtonRef.current.contains(event.target)) {
+        return;
+      }
+      
+      // Se clicou fora do dropdown, fechar
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+        setPauseNotificationsSubmenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Timer do Pomodoro
   useEffect(() => {
@@ -77,7 +126,7 @@ const Sidebar = ({ currentPage, onNavigate }) => {
       }, 1000);
     } else if (pomodoroTime === 0) {
       setPomodoroActive(false);
-      // Próximo pomodoro
+      // Proximo pomodoro
       if (currentPomodoro < 4) {
         setCurrentPomodoro(prev => prev + 1);
         setPomodoroTime(25 * 60);
@@ -86,25 +135,31 @@ const Sidebar = ({ currentPage, onNavigate }) => {
     return () => clearInterval(interval);
   }, [pomodoroActive, pomodoroTime, currentPomodoro]);
 
+  const handlePauseNotifications = (option) => {
+    console.log('Pause notifications for:', option.label);
+    setDropdownOpen(false);
+    setPauseNotificationsSubmenu(false);
+  };
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Função para calcular o progresso de cada barra do Pomodoro
+  // Funcao para calcular o progresso de cada barra do Pomodoro
   const getPomodoroProgress = (barNumber) => {
     const totalTime = 25 * 60; // 25 minutos em segundos
     
     if (barNumber < currentPomodoro) {
-      // Barras anteriores estão completas
+      // Barras anteriores estao completas
       return 100;
     } else if (barNumber === currentPomodoro) {
       // Barra atual mostra o progresso
       const elapsed = totalTime - pomodoroTime;
       return (elapsed / totalTime) * 100;
     } else {
-      // Barras futuras estão vazias
+      // Barras futuras estao vazias
       return 0;
     }
   };
@@ -124,12 +179,12 @@ const Sidebar = ({ currentPage, onNavigate }) => {
     setNewReminderText('');
   };
 
-  // Função para obter avatar do usuário baseado na menção
+  // Funcao para obter avatar do usuario baseado na mencao
   const getUserAvatarFromMention = (mention) => {
-    // Remove o @ do início da menção
-    const username = mention.replace('@', '').toLowerCase();
+    // Remove o @ do inicio da mencao
+    const username = mention.replace("@", "").toLowerCase();
     
-    // Procura o usuário baseado no nome (primeira parte do nome)
+    // Procura o usuario baseado no nome (primeira parte do nome)
     const user = usersData.find(user => 
       user.name.toLowerCase().split(' ')[0] === username ||
       user.name.toLowerCase().includes(username)
@@ -170,22 +225,20 @@ const Sidebar = ({ currentPage, onNavigate }) => {
         return sortedReminders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       case 'oldest':
         return sortedReminders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      case 'priority':
-        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
-        return sortedReminders.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+      case 'dueDate':
+        return sortedReminders.sort((a, b) => {
+          // Reminders without due date go to the end
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate) - new Date(b.dueDate);
+        });
       default:
         return sortedReminders;
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high': return 'bg-red-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-green-500';
-      default: return 'bg-neutral-500';
-    }
-  };
+
 
   const startPomodoro = () => {
     setPomodoroActive(true);
@@ -225,12 +278,12 @@ const Sidebar = ({ currentPage, onNavigate }) => {
 
   const handleStatusClick = () => {
     if (statusDropdownOpen) {
-      // Se está fechando o dropdown, resetar a seleção
+      // Se esta fechando o dropdown, resetar a selecao
       setSelectedStatusOption(null);
       setStatusMessage('');
       setShowStatusError(false);
     } else {
-      // Se está abrindo o dropdown, definir o status atual como selecionado
+      // Se esta abrindo o dropdown, definir o status atual como selecionado
       const currentStatusObj = statusOptions.find(s => s.name === currentStatus);
       setSelectedStatusOption(currentStatusObj);
     }
@@ -238,16 +291,15 @@ const Sidebar = ({ currentPage, onNavigate }) => {
   };
 
   const getToggleBackgroundColor = () => {
-    if (isAvailable) return 'bg-green-500';
-    
     switch (currentStatus) {
-      case 'In Meeting': return 'bg-blue-500';
+      case 'Available': return 'bg-green-500';
       case 'Focus': return 'bg-purple-500';
+      case 'In meeting': return 'bg-blue-500';
       case 'Emergency': return 'bg-red-500';
-      case 'Out for Lunch': return 'bg-yellow-500';
+      case 'Break': return 'bg-yellow-500';
       case 'Away': return 'bg-orange-500';
       case 'Offline': return 'bg-gray-500';
-      default: return 'bg-neutral-600';
+      default: return 'bg-neutral-500';
     }
   };
 
@@ -256,31 +308,116 @@ const Sidebar = ({ currentPage, onNavigate }) => {
     { icon: Check, label: 'To-dos', count: 2 },
     { icon: Calendar, label: 'Schedule', count: null },
     { icon: Zap, label: 'Nudge', count: null },
-    { icon: Bell, label: 'Notifications', count: 5 },
     { icon: Users, label: 'Team', count: null },
-    { icon: BarChart3, label: 'Activity', count: null },
-    { icon: Clock, label: 'Reports', count: null }
+    { icon: Activity, label: 'Pulse', count: null }
   ];
 
   const uncompletedReminders = reminders.filter(r => !r.completed).length;
 
   return (
-    <div className="w-[300px] h-full flex flex-col overflow-hidden">
-      {/* Header com nome da empresa e dropdown */}
-      <div className="p-2 border-b border-neutral-700">
-        <button 
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="w-full flex items-center justify-between text-white hover:bg-neutral-700 rounded-lg p-2 transition-colors"
-        >
-          <span className="font-medium">Universe Reactive</span>
-          <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
+    <div className="w-[300px] h-full flex flex-col">
+      {/* Header com avatar do usuário e dropdown */}
+      <div className="p-2 border-b border-neutral-700 relative">
+        <div className="flex items-center justify-between">
+          <button 
+            ref={avatarButtonRef}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="flex items-center gap-2 text-white hover:bg-neutral-800 rounded-lg p-2 transition-colors"
+          >
+            <img 
+              src={currentUser.avatar} 
+              alt={currentUser.name}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <span className="font-medium text-sm">{currentUser.name}</span>
+            <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+          
+          <button className="p-2 hover:bg-neutral-700 rounded-lg transition-colors">
+            <Bell className="h-4 w-4 text-neutral-400 hover:text-white" />
+          </button>
+        </div>
         
         {dropdownOpen && (
-          <div className="mt-2 bg-neutral-700 rounded-lg border border-neutral-600 shadow-lg">
+          <div className="absolute top-full left-2 mt-2 w-56 bg-neutral-800 border border-neutral-700 rounded-lg shadow-2xl z-[9999]" ref={dropdownRef}>
             <div className="p-2">
-              <div className="text-sm text-neutral-300 p-2 hover:bg-neutral-600 rounded cursor-pointer">Switch Organization</div>
-              <div className="text-sm text-neutral-300 p-2 hover:bg-neutral-600 rounded cursor-pointer">Organization Settings</div>
+              {/* Seção da empresa */}
+              <div className="flex items-center gap-3 p-2 border-b border-neutral-700 mb-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-semibold text-sm">UR</span>
+                </div>
+                <span className="text-white font-medium">Universe Reactive</span>
+              </div>
+              
+              <button className="w-full text-left text-sm text-white p-2 hover:bg-neutral-700 rounded-lg transition-colors mb-2 flex items-center gap-3">
+                <Plus className="h-4 w-4 text-neutral-400" />
+                Add organization
+              </button>
+              
+              <div className="border-t border-neutral-700 my-2"></div>
+              
+              {/* Pause Notifications */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setPauseNotificationsSubmenu(true)}
+                onMouseLeave={() => setPauseNotificationsSubmenu(false)}
+              >
+                <button className="w-full flex items-center justify-between p-2 hover:bg-neutral-700 rounded-lg transition-colors text-left">
+                  <div className="flex items-center space-x-3">
+                    <BellOff className="h-4 w-4 text-neutral-400" />
+                    <span className="text-sm text-white">Pause notifications</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-neutral-400" />
+                </button>
+                
+                {/* Submenu */}
+                {pauseNotificationsSubmenu && (
+                  <div 
+                    className="absolute left-full top-0 ml-1 w-40 bg-neutral-800 border border-neutral-700 rounded-lg shadow-2xl z-[9999]"
+                    onMouseEnter={() => setPauseNotificationsSubmenu(true)}
+                    onMouseLeave={() => setPauseNotificationsSubmenu(false)}
+                  >
+                    <div className="p-2">
+                      {pauseOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          onClick={() => handlePauseNotifications(option)}
+                          className="w-full text-left p-2 hover:bg-neutral-700 rounded-lg transition-colors"
+                        >
+                          <span className="text-sm text-white">{option.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Profile */}
+              <button className="w-full flex items-center space-x-3 p-2 hover:bg-neutral-700 rounded-lg transition-colors text-left">
+                <User className="h-4 w-4 text-neutral-400" />
+                <span className="text-sm text-white">Profile</span>
+              </button>
+              
+              {/* Change Account */}
+              <button className="w-full flex items-center space-x-3 p-2 hover:bg-neutral-700 rounded-lg transition-colors text-left">
+                <RefreshCw className="h-4 w-4 text-neutral-400" />
+                <span className="text-sm text-white">Change account</span>
+              </button>
+              
+              {/* Divider */}
+              <div className="border-t border-neutral-700 my-2"></div>
+              
+              {/* Settings */}
+              <button className="w-full flex items-center space-x-3 p-2 hover:bg-neutral-700 rounded-lg transition-colors text-left">
+                <Settings className="h-4 w-4 text-neutral-400" />
+                <span className="text-sm text-white">Settings</span>
+              </button>
+              
+              {/* Logout */}
+              <button className="w-full flex items-center space-x-3 p-2 hover:bg-neutral-700 rounded-lg transition-colors text-left">
+                <LogOut className="h-4 w-4 text-neutral-400" />
+                <span className="text-sm text-white">Logout</span>
+              </button>
             </div>
           </div>
         )}
@@ -293,7 +430,9 @@ const Sidebar = ({ currentPage, onNavigate }) => {
             const isActive = (item.label === 'Dashboard' && currentPage === 'dashboard') || 
                            (item.label === 'Nudge' && currentPage === 'nudges') ||
                            (item.label === 'Schedule' && currentPage === 'schedule') ||
-                           (item.label === 'To-dos' && currentPage === 'todos');
+                           (item.label === 'To-dos' && currentPage === 'todos') ||
+                           (item.label === 'Team' && currentPage === 'team') ||
+                           (item.label === 'Pulse' && currentPage === 'pulse');
             
             return (
               <button
@@ -307,6 +446,10 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                     onNavigate('schedule');
                   } else if (item.label === 'To-dos') {
                     onNavigate('todos');
+                  } else if (item.label === 'Team') {
+                    onNavigate('team');
+                  } else if (item.label === 'Pulse') {
+                    onNavigate('pulse');
                   }
                 }}
                 className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-800 ${
@@ -344,10 +487,22 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                     onClick={() => setShowReminderSort(!showReminderSort)}
                     className="p-1 hover:bg-neutral-600 rounded transition-colors"
                   >
-                    <ArrowUpDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                    <Filter className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
                   </button>
                   {showReminderSort && (
                     <div className="absolute right-0 top-6 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 min-w-32">
+                      <button
+                        onClick={() => {
+                          setReminderSortBy('dueDate');
+                          setShowReminderSort(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors ${
+                          reminderSortBy === 'dueDate' ? 'text-white' : 'text-neutral-400'
+                        }`}
+                      >
+                        Due Date
+                      </button>
+
                       <button
                         onClick={() => {
                           setReminderSortBy('recent');
@@ -364,22 +519,11 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                           setReminderSortBy('oldest');
                           setShowReminderSort(false);
                         }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors ${
+                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors rounded-b-lg ${
                           reminderSortBy === 'oldest' ? 'text-white' : 'text-neutral-400'
                         }`}
                       >
                         Oldest
-                      </button>
-                      <button
-                        onClick={() => {
-                          setReminderSortBy('priority');
-                          setShowReminderSort(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-xs hover:bg-neutral-700 transition-colors rounded-b-lg ${
-                          reminderSortBy === 'priority' ? 'text-white' : 'text-neutral-400'
-                        }`}
-                      >
-                        Priority
                       </button>
                     </div>
                   )}
@@ -446,46 +590,28 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                           )}
                         </div>
                         
-                        {/* Priority badge, mentions, and date */}
+                        {/* Mentions and date */}
                         <div className="flex items-center space-x-2 text-xs">
-                          {/* Priority badge */}
-                          <div className="flex items-center space-x-1">
-                            <div className={`w-2 h-2 rounded-full ${getPriorityColor(reminder.priority)}`}></div>
-                            <span className="text-neutral-500 capitalize">{reminder.priority}</span>
-                          </div>
-                          
-                          {/* Mentions */}
+                          {/* Single mention */}
                           {reminder.mentions && reminder.mentions.length > 0 && (
-                            <div className="flex items-center">
-                              <div className="flex space-x-1">
-                                {reminder.mentions.slice(0, 3).map((mention, index) => {
-                                  const avatar = getUserAvatarFromMention(mention);
-                                  return avatar ? (
-                                    <img
-                                      key={index}
-                                      src={avatar}
-                                      alt={mention}
-                                      className="w-3 h-3 rounded-full border border-neutral-600"
-                                    />
-                                  ) : (
-                                    <div
-                                      key={index}
-                                      className="w-3 h-3 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center"
-                                    >
-                                      <span className="text-[6px] text-white font-medium">
-                                        {mention.replace('@', '').charAt(0).toUpperCase()}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
-                                {reminder.mentions.length > 3 && (
-                                  <div className="w-3 h-3 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center">
-                                    <span className="text-[6px] text-white font-medium">
-                                      +{reminder.mentions.length - 3}
+                            <div className="flex items-center space-x-1">
+                              {(() => {
+                                const firstMention = reminder.mentions[0];
+                                const avatar = getUserAvatarFromMention(firstMention);
+                                return avatar ? (
+                                  <img
+                                    src={avatar}
+                                    alt={firstMention}
+                                    className="w-6 h-6 rounded-full border border-neutral-600"
+                                  />
+                                ) : (
+                                  <div className="w-6 h-6 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center">
+                                    <span className="text-[10px] text-white font-medium">
+                                      {firstMention.replace("@", "").charAt(0).toUpperCase()}
                                     </span>
                                   </div>
-                                )}
-                              </div>
+                                );
+                              })()}
                             </div>
                           )}
                           
@@ -616,14 +742,16 @@ const Sidebar = ({ currentPage, onNavigate }) => {
       <div className="border-t border-neutral-700">
         {/* Status Dropdown */}
         <div className="px-4 pt-4 pb-2 relative">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4">
+          <button
+            onClick={handleStatusClick}
+            className="w-full bg-neutral-900 border border-neutral-700 rounded-lg p-4 hover:bg-neutral-800 transition-colors"
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-white">{currentStatus}</span>
               </div>
               
-              <button
-                onClick={handleStatusClick}
+              <div
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${getToggleBackgroundColor()}`}
               >
                 <span
@@ -631,9 +759,9 @@ const Sidebar = ({ currentPage, onNavigate }) => {
                     isAvailable ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
-              </button>
+              </div>
             </div>
-          </div>
+          </button>
 
           {/* Status Dropdown Menu */}
           {statusDropdownOpen && (
