@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Sidebar from '../shared/Sidebar';
-import FirstColumn from '../shared/FirstColumn';
+
 import TodoHeader from './TodoHeader';
 import TodoList from './TodoList';
 import AddTodoInput from './AddTodoInput';
@@ -430,17 +430,12 @@ const TodosPage = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
-        {/* First column: 60px */}
-        <div className="h-full" style={{ width: '60px' }}>
-          <FirstColumn />
-        </div>
-
-        {/* Second column: 300px - Sidebar */}
+        {/* First column: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
           <Sidebar currentPage="todos" onNavigate={onNavigate} />
         </div>
 
-        {/* Third column: flex-1 - Main content */}
+        {/* Second column: flex-1 - Main content */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top Bar with Tabs, Live Notifications and Actions */}
           <div className="flex w-full items-start gap-2 min-w-0">

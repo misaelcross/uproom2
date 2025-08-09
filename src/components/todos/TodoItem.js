@@ -75,13 +75,13 @@ const TodoItem = ({
         {/* Checkbox */}
         <button
           onClick={handleCheckboxClick}
-          className={`w-5 h-5 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
+          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
             todo.completed 
               ? 'bg-white border-white' 
               : 'border-neutral-400 hover:border-white'
           }`}
         >
-          {todo.completed && <Check className="w-3 h-3 text-black" />}
+          {todo.completed && <Check className="w-2.5 h-2.5 text-black" />}
         </button>
 
         {/* Content */}

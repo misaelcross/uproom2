@@ -229,23 +229,25 @@ const Schedule = () => {
                   return (
                     <div
                       key={event.id}
-                      className={`rounded-lg p-4 border ${getStatusColors(event.status)}`}
+                      className={`rounded-lg p-2 border ${getStatusColors(event.status)}`}
                     >
-                      {/* Header with title and time */}
+                      {/* Header with title and status */}
                       <div className="flex items-center justify-between mb-3">
                         <div className="text-xs font-medium text-white">
                           {event.title}
                         </div>
-                        <div className="text-[10px] text-neutral-400">
-                          {event.time}
+                        <div className="flex items-center gap-2">
+                          {event.status && getStatusBadge(event.status)}
                         </div>
                       </div>
 
-                    {/* Bottom section with status, actions, and avatar */}
+                    {/* Bottom section with time, actions, and avatar */}
                     <div className="flex items-center justify-between">
-                      {/* Left side - Status badge */}
+                      {/* Left side - Time */}
                       <div className="flex items-center gap-2">
-                        {event.status && getStatusBadge(event.status)}
+                        <div className="text-sm font-medium text-neutral-300">
+                          {event.time}
+                        </div>
                       </div>
 
                         {/* Right side - Actions and avatar */}

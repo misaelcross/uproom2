@@ -49,8 +49,8 @@ const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
       color: 'text-red-400',
       bgColor: 'bg-red-500/10'
     },
-    'Out for Lunch': {
-      label: 'Out for Lunch',
+    'Break': {
+      label: 'Break',
       icon: Utensils,
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10'

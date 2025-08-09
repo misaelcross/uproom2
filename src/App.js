@@ -13,8 +13,10 @@ import AnimatedBottomSheet from './components/shared/AnimatedBottomSheet';
 import SecondaryBottomSheet from './components/shared/SecondaryBottomSheet';
 import NudgePage from './components/nudges/NudgePage';
 import TodosPage from './components/todos/TodosPage';
+import TeamPage from './components/team/TeamPage';
+import PulsePage from './components/pulse/PulsePage';
 import Sidebar from './components/shared/Sidebar';
-import FirstColumn from './components/shared/FirstColumn';
+
 import TopTabs from './components/dashboard/TopTabs';
 import LiveNotifications from './components/shared/LiveNotifications';
 import ActionBar from './components/dashboard/ActionBar';
@@ -233,21 +235,26 @@ function App() {
     return <TodosPage onNavigate={setCurrentPage} />;
   }
 
+  // Se estiver na página de team, renderizar TeamPage
+  if (currentPage === 'team') {
+    return <TeamPage onNavigate={setCurrentPage} />;
+  }
+
+  // Se estiver na página de pulse, renderizar PulsePage
+  if (currentPage === 'pulse') {
+    return <PulsePage onNavigate={setCurrentPage} />;
+  }
+
   // Renderizar Dashboard (página padrão)
   return (
     <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
-        {/* Primeira coluna: 60px */}
-        <div className="h-full" style={{ width: '60px' }}>
-          <FirstColumn />
-        </div>
-
-        {/* Segunda coluna: 300px - Sidebar */}
+        {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
           <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
         </div>
 
-        {/* Terceira coluna: flex-1 */}
+        {/* Segunda coluna: flex-1 */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Primeira linha: 3 divs retangulares */}
           <div className="flex w-full items-start gap-2 min-w-0">

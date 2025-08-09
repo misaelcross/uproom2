@@ -9,7 +9,7 @@ function classNames(...classes) {
 const UserDetails = ({ user, onBack }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef(null);
-  const tabs = ['Activity', 'Schedule', 'Info'];
+  const tabs = ['Status', 'Schedule', 'Info'];
 
   // Auto-resize textarea
   useEffect(() => {
@@ -215,17 +215,17 @@ const UserDetails = ({ user, onBack }) => {
       {/* Tabs */}
       <div className="px-6 py-4">
         <Tab.Group>
-          <Tab.List className="flex space-x-1 rounded-lg bg-neutral-900 p-1 mb-6">
+          <Tab.List className="flex space-x-1 rounded-lg bg-neutral-800 p-1 mb-6">
             {tabs.map((tab) => (
               <Tab
                 key={tab}
                 className={({ selected }) =>
                   classNames(
-                    'w-full rounded-lg text-sm font-medium leading-5 h-7 flex items-center justify-center',
+                    'w-full rounded-md text-sm font-medium leading-5 h-7 flex items-center justify-center',
                     'focus:outline-none',
                     selected
-                      ? 'bg-neutral-800 text-white shadow'
-                      : 'text-neutral-400 hover:bg-white/[0.12] hover:text-white'
+                      ? 'bg-neutral-700 text-white shadow'
+                      : 'text-neutral-400 hover:bg-neutral-700/50 hover:text-white'
                   )
                 }
               >
@@ -235,55 +235,105 @@ const UserDetails = ({ user, onBack }) => {
           </Tab.List>
         <Tab.Panels>
           <Tab.Panel className="space-y-4">
-            {/* Activity Content */}
+            {/* STATUS Content */}
             <div className="space-y-4">
-              <div className="bg-neutral-900 rounded-lg p-4">
-                {/* Primeira linha: Ícone, Título e Duração */}
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 bg-neutral-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Eye className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-white font-medium">Working on {user.skills && user.skills[0] ? user.skills[0] : 'current'} project</h4>
-                    <p className="text-neutral-400 text-sm">2:30 PM - 5:00 PM</p>
-                  </div>
-                </div>
-                {/* Segunda linha: Descrição, Timestamp e Status alinhados ao ícone */}
-                <div className="ml-13">
-                  <p className="text-neutral-400 text-sm mb-2">
-                    Currently focused on {user.bio}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-neutral-400">
-                    <span>Started 30m</span>
-                    <span>•</span>
-                    <span className="text-neutral-400">In Progress</span>
-                  </div>
-                </div>
-              </div>
+              {(() => {
+                // Helper function to get status colors based on user availability
+                const getStatusColors = (status) => {
+                  switch(status) {
+                    case 'Focus':
+                      return 'bg-purple-500/10 border-purple-500/20';
+                    case 'Available':
+                      return 'bg-green-500/10 border-green-500/20';
+                    case 'In meeting':
+                      return 'bg-blue-500/10 border-blue-500/20';
+                    case 'Break':
+                      return 'bg-orange-500/10 border-orange-500/20';
+                    case 'Emergency':
+                      return 'bg-red-500/10 border-red-500/20';
+                    case 'Away':
+                      return 'bg-yellow-500/10 border-yellow-500/20';
+                    case 'Offline':
+                      return 'bg-gray-500/10 border-gray-500/20';
+                    default:
+                      return 'bg-neutral-500/10 border-neutral-500/20';
+                  }
+                };
 
-              <div className="bg-transparent border border-neutral-700 rounded-lg p-4">
-                {/* Primeira linha: Ícone, Título e Duração */}
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 border border-neutral-700 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5 text-purple-400" />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-white font-medium">Team Meeting - {user.department}</h4>
-                    <p className="text-neutral-400 text-sm">10:00 AM - 11:00 AM</p>
-                  </div>
-                </div>
-                {/* Segunda linha: Descrição, Timestamp e Status alinhados ao ícone */}
-                <div className="ml-13">
-                  <p className="text-neutral-400 text-sm mb-2">
-                    Weekly sync with the {user.department} team to discuss ongoing projects and priorities.
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-neutral-400">
-                    <span>3h</span>
-                    <span>•</span>
-                    <span className="text-neutral-400">Completed</span>
-                  </div>
-                </div>
-              </div>
+                // Helper function to get icon colors based on user availability
+                const getIconColors = (status) => {
+                  switch(status) {
+                    case 'Focus':
+                      return 'bg-purple-500/20 text-purple-400';
+                    case 'Available':
+                      return 'bg-green-500/20 text-green-400';
+                    case 'In meeting':
+                      return 'bg-blue-500/20 text-blue-400';
+                    case 'Break':
+                      return 'bg-orange-500/20 text-orange-400';
+                    case 'Emergency':
+                      return 'bg-red-500/20 text-red-400';
+                    case 'Away':
+                      return 'bg-yellow-500/20 text-yellow-400';
+                    case 'Offline':
+                      return 'bg-gray-500/20 text-gray-400';
+                    default:
+                      return 'bg-neutral-500/20 text-neutral-400';
+                  }
+                };
+
+                return (
+                  <>
+                    <div className={`rounded-lg p-4 border ${getStatusColors(user.availability)}`}>
+                      {/* Primeira linha: Ícone, Título e Duração */}
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconColors(user.availability)}`}>
+                          <Eye className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-white font-medium">Working on {user.skills && user.skills[0] ? user.skills[0] : 'current'} project</h4>
+                          <p className="text-neutral-400 text-sm">2:30 PM - 5:00 PM</p>
+                        </div>
+                      </div>
+                      {/* Segunda linha: Descrição e Timestamp alinhados ao ícone */}
+                      <div className="ml-13">
+                        <p className="text-neutral-400 text-sm mb-2">
+                          Currently focused on {user.bio}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-neutral-400">
+                          <span>Started 30m</span>
+                          <span>•</span>
+                          <span className="text-neutral-400">In Progress</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={`rounded-lg p-4 border ${getStatusColors('In meeting')}`}>
+                      {/* Primeira linha: Ícone, Título e Duração */}
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconColors('In meeting')}`}>
+                          <Users className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-white font-medium">Team Meeting - {user.department}</h4>
+                          <p className="text-neutral-400 text-sm">10:00 AM - 11:00 AM</p>
+                        </div>
+                      </div>
+                      {/* Segunda linha: Descrição e Timestamp alinhados ao ícone */}
+                      <div className="ml-13">
+                        <p className="text-neutral-400 text-sm mb-2">
+                          Weekly sync with the {user.department} team to discuss ongoing projects and priorities.
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-neutral-400">
+                          <span>3h</span>
+                          <span>•</span>
+                          <span className="text-neutral-400">Completed</span>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </Tab.Panel>
           <Tab.Panel>

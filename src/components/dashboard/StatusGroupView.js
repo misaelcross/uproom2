@@ -48,8 +48,8 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
       bgColor: 'bg-red-500/10',
       borderColor: 'border-red-500/20'
     },
-    'Out for Lunch': {
-      label: 'Out for Lunch',
+    'Break': {
+      label: 'Break',
       color: 'bg-yellow-500',
       textColor: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10',
@@ -70,7 +70,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
   };
 
   // Definir ordem específica dos status
-  const statusOrder = ['Available', 'Focus', 'In meeting', 'Emergency', 'Out for Lunch', 'Away', 'Offline'];
+  const statusOrder = ['Available', 'Focus', 'In meeting', 'Emergency', 'Break', 'Away', 'Offline'];
 
   // Ordenar os grupos de acordo com a ordem definida
   const sortedGroupEntries = statusOrder
@@ -99,7 +99,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
               </div>
               <div className={`px-2 py-1 rounded text-xs font-medium ${config.textColor} ${config.bgColor}`}>
                 {status === 'In meeting' ? 'In meeting' : 
-                 status === 'Out for Lunch' ? 'Out for Lunch' :
+                 status === 'Break' ? 'Break' :
                  status === 'Focus' ? 'Focus' :
                  status === 'Emergency' ? 'Emergency' :
                  status === 'Away' ? 'Away' :

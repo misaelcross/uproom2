@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useNudgeStore from '../../store/nudgeStore';
 import { usersData } from '../../data/usersData';
-import FirstColumn from '../shared/FirstColumn';
+
 import Sidebar from '../shared/Sidebar';
 import TopTabsNudges from './TopTabsNudges';
 import LiveNotifications from '../shared/LiveNotifications';
@@ -610,17 +610,12 @@ function NudgePage({ onNavigate }) {
   return (
     <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
-        {/* Primeira coluna: 60px */}
-        <div className="h-full" style={{ width: '60px' }}>
-          <FirstColumn />
-        </div>
-
-        {/* Segunda coluna: 300px - Sidebar */}
+        {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
           <Sidebar currentPage="nudges" onNavigate={onNavigate} />
         </div>
 
-        {/* Terceira coluna: flex-1 */}
+        {/* Segunda coluna: flex-1 */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Primeira linha: 3 divs retangulares */}
           <div className="flex w-full items-start gap-2 min-w-0">

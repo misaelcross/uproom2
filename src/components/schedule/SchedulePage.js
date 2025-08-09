@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Users, CheckCircle, AlertTriangle, TrendingUp, Calendar, ChevronDown, ChevronUp, Search } from 'lucide-react';
 import Sidebar from '../shared/Sidebar';
-import FirstColumn from '../shared/FirstColumn';
+
 import MonthCalendar from './MonthCalendar';
 import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 import TopTabsSchedule from './TopTabsSchedule';
@@ -262,16 +262,11 @@ const SchedulePage = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-neutral-900 pr-6">
       <div className="flex gap-4 h-screen">
-        {/* First column: 60px */}
-        <div className="h-full" style={{ width: '60px' }}>
-          <FirstColumn />
-        </div>
-
-        {/* Second column: 300px - Sidebar */}
+        {/* First column: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
           <Sidebar currentPage="schedule" onNavigate={onNavigate} />
         </div>
-        {/* Third column: flex-1 - Main content */}
+        {/* Second column: flex-1 - Main content */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top Bar with Tabs, Live Notifications and Actions */}
           <div className="flex w-full items-start gap-2 min-w-0">
@@ -430,7 +425,7 @@ const SchedulePage = ({ onNavigate }) => {
                           switch (availability) {
                             case 'Available': return 'bg-green-500';
                             case 'In meeting': return 'bg-blue-500';
-                            case 'Out for Lunch': return 'bg-yellow-500';
+                            case 'Break': return 'bg-yellow-500';
                             case 'Focus': return 'bg-purple-500';
                             case 'Emergency': return 'bg-red-500';
                             case 'Away': return 'bg-orange-500';
@@ -506,7 +501,7 @@ const SchedulePage = ({ onNavigate }) => {
                           switch (availability) {
                             case 'Available': return 'bg-green-500';
                             case 'In meeting': return 'bg-blue-500';
-                            case 'Out for Lunch': return 'bg-yellow-500';
+                            case 'Break': return 'bg-yellow-500';
                             case 'Focus': return 'bg-purple-500';
                             case 'Emergency': return 'bg-red-500';
                             case 'Away': return 'bg-orange-500';

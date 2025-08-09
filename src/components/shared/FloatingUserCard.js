@@ -22,7 +22,7 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
     switch (availability) {
       case 'Available': return 'text-green-500';
       case 'In meeting': return 'text-blue-500';
-      case 'Out for Lunch': return 'text-yellow-500';
+      case 'Break': return 'text-yellow-500';
       case 'Focus': return 'text-purple-500';
       case 'Emergency': return 'text-red-500';
       case 'Away': return 'text-orange-500';
@@ -35,7 +35,7 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
     switch (availability) {
       case 'Available': return 'bg-green-500';
       case 'In meeting': return 'bg-blue-500';
-      case 'Out for Lunch': return 'bg-yellow-500';
+      case 'Break': return 'bg-yellow-500';
       case 'Focus': return 'bg-purple-500';
       case 'Emergency': return 'bg-red-500';
       case 'Away': return 'bg-orange-500';
