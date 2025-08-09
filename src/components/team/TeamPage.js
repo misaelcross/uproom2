@@ -3,7 +3,6 @@ import {
   Search, 
   Filter, 
   Plus, 
-  MoreHorizontal,
   Mail,
   Phone,
   Calendar,
@@ -66,8 +65,6 @@ const TeamPage = ({ onNavigate }) => {
         return a.role.localeCompare(b.role);
       case 'status':
         return a.status.localeCompare(b.status);
-      case 'lastActive':
-        return new Date(b.lastActive) - new Date(a.lastActive);
       default:
         return 0;
     }
@@ -232,7 +229,6 @@ const TeamPage = ({ onNavigate }) => {
                               <option value="name">Name</option>
                               <option value="role">Role</option>
                               <option value="status">Status</option>
-                              <option value="lastActive">Last Active</option>
                             </select>
                           </div>
                         </div>
@@ -267,8 +263,6 @@ const TeamPage = ({ onNavigate }) => {
                       <th className="text-left p-4 text-sm font-medium text-neutral-300">User</th>
                       <th className="text-left p-4 text-sm font-medium text-neutral-300">Role</th>
                       <th className="text-left p-4 text-sm font-medium text-neutral-300">Status</th>
-                      <th className="text-left p-4 text-sm font-medium text-neutral-300">Last Active</th>
-                      <th className="text-left p-4 text-sm font-medium text-neutral-300">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -315,20 +309,6 @@ const TeamPage = ({ onNavigate }) => {
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
                             {user.status}
                           </span>
-                        </td>
-                        <td className="p-4 text-sm text-neutral-400">
-                          {user.lastActive ? new Date(user.lastActive).toLocaleDateString() : 'Never'}
-                        </td>
-                        <td className="p-4">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Handle action menu
-                            }}
-                            className="p-2 hover:bg-neutral-700 rounded-lg transition-colors"
-                          >
-                            <MoreHorizontal className="h-4 w-4 text-neutral-400" />
-                          </button>
                         </td>
                       </tr>
                     ))}
