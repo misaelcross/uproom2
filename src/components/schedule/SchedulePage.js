@@ -7,6 +7,7 @@ import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 import TopTabsSchedule from './TopTabsSchedule';
 import ActionBarSchedule from './ActionBarSchedule';
 import LiveNotifications from '../shared/LiveNotifications';
+import Schedule from './Schedule';
 import { usersData } from '../../data/usersData';
 
 // Mock data for groups
@@ -46,7 +47,10 @@ const groupsData = [
 ];
 
 const SchedulePage = ({ onNavigate }) => {
-  const [selectedUser, setSelectedUser] = useState(null);
+  // Definir o usuário atual (primeiro usuário como exemplo)
+  const currentUser = usersData[0]; // Alex Thompson como usuário atual
+  
+  const [selectedUser, setSelectedUser] = useState(null); // null = My Schedule, user = schedule do usuário selecionado
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [roleFilter, setRoleFilter] = useState([]);
@@ -54,6 +58,7 @@ const SchedulePage = ({ onNavigate }) => {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [timeFrame, setTimeFrame] = useState('Day');
   
   // AnimatedBottomSheet state
   const [activeTab, setActiveTab] = useState('received');
@@ -191,42 +196,214 @@ const SchedulePage = ({ onNavigate }) => {
 
     const scheduleTemplates = [
       {
-        day: '02',
-        dayName: 'Monday',
+        day: '30',
+        dayName: 'Sunday',
         events: [
           {
             id: 1,
-            title: `${user.skills && user.skills[0] ? user.skills[0] : 'Project'} Review`,
-            time: '2:00pm - 3:30pm',
-            isCurrent: false
-          },
+            title: 'Personal Time',
+            time: '10:00am - 12:00pm',
+            date: 'Sunday, July 30, 2025',
+            duration: '2 hours',
+            description: `Personal time for ${user.name} to focus on individual tasks and planning.`,
+            location: 'Home Office',
+            isCurrent: false,
+            status: 'Available',
+            attendees: [
+              { name: user.name, avatar: user.avatar }
+            ],
+            linkedTasks: [],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '01',
+        dayName: 'Monday',
+        events: [
           {
             id: 2,
+            title: `${user.skills && user.skills[0] ? user.skills[0] : 'Project'} Review`,
+            time: '2:00pm - 3:30pm',
+            date: 'Monday, July 01, 2025',
+            duration: '1 hour 30 minutes',
+            description: `Review session focused on ${user.skills && user.skills[0] ? user.skills[0] : 'project'} deliverables and progress.`,
+            location: 'Conference Room B',
+            avatar: user.avatar,
+            isCurrent: false,
+            status: 'Focus',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Team Lead', avatar: null }
+            ],
+            linkedTasks: [
+              { id: 1, title: 'Prepare review materials', completed: true },
+              { id: 2, title: 'Update project documentation', completed: false }
+            ],
+            linkedNudges: [],
+            linkedFiles: []
+          },
+          {
+            id: 3,
             title: 'Team Meeting',
             time: '4:00pm - 5:00pm',
+            date: 'Monday, July 01, 2025',
+            duration: '1 hour',
+            description: 'Weekly team sync meeting to discuss progress and blockers.',
+            location: 'Main Conference Room',
             avatar: user.avatar,
             additionalPeople: '+3',
-            isCurrent: true
+            isCurrent: true,
+            status: 'Meeting',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Sarah Johnson', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop' },
+              { name: 'Mike Chen', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop' },
+              { name: 'Emma Davis', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop' }
+            ],
+            linkedTasks: [],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '02',
+        dayName: 'Tuesday',
+        events: [
+          {
+            id: 4,
+            title: 'Daily Standup',
+            time: '9:00am - 9:30am',
+            date: 'Tuesday, July 02, 2025',
+            duration: '30 minutes',
+            description: 'Daily standup meeting to sync with the team.',
+            location: 'Team Area',
+            avatar: user.avatar,
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Development Team', avatar: null }
+            ],
+            linkedTasks: [],
+            linkedNudges: [],
+            linkedFiles: []
+          },
+          {
+            id: 5,
+            title: `${user.skills && user.skills.length > 0 ? (user.skills[1] || user.skills[0]) : 'General'} Workshop`,
+            time: '10:00am - 12:00pm',
+            date: 'Tuesday, July 02, 2025',
+            duration: '2 hours',
+            description: `Workshop session focused on ${user.skills && user.skills.length > 0 ? (user.skills[1] || user.skills[0]) : 'general'} skills development.`,
+            location: 'Training Room',
+            avatar: user.avatar,
+            additionalPeople: '+6',
+            isCurrent: false,
+            status: 'Focus',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Workshop Participants', avatar: null }
+            ],
+            linkedTasks: [
+              { id: 3, title: 'Prepare workshop materials', completed: true }
+            ],
+            linkedNudges: [
+              { id: 1, title: 'Follow up on workshop feedback' }
+            ],
+            linkedFiles: [
+              { id: 1, name: 'Workshop_Materials.pdf', type: 'pdf' }
+            ]
           }
         ]
       },
       {
         day: '03',
-        dayName: 'Tuesday',
+        dayName: 'Wednesday',
         events: [
           {
-            id: 3,
-            title: 'Daily Standup',
-            time: '9:00am - 9:30am',
-            isCurrent: false
-          },
-          {
-            id: 4,
-            title: `${user.skills && user.skills.length > 0 ? (user.skills[1] || user.skills[0]) : 'General'} Workshop`,
-            time: '10:00am - 12:00pm',
+            id: 6,
+            title: 'Client Meeting',
+            time: '11:00am - 12:30pm',
+            date: 'Wednesday, July 03, 2025',
+            duration: '1 hour 30 minutes',
+            description: 'Meeting with client to discuss project requirements and timeline.',
+            location: 'Client Office / Zoom',
             avatar: user.avatar,
-            additionalPeople: '+6',
-            isCurrent: false
+            additionalPeople: '+2',
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Client Representative', avatar: null },
+              { name: 'Account Manager', avatar: null }
+            ],
+            linkedTasks: [
+              { id: 4, title: 'Prepare client presentation', completed: false }
+            ],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '04',
+        dayName: 'Thursday',
+        events: [
+          {
+            id: 7,
+            title: 'Sprint Planning',
+            time: '9:00am - 11:00am',
+            date: 'Thursday, July 04, 2025',
+            duration: '2 hours',
+            description: 'Sprint planning session for the upcoming development cycle.',
+            location: 'Planning Room',
+            avatar: user.avatar,
+            additionalPeople: '+5',
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Scrum Team', avatar: null }
+            ],
+            linkedTasks: [
+              { id: 5, title: 'Review backlog items', completed: true },
+              { id: 6, title: 'Estimate story points', completed: false }
+            ],
+            linkedNudges: [],
+            linkedFiles: [
+              { id: 2, name: 'Sprint_Backlog.xlsx', type: 'excel' }
+            ]
+          }
+        ]
+      },
+      {
+        day: '05',
+        dayName: 'Friday',
+        events: [
+          {
+            id: 8,
+            title: 'Team Retrospective',
+            time: '3:00pm - 4:00pm',
+            date: 'Friday, July 05, 2025',
+            duration: '1 hour',
+            description: 'Weekly retrospective to discuss what went well and areas for improvement.',
+            location: 'Retrospective Room',
+            avatar: user.avatar,
+            additionalPeople: '+4',
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: user.name, avatar: user.avatar },
+              { name: 'Team Members', avatar: null }
+            ],
+            linkedTasks: [],
+            linkedNudges: [
+              { id: 2, title: 'Implement retrospective action items' }
+            ],
+            linkedFiles: []
           }
         ]
       }
@@ -241,6 +418,10 @@ const SchedulePage = ({ onNavigate }) => {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleTimeFrameChange = (newTimeFrame) => {
+    setTimeFrame(newTimeFrame);
   };
 
   // AnimatedBottomSheet helper functions
@@ -282,15 +463,17 @@ const SchedulePage = ({ onNavigate }) => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               onScheduleMeet={() => console.log('Schedule meet clicked')}
+              timeFrame={timeFrame}
+              onTimeFrameChange={handleTimeFrameChange}
             />
           </div>
 
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
-            {/* Content Area - Team Members List or User Schedule */}
-            <div className="flex-1 overflow-y-auto min-h-0 ">
+            {/* Content Area - My Schedule or Selected User Schedule */}
+            <div className="flex-1 overflow-y-auto min-h-0">
               {selectedUser ? (
-                /* User Schedule - Full Width */
+                /* Selected User Schedule - Full Width */
                 <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
                   {/* Header do Schedule */}
                   <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
@@ -314,152 +497,18 @@ const SchedulePage = ({ onNavigate }) => {
                   </div>
 
                   {/* Conteúdo do Schedule */}
-                  <div className="flex-1 overflow-y-auto px-6 pb-6">
-                    <div className="space-y-1">
-                      {generateUserSchedule(selectedUser).map((dayData) => (
-                        <div key={dayData.day} className="flex gap-4 py-4 border-b border-neutral-700">
-                          {/* Day Column */}
-                          <div className="flex flex-col items-center w-[40px]">
-                            <div className="text-white text-xl font-semibold">{dayData.day}</div>
-                            <div className="text-neutral-400 text-xs">{dayData.dayName}</div>
-                          </div>
-
-                          {/* Events Column */}
-                          <div className="flex-1 space-y-3">
-                            {dayData.events.map((event) => (
-                              <div
-                                key={event.id}
-                                className={`rounded-lg p-3 ${
-                                  event.isCurrent
-                                    ? 'bg-neutral-600'
-                                    : 'border border-neutral-700 bg-transparent'
-                                }`}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <div className="flex-1">
-                                    <div className={`text-sm font-medium ${
-                                      event.isCurrent ? 'text-neutral-200' : 'text-neutral-500'
-                                    }`}>
-                                      {event.title}
-                                    </div>
-                                    <div className="text-white text-xs">{event.time}</div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    {event.avatar && (
-                                      <img 
-                                        src={event.avatar} 
-                                        alt="Avatar" 
-                                        className="w-6 h-6 rounded-full object-cover"
-                                      />
-                                    )}
-                                    {event.additionalPeople && (
-                                      <span className={`text-sm ${
-                                        event.isCurrent ? 'text-neutral-200' : 'text-neutral-500'
-                                      }`}>
-                                        {event.additionalPeople}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex-1 overflow-hidden">
+                    <Schedule 
+                      fullWidth={true} 
+                      viewMode={timeFrame} 
+                      scheduleData={generateUserSchedule(selectedUser)}
+                      userName={selectedUser.name}
+                    />
                   </div>
                 </div>
               ) : (
-                /* Team Members List - When no user is selected */
-                <div className="border border-neutral-700 rounded-lg overflow-hidden h-full">
-                  <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between">
-                    <h2 className="text-white text-xl font-semibold">
-                      {activeTopTab === 'groups' ? 'Groups' : 'Team Members'}
-                    </h2>
-                    
-                    {/* Search Input */}
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder={activeTopTab === 'groups' ? 'Search groups...' : 'Search members...'}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                      />
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                    </div>
-                  </div>
-
-                  {/* Content List */}
-                  <div className="divide-y divide-neutral-700">
-                    {activeTopTab === 'groups' ? (
-                      /* Groups List */
-                      getFilteredAndSortedData().map((group) => (
-                        <div
-                          key={group.id}
-                          className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                          onClick={() => console.log('Group selected:', group)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <div className={`w-10 h-10 ${group.color} rounded-lg flex items-center justify-center`}>
-                                <span className="text-white font-semibold text-sm">
-                                  {group.name.charAt(0)}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex-1">
-                              <div className="text-white font-medium">{group.name}</div>
-                              <div className="text-neutral-400 text-sm">{group.description}</div>
-                            </div>
-                            <div className="text-neutral-400 text-sm">
-                              {group.members.length} members
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      /* Team Members List */
-                      getFilteredAndSortedData().map((user) => {
-                        const getStatusDotColor = (availability) => {
-                          switch (availability) {
-                            case 'Available': return 'bg-green-500';
-                            case 'In meeting': return 'bg-blue-500';
-                            case 'Break': return 'bg-yellow-500';
-                            case 'Focus': return 'bg-purple-500';
-                            case 'Emergency': return 'bg-red-500';
-                            case 'Away': return 'bg-orange-500';
-                            case 'Offline': return 'bg-gray-500';
-                            default: return 'bg-green-500';
-                          }
-                        };
-
-                        return (
-                          <div
-                            key={user.id}
-                            className="px-6 py-4 hover:bg-neutral-800/50 transition-colors cursor-pointer"
-                            onClick={() => handleUserSelect(user)}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="relative">
-                                <img
-                                  src={user.avatar}
-                                  alt={user.name}
-                                  className="w-10 h-10 rounded-full object-cover"
-                                />
-                                <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
-                              </div>
-                              <div>
-                                <div className="text-white font-medium">{user.name}</div>
-                                <div className="text-neutral-400 text-sm">{user.title}</div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
+                /* My Schedule - Default view */
+                <Schedule fullWidth={true} viewMode={timeFrame} />
               )}
             </div>
 
@@ -473,82 +522,68 @@ const SchedulePage = ({ onNavigate }) => {
                 />
               </div>
 
-              {/* Team Members List or Empty State */}
+              {/* Team Members List - Always visible */}
               <div className="flex-1 min-h-0 flex flex-col">
-                {selectedUser ? (
-                  /* Team Members List - When user is selected */
-                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
-                    <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
-                      <h2 className="text-white text-lg font-semibold">Team Members</h2>
-                      
-                      {/* Search Input */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                        />
-                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
-                      </div>
+                <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
+                  <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
+                    <h2 className="text-white text-lg font-semibold">Team Members</h2>
+                    
+                    {/* Search Input */}
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
+                      />
+                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
                     </div>
+                  </div>
 
-                    {/* Team Members List */}
-                     <div className="divide-y divide-neutral-700 overflow-y-auto flex-1 min-h-0">
-                       {getFilteredAndSortedData().map((user) => {
-                        const getStatusDotColor = (availability) => {
-                          switch (availability) {
-                            case 'Available': return 'bg-green-500';
-                            case 'In meeting': return 'bg-blue-500';
-                            case 'Break': return 'bg-yellow-500';
-                            case 'Focus': return 'bg-purple-500';
-                            case 'Emergency': return 'bg-red-500';
-                            case 'Away': return 'bg-orange-500';
-                            case 'Offline': return 'bg-gray-500';
-                            default: return 'bg-green-500';
-                          }
-                        };
+                  {/* Team Members List */}
+                  <div className="divide-y divide-neutral-700 overflow-y-auto flex-1 min-h-0">
+                    {getFilteredAndSortedData().map((user) => {
+                      const getStatusDotColor = (availability) => {
+                        switch (availability) {
+                          case 'Available': return 'bg-green-500';
+                          case 'In meeting': return 'bg-blue-500';
+                          case 'Break': return 'bg-yellow-500';
+                          case 'Focus': return 'bg-purple-500';
+                          case 'Emergency': return 'bg-red-500';
+                          case 'Away': return 'bg-orange-500';
+                          case 'Offline': return 'bg-gray-500';
+                          default: return 'bg-green-500';
+                        }
+                      };
 
-                        return (
-                          <div
-                            key={user.id}
-                            className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
-                              selectedUser?.id === user.id ? 'bg-neutral-800' : ''
-                            }`}
-                            onClick={() => handleUserSelect(user)}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="relative">
-                                <img
-                                  src={user.avatar}
-                                  alt={user.name}
-                                  className="w-8 h-8 rounded-full object-cover"
-                                />
-                                <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(user.availability)} rounded-full border border-gray-900`}></div>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-white font-medium text-sm truncate">{user.name}</div>
-                                <div className="text-neutral-400 text-xs truncate">{user.title}</div>
-                              </div>
+                      return (
+                        <div
+                          key={user.id}
+                          className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
+                            selectedUser?.id === user.id ? 'bg-neutral-800' : ''
+                          }`}
+                          onClick={() => handleUserSelect(user)}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="w-8 h-8 rounded-full object-cover"
+                              />
+                              <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(user.availability)} rounded-full border border-gray-900`}></div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-white font-medium text-sm truncate">{user.name}</div>
+                              <div className="text-neutral-400 text-xs truncate">{user.title}</div>
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ) : (
-                  /* Empty State */
-                  <div className="border border-neutral-700 rounded-lg h-full flex flex-col items-center justify-center">
-                    <div className="text-center">
-                      <Calendar className="w-16 h-16 text-neutral-600 mx-auto mb-4" />
-                      <h3 className="text-white text-lg font-medium mb-2">Select a Team Member</h3>
-                      <p className="text-neutral-400 text-sm max-w-sm">
-                        Choose a team member from the list to view their schedule and see the team list here.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

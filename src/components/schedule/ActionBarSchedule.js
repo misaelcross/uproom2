@@ -6,9 +6,8 @@ import {
   Check
 } from 'lucide-react';
 
-const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet }) => {
+const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet, timeFrame = 'Day', onTimeFrameChange }) => {
   const [timeFrameDropdownOpen, setTimeFrameDropdownOpen] = useState(false);
-  const [selectedTimeFrame, setSelectedTimeFrame] = useState('Day');
   const timeFrameDropdownRef = useRef(null);
 
   // Opções de time frame para schedule
@@ -40,8 +39,10 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet }) => {
   };
 
   const handleTimeFrameSelect = (option) => {
-    setSelectedTimeFrame(option);
     setTimeFrameDropdownOpen(false);
+    if (onTimeFrameChange) {
+      onTimeFrameChange(option);
+    }
   };
 
   return (
@@ -65,7 +66,7 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet }) => {
           className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
         >
           <Filter className="h-4 w-4 text-neutral-300" />
-          <span className="text-neutral-300 text-sm font-medium">{selectedTimeFrame}</span>
+          <span className="text-neutral-300 text-sm font-medium">{timeFrame}</span>
         </button>
         
         {/* Dropdown Menu */}
@@ -77,13 +78,13 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet }) => {
                   key={index}
                   onClick={() => handleTimeFrameSelect(option)}
                   className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between ${
-                    selectedTimeFrame === option 
+                    timeFrame === option 
                       ? 'bg-neutral-700 text-white' 
                       : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
                   }`}
                 >
                   <span>{option}</span>
-                  {selectedTimeFrame === option && (
+                  {timeFrame === option && (
                     <Check className="h-4 w-4 text-white" />
                   )}
                 </button>
