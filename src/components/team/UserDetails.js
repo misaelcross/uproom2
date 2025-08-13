@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  X, 
-  Edit, 
-  Trash2, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Clock, 
-  Shield, 
+import {
+  X,
+  Edit,
+  Trash2,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Clock,
+  Shield,
   User,
   CheckCircle,
   XCircle,
@@ -37,30 +37,35 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
     }
   };
 
-  const getStatusColor = (status) => {
+  const getAccountColor = (status) => {
     switch (status) {
       case 'active':
-        return 'bg-green-500/10 text-green-400 border border-green-500/20';
+        return 'bg-green-500/10 text-green-400';
       case 'inactive':
-        return 'bg-red-500/10 text-red-400 border border-red-500/20';
+        return 'bg-red-500/10 text-red-400';
       case 'pending':
-        return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+        return 'bg-yellow-500/10 text-yellow-400';
       default:
-        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
+        return 'bg-gray-500/10 text-gray-400';
     }
   };
 
   const getRoleColor = (role) => {
     switch (role) {
       case 'admin':
-        return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
+        return 'bg-transparent text-purple-400 border border-neutral-700';
       case 'manager':
-        return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+        return 'bg-transparent text-blue-400 border border-neutral-700';
       case 'user':
-        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
+        return 'bg-transparent text-gray-400 border border-neutral-700';
       default:
-        return 'bg-gray-500/10 text-gray-400 border border-gray-500/20';
+        return 'bg-transparent text-gray-400 border border-neutral-700';
     }
+  };
+
+  // Helper function to capitalize first letter
+  const capitalizeFirst = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   const mockPermissions = [
@@ -84,7 +89,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-700">
         <div className="flex items-center gap-3 mb-4">
-          <button 
+          <button
             onClick={onClose}
             className="text-neutral-400 hover:text-white"
           >
@@ -96,16 +101,15 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
         {/* User Avatar and Info */}
         <div className="flex items-center gap-4">
           <div className="relative">
-            <img 
-              src={user.avatar} 
+            <img
+              src={user.avatar}
               alt={user.name}
               className="w-12 h-12 rounded-full object-cover"
             />
-            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-900 ${
-              user.status === 'active' ? 'bg-green-500' : 
-              user.status === 'inactive' ? 'bg-red-500' : 
-              user.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
-            }`}></div>
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-900 ${user.status === 'active' ? 'bg-green-500' :
+              user.status === 'inactive' ? 'bg-red-500' :
+                user.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
+              }`}></div>
           </div>
           <div>
             <h2 className="text-white text-xl font-semibold">{user.name}</h2>
@@ -115,11 +119,11 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
 
         {/* Status and Role Badges */}
         <div className="flex items-center space-x-2 mt-4">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(user.status)}`}>
-            {user.status}
+          <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getAccountColor(user.status)}`}>
+            {capitalizeFirst(user.status)}
           </span>
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
-            {user.role}
+          <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${getRoleColor(user.role)}`}>
+            {capitalizeFirst(user.role)}
           </span>
         </div>
       </div>
@@ -129,14 +133,14 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
         <div className="flex space-x-2">
           <button
             onClick={() => onEdit(user)}
-            className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 bg-white hover:bg-neutral-100 rounded-lg text-black text-sm transition-colors"
+            className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg text-white text-sm transition-colors"
           >
             <Edit className="h-4 w-4" />
             <span>Edit User</span>
           </button>
           <button
             onClick={() => onDelete(user)}
-            className="flex items-center justify-center px-3 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg text-white text-sm transition-colors"
+            className="flex items-center justify-center px-3 py-2 bg-red-500/10 hover:bg-red-500/30 rounded-lg text-red-400 text-sm transition-colors"
           >
             <Trash2 className="h-4 w-4" />
           </button>
@@ -150,11 +154,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full rounded-md text-xs font-medium leading-5 h-7 flex items-center justify-center focus:outline-none transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-white text-black shadow'
-                  : 'text-neutral-400 hover:bg-neutral-700/50 hover:text-white'
-              }`}
+              className={`w-full rounded-md text-xs font-medium leading-5 h-7 flex items-center justify-center focus:outline-none transition-colors ${activeTab === tab.id
+                ? 'bg-neutral-700 text-white shadow'
+                : 'text-neutral-400 hover:bg-neutral-700/50 hover:text-white'
+                }`}
             >
               <span>{tab.label}</span>
             </button>
@@ -235,11 +238,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                     <div className="flex space-x-4 text-xs">
                       <label className="flex items-center space-x-1">
                         <button
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                            permission.read
-                              ? 'bg-white border-white' 
-                              : 'border-neutral-400'
-                          }`}
+                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${permission.read
+                            ? 'bg-white border-white'
+                            : 'border-neutral-400'
+                            }`}
                           disabled
                         >
                           {permission.read && <Check className="w-2.5 h-2.5 text-black" />}
@@ -248,11 +250,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                       </label>
                       <label className="flex items-center space-x-1">
                         <button
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                            permission.write
-                              ? 'bg-white border-white' 
-                              : 'border-neutral-400'
-                          }`}
+                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${permission.write
+                            ? 'bg-white border-white'
+                            : 'border-neutral-400'
+                            }`}
                           disabled
                         >
                           {permission.write && <Check className="w-2.5 h-2.5 text-black" />}
@@ -261,11 +262,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                       </label>
                       <label className="flex items-center space-x-1">
                         <button
-                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                            permission.delete
-                              ? 'bg-white border-white' 
-                              : 'border-neutral-400'
-                          }`}
+                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${permission.delete
+                            ? 'bg-white border-white'
+                            : 'border-neutral-400'
+                            }`}
                           disabled
                         >
                           {permission.delete && <Check className="w-2.5 h-2.5 text-black" />}
@@ -291,11 +291,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white">Email Notifications</span>
                     <button
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                        true
-                          ? 'bg-white border-white' 
-                          : 'border-neutral-400 hover:border-white'
-                      }`}
+                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${true
+                        ? 'bg-white border-white'
+                        : 'border-neutral-400 hover:border-white'
+                        }`}
                     >
                       {true && <Check className="w-2.5 h-2.5 text-black" />}
                     </button>
@@ -305,11 +304,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white">Two-Factor Authentication</span>
                     <button
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                        false
-                          ? 'bg-white border-white' 
-                          : 'border-neutral-400 hover:border-white'
-                      }`}
+                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${false
+                        ? 'bg-white border-white'
+                        : 'border-neutral-400 hover:border-white'
+                        }`}
                     >
                       {false && <Check className="w-2.5 h-2.5 text-black" />}
                     </button>
@@ -319,11 +317,10 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-white">API Access</span>
                     <button
-                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                        true
-                          ? 'bg-white border-white' 
-                          : 'border-neutral-400 hover:border-white'
-                      }`}
+                      className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${true
+                        ? 'bg-white border-white'
+                        : 'border-neutral-400 hover:border-white'
+                        }`}
                     >
                       {true && <Check className="w-2.5 h-2.5 text-black" />}
                     </button>

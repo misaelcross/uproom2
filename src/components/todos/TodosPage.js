@@ -622,7 +622,7 @@ const TodosPage = ({ onNavigate }) => {
             </div>
 
           {/* Right Column */}
-          <div className="w-80 border border-neutral-700 rounded-lg flex flex-col pb-12">
+          <div className="border border-neutral-700 rounded-lg flex flex-col pb-12" style={{ width: '350px' }}>
             {!selectedTodo ? (
               <GroupsView 
                 folders={groups}

@@ -640,7 +640,7 @@ function NudgePage({ onNavigate }) {
           </div>
 
           {/* Segunda linha: Grid de nudges e coluna direita */}
-          <div className="flex gap-6 flex-1 min-h-0">
+          <div className="flex flex-1 min-h-0">
             {/* Grid de nudges */}
             <SimpleBar className="flex-1">
               <div className="p-6">
