@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, Users, MessageCircle, Send } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send } from 'lucide-react';
 import TodoStep from './TodoStep';
 
 const TodoDetails = ({ 
@@ -32,12 +32,9 @@ const TodoDetails = ({
   const [reminders, setReminders] = useState(todo?.reminders || []);
   const [duration, setDuration] = useState(todo?.duration || null);
   const [repeat, setRepeat] = useState(todo?.repeat || null);
-  const [showAssignForm, setShowAssignForm] = useState(false);
-  const [assigneeSearch, setAssigneeSearch] = useState('');
   const [newComment, setNewComment] = useState('');
   const [showComments, setShowComments] = useState(true); // Always show comments
   const [description, setDescription] = useState(todo?.description || '');
-  const [selectedAssignees, setSelectedAssignees] = useState(todo?.assignees || []);
   const [showMentionForm, setShowMentionForm] = useState(false);
   const [mentionSearch, setMentionSearch] = useState('');
   const titleInputRef = useRef(null);
@@ -647,101 +644,7 @@ const TodoDetails = ({
             )}
           </div>
 
-          {/* Assignments Section */}
-          <div>
-            <h4 className="text-sm font-medium text-neutral-400 mb-2">Assignees</h4>
-            {selectedAssignees && selectedAssignees.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {selectedAssignees.map((assignee) => (
-                  <div key={assignee.id} className="flex items-center space-x-2 bg-neutral-700 rounded-full px-3 py-1">
-                    <img src={assignee.avatar} alt={assignee.name} className="w-5 h-5 rounded-full" />
-                    <span className="text-white text-sm">{assignee.name}</span>
-                    <button 
-                      onClick={() => {
-                        setSelectedAssignees(selectedAssignees.filter(a => a.id !== assignee.id));
-                      }}
-                      className="text-neutral-400 hover:text-red-400 transition-colors"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {showAssignForm ? (
-              <div className="space-y-2 p-3 border border-neutral-600 rounded">
-                <input
-                  type="text"
-                  value={assigneeSearch}
-                  onChange={(e) => setAssigneeSearch(e.target.value)}
-                  placeholder="Search users..."
-                  className="w-full bg-neutral-700 border border-neutral-600 rounded px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-                />
-                <div className="max-h-32 overflow-y-auto space-y-1">
-                  {mockUsers
-                    .filter(user => user.name.toLowerCase().includes(assigneeSearch.toLowerCase()))
-                    .map(user => {
-                      const isSelected = selectedAssignees.some(a => a.id === user.id);
-                      return (
-                        <div 
-                          key={user.id}
-                          onClick={() => {
-                            if (isSelected) {
-                              setSelectedAssignees(selectedAssignees.filter(a => a.id !== user.id));
-                            } else {
-                              setSelectedAssignees([...selectedAssignees, user]);
-                            }
-                          }}
-                          className={`flex items-center space-x-2 p-2 hover:bg-neutral-600 rounded cursor-pointer ${
-                            isSelected ? 'bg-neutral-900/30 border border-neutral-600' : ''
-                          }`}
-                        >
-                          <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
-                          <div className="flex-1">
-                            <p className="text-white text-sm">{user.name}</p>
-                            <p className="text-neutral-400 text-xs">{user.title}</p>
-                          </div>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-neutral-400" />
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => {
-                      setShowAssignForm(false);
-                      setAssigneeSearch('');
-                    }}
-                    className="flex-1 px-3 py-2 border border-neutral-600 rounded text-neutral-400 hover:text-white transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => {
-                      // Save assignees logic here
-                      console.log('Saving assignees:', selectedAssignees);
-                      setShowAssignForm(false);
-                      setAssigneeSearch('');
-                    }}
-                    className="flex-1 px-3 py-2 bg-neutral-800 text-white rounded hover:bg-neutral-700 border border-neutral-600 transition-colors"
-                  >
-                    OK
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setShowAssignForm(true)}
-                className="flex items-center text-neutral-400 hover:text-white transition-colors"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Assign to someone
-              </button>
-            )}
-          </div>
+
 
           {/* Comments Section */}
           <div>

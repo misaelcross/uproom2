@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check, Star, ChevronDown, AlertTriangle, MessageCircle, Users, Clock } from 'lucide-react';
+import { Check, Star, ChevronDown, AlertTriangle, MessageCircle, Clock } from 'lucide-react';
 
 const TodoItem = ({ 
   todo, 
@@ -7,7 +7,7 @@ const TodoItem = ({
   onToggleStar, 
   onDelete, 
   onSelect,
-  onUpdatePriority 
+  onUpdatePriority
 }) => {
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -143,35 +143,14 @@ const TodoItem = ({
           
           {/* Removed Steps indicator with progress bar - as requested */}
           
-          {/* Additional info: Comments, Assignees, Duration */}
-          {(todo.comments?.length > 0 || todo.assignees?.length > 0 || todo.duration) && (
+          {/* Additional info: Comments, Duration */}
+          {(todo.comments?.length > 0 || todo.duration) && (
             <div className="mt-2 space-y-1">
               {/* Comments */}
               {todo.comments && todo.comments.length > 0 && (
                 <div className="flex items-center gap-1 text-sm text-neutral-400">
                   <MessageCircle className="w-3 h-3" />
                   <span>{todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}</span>
-                </div>
-              )}
-              
-              {/* Assignees */}
-              {todo.assignees && todo.assignees.length > 0 && (
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
-                  <Users className="w-3 h-3" />
-                  <div className="flex items-center gap-1">
-                    {todo.assignees.slice(0, 3).map((assignee, index) => (
-                      <img 
-                        key={assignee.id}
-                        src={assignee.avatar} 
-                        alt={assignee.name}
-                        className="w-5 h-5 rounded-full border border-neutral-600"
-                        title={assignee.name}
-                      />
-                    ))}
-                    {todo.assignees.length > 3 && (
-                      <span className="text-xs">+{todo.assignees.length - 3}</span>
-                    )}
-                  </div>
                 </div>
               )}
               
