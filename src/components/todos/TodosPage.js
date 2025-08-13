@@ -550,7 +550,7 @@ const TodosPage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* First column: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -582,7 +582,7 @@ const TodosPage = ({ onNavigate }) => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full relative">
               {/* Todo List with scroll */}
-              <div className="flex-1 overflow-y-auto pb-20">
+              <div className="flex-1 pb-20" data-simplebar>
                 <TodoList
                   todos={getFilteredTodos()}
                   onToggleComplete={toggleTodoComplete}

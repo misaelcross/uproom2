@@ -441,7 +441,7 @@ const SchedulePage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* First column: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -471,7 +471,7 @@ const SchedulePage = ({ onNavigate }) => {
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Content Area - My Schedule or Selected User Schedule */}
-            <div className="flex-1 overflow-y-auto min-h-0">
+            <div className="flex-1 min-h-0" data-simplebar>
               {selectedUser ? (
                 /* Selected User Schedule - Full Width */
                 <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
@@ -542,7 +542,7 @@ const SchedulePage = ({ onNavigate }) => {
                   </div>
 
                   {/* Team Members List */}
-                  <div className="divide-y divide-neutral-700 overflow-y-auto flex-1 min-h-0">
+                  <div className="divide-y divide-neutral-700 flex-1 min-h-0" data-simplebar>
                     {getFilteredAndSortedData().map((user) => {
                       const getStatusDotColor = (availability) => {
                         switch (availability) {

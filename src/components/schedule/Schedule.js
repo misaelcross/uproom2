@@ -344,7 +344,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-6 pb-6">
+      <div className="flex-1 px-6 pb-6" data-simplebar>
         {viewMode === 'Week' ? (
           /* Week View - Days in columns */
           <div className="grid grid-cols-7 gap-2 h-full">

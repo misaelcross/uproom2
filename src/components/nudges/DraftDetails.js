@@ -197,7 +197,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 p-6 space-y-6" data-simplebar>
         {!isEditing ? (
           // Modo de visualização (código original)
           <>
@@ -356,7 +356,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
                   
                   {/* Search Results */}
                   {filteredUsers.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48" data-simplebar>
                       {filteredUsers.map((user) => (
                         <button
                           key={user.id}

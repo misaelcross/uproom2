@@ -88,7 +88,7 @@ const ArchivedNudgeDetails = ({ userGroup, onBack, onUnarchive }) => {
       </div>
 
       {/* Lista de nudges */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1" data-simplebar>
         {nudges.map((nudge, index) => {
           const isExpanded = expandedNudges.has(nudge.id);
           const isLatest = index === 0;

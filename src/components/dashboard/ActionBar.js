@@ -99,7 +99,7 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
         
         {/* Search Results Dropdown */}
         {filteredUsers.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 max-h-48 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 max-h-48" data-simplebar>
             {filteredUsers.map((user) => (
               <button
                 key={user.id}

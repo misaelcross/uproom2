@@ -141,7 +141,7 @@ const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
       </div>
 
       {/* Users List */}
-      <div className="flex-1 overflow-y-auto p-6 py-3">
+      <div className="flex-1 p-6 py-3" data-simplebar>
         <h3 className="text-md text-white mb-3">Group Members</h3>
         <div className="space-y-4">
           {group.users.map((user) => (

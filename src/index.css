@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* SimpleBar custom styles */
+.simplebar-scrollbar::before {
+  background-color: #d1d5db !important; /* neutral-300 */
+}
+
+.simplebar-track.simplebar-vertical {
+  background-color: transparent !important;
+}
+
+.simplebar-track.simplebar-horizontal {
+  background-color: transparent !important;
+}
+
+.simplebar-scrollbar:hover::before {
+  background-color: #9ca3af !important; /* neutral-400 on hover */
+}

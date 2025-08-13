@@ -185,7 +185,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
             </div>
 
             {/* Items List */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            <div className="flex-1 p-4 space-y-2" data-simplebar>
               {activeTab === 'tasks' && filteredData.tasks.map((task) => (
                 <div
                   key={task.id}

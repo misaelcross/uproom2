@@ -79,7 +79,7 @@ const BottomSheet = ({
                 </div>
 
                 {/* Content */}
-                <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: `calc(${maxHeight} - 80px)` }}>
+                <div className="px-4 pb-4" style={{ maxHeight: `calc(${maxHeight} - 80px)` }} data-simplebar>
                   {children}
                 </div>
 

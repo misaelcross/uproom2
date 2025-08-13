@@ -247,7 +247,7 @@ function App() {
 
   // Renderizar Dashboard (página padrão)
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -269,7 +269,7 @@ function App() {
           {/* Segunda linha: Grid e coluna direita */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Grid de cards ou visualização por status/cargo */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 min-h-0" data-simplebar>
               {topTabActive === 'groups' ? (
                 <UserGroupsView 
                   users={usersWithIcons} 
@@ -302,7 +302,7 @@ function App() {
             </div>
 
             {/* Coluna direita */}
-            <div className="overflow-y-auto pb-12" style={{ width: '350px' }}>
+            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
               {rightPanelContent === 'schedule' && <Schedule />}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />
