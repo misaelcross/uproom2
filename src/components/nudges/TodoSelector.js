@@ -9,7 +9,6 @@ const todosData = [
     description: 'Check the new dashboard designs and provide feedback',
     priority: 'high',
     status: 'pending',
-    assignee: { id: 101, name: "Ana Silva", avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
     dueDate: '2024-01-15',
     project: 'Dashboard Redesign'
   },
@@ -19,7 +18,6 @@ const todosData = [
     description: 'Add new endpoints and update existing ones',
     priority: 'medium',
     status: 'in-progress',
-    assignee: { id: 102, name: "Carlos Santos", avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
     dueDate: '2024-01-20',
     project: 'API Development'
   },
@@ -29,7 +27,6 @@ const todosData = [
     description: 'Configure automated testing and deployment',
     priority: 'high',
     status: 'pending',
-    assignee: { id: 106, name: "Pedro Alves", avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
     dueDate: '2024-01-18',
     project: 'DevOps'
   },
@@ -39,7 +36,6 @@ const todosData = [
     description: 'Add test coverage for new features',
     priority: 'medium',
     status: 'pending',
-    assignee: { id: 107, name: "Lucia Ferreira", avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
     dueDate: '2024-01-25',
     project: 'Quality Assurance'
   },
@@ -49,7 +45,6 @@ const todosData = [
     description: 'Conduct interviews with 5 users about new features',
     priority: 'low',
     status: 'pending',
-    assignee: { id: 103, name: "Maria Costa", avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
     dueDate: '2024-01-30',
     project: 'User Research'
   }
@@ -192,13 +187,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                       <div className="text-white text-sm font-medium truncate">{todo.title}</div>
                       <div className="text-neutral-400 text-xs truncate">{todo.project}</div>
                     </div>
-                    {todo.assignee && (
-                      <img
-                        src={todo.assignee.avatar}
-                        alt={todo.assignee.name}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    )}
+
                   </button>
                 ))
               ) : searchTerm.trim() ? (
@@ -274,13 +263,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                     </div>
                     <div className="text-neutral-400 text-xs truncate">{todo.project}</div>
                   </div>
-                  {todo.assignee && (
-                    <img
-                      src={todo.assignee.avatar}
-                      alt={todo.assignee.name}
-                      className="w-6 h-6 rounded-full"
-                    />
-                  )}
+
                 </div>
                 <button
                   onClick={() => handleTodoRemove(todo.id)}

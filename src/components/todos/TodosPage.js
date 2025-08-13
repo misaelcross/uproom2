@@ -126,17 +126,50 @@ const TodosPage = ({ onNavigate }) => {
 
   // Mock data for groups
   const [groups, setGroups] = useState([
-    { id: 1, name: 'Work Projects', icon: 'Briefcase', count: 2, isShared: false },
-    { id: 2, name: 'Personal', icon: 'User', count: 1, isShared: false },
-    { id: 3, name: 'Learning', icon: 'BookOpen', count: 0, isShared: false },
-    { id: 4, name: 'Health', icon: 'Heart', count: 0, isShared: false },
+    { 
+      id: 1, 
+      name: 'Work Projects', 
+      icon: 'Briefcase', 
+      count: 2, 
+      isShared: false,
+      order: 0,
+      assignedUsers: [
+        { id: 1, name: 'John Doe', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' },
+        { id: 2, name: 'Sarah Chen', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }
+      ]
+    },
+    { id: 2, name: 'Personal', icon: 'User', count: 1, isShared: false, order: 1, assignedUsers: [] },
+    { id: 3, name: 'Learning', icon: 'BookOpen', count: 0, isShared: false, order: 2, assignedUsers: [] },
+    { id: 4, name: 'Health', icon: 'Heart', count: 0, isShared: false, order: 3, assignedUsers: [] },
     { 
       id: 5, 
       name: 'Project Alpha Team', 
       icon: 'Users', 
       count: 0, 
       isShared: true, 
-      expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+      order: 4,
+      expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+      assignedUsers: [
+        { id: 3, name: 'Mike Johnson', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }
+      ]
+    },
+    {
+      id: 6,
+      name: 'Development',
+      icon: 'Folder',
+      count: 0,
+      isShared: false,
+      parentId: 1,
+      assignedUsers: []
+    },
+    {
+      id: 7,
+      name: 'Design',
+      icon: 'Folder',
+      count: 0,
+      isShared: false,
+      parentId: 1,
+      assignedUsers: []
     }
   ]);
 
@@ -186,7 +219,6 @@ const TodosPage = ({ onNavigate }) => {
           links: nudgeData.links || [],
           originalMessage: nudgeData.message
         } : null,
-        assignees: nudgeData?.assignees || [],
         mentions: nudgeData?.mentions || [],
         dueDate: nudgeData?.dueDate || null
       };
@@ -224,7 +256,7 @@ const TodosPage = ({ onNavigate }) => {
         links: nudge.links || [],
         originalMessage: nudge.message
       },
-      assignees: [],
+
       mentions: [],
       dueDate: nudge.dueDate || null
     };
@@ -331,6 +363,94 @@ const TodosPage = ({ onNavigate }) => {
     setShowDeleteModal(false);
     setGroupToDelete(null);
   };
+  
+  // Move folder to another folder (for drag and drop)
+  const moveFolder = (draggedFolderId, targetFolderId) => {
+    setGroups(groups.map(group => 
+      group.id === draggedFolderId 
+        ? { ...group, parentId: targetFolderId || undefined }
+        : group
+    ));
+  };
+  
+  // Function to reorder folders at the same level
+  const reorderFolders = (draggedFolderId, targetFolderId, position) => {
+    const draggedFolder = groups.find(g => g.id === draggedFolderId);
+    const targetFolder = groups.find(g => g.id === targetFolderId);
+    
+    if (!draggedFolder || !targetFolder) return;
+    
+    // Only allow reordering at root level (folders without parentId)
+    if (draggedFolder.parentId || targetFolder.parentId) return;
+    
+    const rootFolders = groups.filter(g => !g.parentId).sort((a, b) => (a.order || 0) - (b.order || 0));
+    const otherGroups = groups.filter(g => g.parentId);
+    
+    // Remove dragged folder from current position
+    const filteredFolders = rootFolders.filter(f => f.id !== draggedFolderId);
+    
+    // Find target index
+    const targetIndex = filteredFolders.findIndex(f => f.id === targetFolderId);
+    
+    // Insert dragged folder at new position
+    const newOrder = [...filteredFolders];
+    if (position === 'above') {
+      newOrder.splice(targetIndex, 0, draggedFolder);
+    } else {
+      newOrder.splice(targetIndex + 1, 0, draggedFolder);
+    }
+    
+    // Update order property for all root folders
+    const reorderedFolders = newOrder.map((folder, index) => ({
+      ...folder,
+      order: index
+    }));
+    
+    // Combine with other groups (subfolders)
+    setGroups([...reorderedFolders, ...otherGroups]);
+  };
+  
+  // Add person to folder
+  const addPersonToFolder = (folderId, user) => {
+    setGroups(groups.map(group => 
+      group.id === folderId 
+        ? { 
+            ...group, 
+            assignedUsers: group.assignedUsers 
+              ? [...group.assignedUsers.filter(u => u.id !== user.id), user]
+              : [user]
+          }
+        : group
+    ));
+  };
+  
+  // Remove person from folder
+  const removePersonFromFolder = (folderId, userId) => {
+    setGroups(groups.map(group => 
+      group.id === folderId 
+        ? { 
+            ...group, 
+            assignedUsers: group.assignedUsers 
+              ? group.assignedUsers.filter(u => u.id !== userId)
+              : []
+          }
+        : group
+    ));
+  };
+  
+  // Create sub-folder
+  const createSubFolder = (parentId, name) => {
+    const newSubFolder = {
+      id: Date.now(),
+      name: name,
+      icon: 'Folder',
+      count: 0,
+      isShared: false,
+      parentId: parentId,
+      assignedUsers: []
+    };
+    setGroups([...groups, newSubFolder]);
+  };
 
   // Function to update todo description
   const updateTodoDescription = (todoId, newDescription) => {
@@ -365,6 +485,8 @@ const TodosPage = ({ onNavigate }) => {
         : todo
     ));
   };
+  
+
 
   // Function to update todo notes
   const updateNotes = (todoId, newNotes) => {
@@ -458,28 +580,34 @@ const TodosPage = ({ onNavigate }) => {
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Main Content */}
-            <div className="flex-1 flex flex-col h-full">
-              <TodoList
-              todos={getFilteredTodos()}
-              onToggleComplete={toggleTodoComplete}
-              onToggleStar={toggleStarred}
-              onDelete={deleteTodo}
-              onSelect={setSelectedTodo}
-              onUpdatePriority={updateTodoPriority}
-            />
+            <div className="flex-1 flex flex-col h-full relative">
+              {/* Todo List with scroll */}
+              <div className="flex-1 overflow-y-auto pb-20">
+                <TodoList
+                  todos={getFilteredTodos()}
+                  onToggleComplete={toggleTodoComplete}
+                  onToggleStar={toggleStarred}
+                  onDelete={deleteTodo}
+                  onSelect={setSelectedTodo}
+                  onUpdatePriority={updateTodoPriority}
+                />
+              </div>
 
-            <AddTodoInput
-              newTodoText={newTodoText}
-              setNewTodoText={setNewTodoText}
-              onAddTodo={addNewTodo}
-            />
-          </div>
+              {/* Fixed Add Todo Input at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 bg-neutral-900 border-t border-neutral-700 p-4">
+                <AddTodoInput
+                  newTodoText={newTodoText}
+                  setNewTodoText={setNewTodoText}
+                  onAddTodo={addNewTodo}
+                />
+              </div>
+            </div>
 
           {/* Right Column */}
           <div className="w-80 border border-neutral-700 rounded-lg flex flex-col pb-12">
             {!selectedTodo ? (
               <GroupsView 
-                groups={groups}
+                folders={groups}
                 selectedGroup={selectedGroup}
                 onSelectGroup={selectGroup}
                 showCreateGroup={showCreateGroup}
@@ -502,6 +630,11 @@ const TodosPage = ({ onNavigate }) => {
                   setGroupToDelete(groupId);
                   setShowDeleteModal(true);
                 }}
+                onMoveFolder={moveFolder}
+                onAddPersonToFolder={addPersonToFolder}
+                onRemovePersonFromFolder={removePersonFromFolder}
+                onCreateSubFolder={createSubFolder}
+                onReorderFolders={reorderFolders}
               />
             ) : (
               <TodoDetails
@@ -558,6 +691,7 @@ const TodosPage = ({ onNavigate }) => {
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           selectedUsers={selectedUsers}
+          setSelectedUsers={setSelectedUsers}
           toggleUserSelection={toggleUserSelection}
           removeSelectedUser={removeSelectedUser}
           message={message}

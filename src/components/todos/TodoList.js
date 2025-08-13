@@ -7,7 +7,7 @@ const TodoList = ({
   onToggleStar, 
   onDelete, 
   onSelect,
-  onUpdatePriority 
+  onUpdatePriority
 }) => {
   // Sort todos: starred first, then by completion status
   const sortedTodos = [...todos].sort((a, b) => {
