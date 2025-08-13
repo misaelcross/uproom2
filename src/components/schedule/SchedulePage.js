@@ -513,8 +513,8 @@ const SchedulePage = ({ onNavigate }) => {
               )}
             </SimpleBar>
 
-            {/* Right Column - w-80 (same as dashboard) */}
-            <div className="w-80 flex flex-col gap-6 min-h-0">
+            {/* Right Column - 350px (same as dashboard) */}
+            <div className="flex flex-col gap-6 min-h-0" style={{ width: '350px' }}>
               {/* Calendar at the top */}
               <div className="w-full flex-shrink-0">
                 <MonthCalendar 
