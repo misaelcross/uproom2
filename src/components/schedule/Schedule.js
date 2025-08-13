@@ -364,13 +364,13 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                     const getStatusColors = (status) => {
                       switch(status) {
                         case 'Focus':
-                          return 'bg-purple-500/10 border-purple-500/20';
+                          return 'border-neutral-700 hover:bg-purple-500/10 hover:border-purple-500/20';
                         case 'Available':
-                          return 'bg-green-500/10 border-green-500/20';
+                          return 'border-neutral-700 hover:bg-green-500/10 hover:border-green-500/20';
                         case 'Meeting':
-                          return 'bg-blue-500/10 border-blue-500/20';
+                          return 'border-neutral-700 hover:bg-blue-500/10 hover:border-blue-500/20';
                         default:
-                          return 'bg-neutral-500/10 border-neutral-500/20';
+                          return 'border-neutral-700 hover:bg-neutral-500/10 hover:border-neutral-500/20';
                       }
                     };
 
@@ -378,7 +378,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div
                         key={event.id}
                         onClick={() => handleOpenEventDetails(event)}
-                        className={`rounded p-1.5 border ${getStatusColors(event.status)} cursor-pointer hover:opacity-80 transition-opacity`}
+                        className={`rounded p-1.5 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200`}
                       >
                         {/* Header with title and status */}
                         <div className="flex items-start justify-between mb-1">
@@ -461,13 +461,13 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                     const getStatusColors = (status) => {
                       switch(status) {
                         case 'Focus':
-                          return 'bg-purple-500/10 border-purple-500/20';
+                          return 'border-neutral-700 hover:bg-purple-500/10 hover:border-purple-500/20';
                         case 'Available':
-                          return 'bg-green-500/10 border-green-500/20';
+                          return 'border-neutral-700 hover:bg-green-500/10 hover:border-green-500/20';
                         case 'Meeting':
-                          return 'bg-blue-500/10 border-blue-500/20';
+                          return 'border-neutral-700 hover:bg-blue-500/10 hover:border-blue-500/20';
                         default:
-                          return 'bg-neutral-500/10 border-neutral-500/20';
+                          return 'border-neutral-700 hover:bg-neutral-500/10 hover:border-neutral-500/20';
                       }
                     };
 
@@ -475,7 +475,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div
                         key={event.id}
                         onClick={() => handleOpenEventDetails(event)}
-                        className={`rounded-lg p-2 border ${getStatusColors(event.status)} cursor-pointer hover:opacity-80 transition-opacity`}
+                        className={`rounded-lg p-2 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200`}
                       >
                         {/* Header with title and status */}
                         <div className="flex items-center justify-between mb-3">
