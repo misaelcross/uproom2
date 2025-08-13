@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, MoreVertical, Plus, Paperclip, Headset } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import ScheduleMeetingModal from './ScheduleMeetingModal';
 import EventContextModal from './EventContextModal';
 import EventDetailsModal from './EventDetailsModal';
@@ -344,7 +345,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 px-6 pb-6" data-simplebar>
+      <SimpleBar className="flex-1 px-6 pb-6">
         {viewMode === 'Week' ? (
           /* Week View - Days in columns */
           <div className="grid grid-cols-7 gap-2 h-full">
@@ -541,7 +542,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
             ))}
           </div>
         )}
-      </div>
+      </SimpleBar>
 
       {/* Schedule Meeting Modal */}
       <ScheduleMeetingModal

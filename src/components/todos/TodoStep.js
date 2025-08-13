@@ -45,7 +45,7 @@ const TodoStep = ({ step, onToggleComplete, onDelete, onUpdateDescription }) => 
   return (
     <div className="flex items-center space-x-3 group">
       <button
-        onClick={() => onToggleComplete(step.id)}
+        onClick={onToggleComplete}
         className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
           step.completed
             ? 'bg-white border-white'
@@ -96,7 +96,7 @@ const TodoStep = ({ step, onToggleComplete, onDelete, onUpdateDescription }) => 
 
       {!isEditing && (
         <button
-          onClick={() => onDelete(step.id)}
+          onClick={onDelete}
           className="text-neutral-400 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
         >
           <Trash2 className="w-4 h-4" />

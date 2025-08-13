@@ -16,6 +16,7 @@
     "react-spring": "^10.0.1",
     "resize-observer-polyfill": "^1.5.1",
     "simplebar": "^6.3.2",
+    "simplebar-react": "^3.3.2",
     "zustand": "^5.0.7"
   },
   "scripts": {

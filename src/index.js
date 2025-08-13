@@ -4,8 +4,7 @@ import './index.css';
 import App from './App';
 
 // SimpleBar imports
-import 'simplebar/dist/simplebar.min.css';
-import 'simplebar';
+import 'simplebar-react/dist/simplebar.min.css';
 
 // ResizeObserver polyfill for browsers that don't support it
 import ResizeObserver from 'resize-observer-polyfill';

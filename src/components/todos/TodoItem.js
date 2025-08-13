@@ -64,14 +64,14 @@ const TodoItem = ({
 
   return (
     <div
-      className={`border rounded-lg p-4 hover:bg-neutral-800 transition-colors cursor-pointer group ${
+      className={`border rounded-lg p-3 sm:p-4 hover:bg-neutral-800 transition-colors cursor-pointer group w-full ${
         todo.missed 
           ? 'border-amber-600/50 bg-amber-900/10' 
           : 'border-neutral-700'
       }`}
       onClick={handleItemClick}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-2 sm:gap-3 w-full">
         {/* Checkbox */}
         <button
           onClick={handleCheckboxClick}
@@ -85,32 +85,33 @@ const TodoItem = ({
         </button>
 
         {/* Content */}
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
               {todo.missed && (
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               )}
-              <span className={`text-white ${todo.completed ? 'line-through opacity-60' : ''}`}>
+              <span className={`text-white text-sm sm:text-base truncate ${todo.completed ? 'line-through opacity-60' : ''}`}>
                 {todo.description}
               </span>
             </div>
             
-            <div className="flex items-center gap-3">
-              <span className="text-neutral-400 text-sm">{todo.time}</span>
+            <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              <span className="text-neutral-400 text-xs sm:text-sm hidden sm:block">{todo.time}</span>
               
               {/* Priority Badge with Dropdown - Similar to UserCard status badge */}
               <div className="relative priority-badge" ref={dropdownRef}>
                 <button
                   onClick={handlePriorityClick}
-                  className={`flex items-center space-x-1 px-2 py-1 rounded text-xs font-medium transition-colors hover:opacity-80 ${currentPriority.text} ${currentPriority.bg}`}
+                  className={`flex items-center space-x-1 px-1.5 sm:px-2 py-1 rounded text-xs font-medium transition-colors hover:opacity-80 ${currentPriority.text} ${currentPriority.bg}`}
                 >
-                  <span>{currentPriority.label}</span>
+                  <span className="hidden sm:inline">{currentPriority.label}</span>
+                  <span className="sm:hidden">{currentPriority.label.charAt(0)}</span>
                   <ChevronDown className="w-3 h-3" />
                 </button>
 
                 {showPriorityDropdown && (
-                  <div className="absolute right-0 top-full mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 min-w-[100px]">
+                  <div className="absolute right-0 top-full mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 min-w-[80px] sm:min-w-[100px]">
                     {priorities.map((priority) => (
                       <button
                         key={priority.value}
@@ -145,20 +146,22 @@ const TodoItem = ({
           
           {/* Additional info: Comments, Duration */}
           {(todo.comments?.length > 0 || todo.duration) && (
-            <div className="mt-2 space-y-1">
+            <div className="mt-2 flex flex-wrap gap-3 sm:space-y-1 sm:block">
               {/* Comments */}
               {todo.comments && todo.comments.length > 0 && (
-                <div className="flex items-center gap-1 text-sm text-neutral-400">
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-neutral-400">
                   <MessageCircle className="w-3 h-3" />
-                  <span>{todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}</span>
+                  <span className="hidden sm:inline">{todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}</span>
+                  <span className="sm:hidden">{todo.comments.length}</span>
                 </div>
               )}
               
               {/* Duration */}
               {todo.duration && (
-                <div className="flex items-center gap-1 text-sm text-neutral-400">
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-neutral-400">
                   <Clock className="w-3 h-3" />
-                  <span>{todo.duration.start} - {todo.duration.end}</span>
+                  <span className="hidden sm:inline">{todo.duration.start} - {todo.duration.end}</span>
+                  <span className="sm:hidden truncate max-w-[60px]">{todo.duration.start}</span>
                 </div>
               )}
             </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SimpleBar from 'simplebar-react';
 import Sidebar from '../shared/Sidebar';
 
 import TodoHeader from './TodoHeader';
@@ -17,7 +18,7 @@ const TodosPage = ({ onNavigate }) => {
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [newTodoText, setNewTodoText] = useState('');
-  const [newStepText, setNewStepText] = useState('');
+
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -28,6 +29,7 @@ const TodosPage = ({ onNavigate }) => {
   const [editGroupName, setEditGroupName] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState(null);
+  const [todoToDelete, setTodoToDelete] = useState(null);
   
   // Catch-up mode state
   const [catchUpMode, setCatchUpMode] = useState(false);
@@ -274,23 +276,26 @@ const TodosPage = ({ onNavigate }) => {
     return newTodo;
   };
 
-  const addStep = () => {
-    if (newStepText.trim() && selectedTodo) {
+  const addStep = (todoId, stepText) => {
+    if (stepText && stepText.trim()) {
       const newStep = {
         id: Date.now(),
-        description: newStepText,
+        description: stepText.trim(),
         completed: false
       };
       
       const updatedTodos = todos.map(todo => 
-        todo.id === selectedTodo.id 
-          ? { ...todo, steps: [...todo.steps, newStep] }
+        todo.id === todoId 
+          ? { ...todo, steps: [...(todo.steps || []), newStep] }
           : todo
       );
       
       setTodos(updatedTodos);
-      setSelectedTodo({ ...selectedTodo, steps: [...selectedTodo.steps, newStep] });
-      setNewStepText('');
+      
+      // Update selectedTodo if it's the same todo
+      if (selectedTodo && selectedTodo.id === todoId) {
+        setSelectedTodo({ ...selectedTodo, steps: [...(selectedTodo.steps || []), newStep] });
+      }
     }
   };
 
@@ -485,6 +490,19 @@ const TodosPage = ({ onNavigate }) => {
         : todo
     ));
   };
+
+  // Function to add comment to todo
+  const addComment = (todoId, comment) => {
+    const updatedTodos = todos.map(todo => 
+      todo.id === todoId 
+        ? { ...todo, comments: [...(todo.comments || []), comment] }
+        : todo
+    );
+    
+    setTodos(updatedTodos);
+    const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
+    setSelectedTodo(updatedTodo);
+  };
   
 
 
@@ -582,7 +600,7 @@ const TodosPage = ({ onNavigate }) => {
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full relative">
               {/* Todo List with scroll */}
-              <div className="flex-1 pb-20" data-simplebar>
+              <SimpleBar className="flex-1 pb-20">
                 <TodoList
                   todos={getFilteredTodos()}
                   onToggleComplete={toggleTodoComplete}
@@ -591,7 +609,7 @@ const TodosPage = ({ onNavigate }) => {
                   onSelect={setSelectedTodo}
                   onUpdatePriority={updateTodoPriority}
                 />
-              </div>
+              </SimpleBar>
 
               {/* Fixed Add Todo Input at bottom */}
               <div className="absolute bottom-0 left-0 right-0 bg-neutral-900 border-t border-neutral-700 p-4">
@@ -642,49 +660,62 @@ const TodosPage = ({ onNavigate }) => {
                 onBack={() => setSelectedTodo(null)}
                 onToggleComplete={toggleTodoComplete}
                 onToggleStar={toggleStarred}
-                onAddStep={() => addStep(selectedTodo.id)}
+                onAddStep={(todoId, stepText) => addStep(todoId, stepText)}
                 onDeleteStep={deleteStep}
                 onToggleStepComplete={toggleStepComplete}
                 onUpdateNotes={updateNotes}
                 onDeleteTodo={deleteTodo}
                 onUpdateTodoDescription={updateTodoDescription}
-                onUpdateStepDescription={(stepId, newDescription) => 
+                onUpdateStepDescription={(stepId, newDescription) =>
                   updateStepDescription(selectedTodo.id, stepId, newDescription)
                 }
+                onAddComment={addComment}
               />
             )}
           </div>
         </div>
       </div>
 
-        {/* Delete Modal */}
-        {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-white text-lg font-semibold mb-4">Delete Group</h3>
-              <p className="text-neutral-400 mb-6">
-                Are you sure you want to delete this group? This action cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => {
-                    setShowDeleteModal(false);
-                    setGroupToDelete(null);
-                  }}
-                  className="px-4 py-2 border border-neutral-600 rounded-lg text-white hover:bg-neutral-800 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => deleteGroup(groupToDelete)}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Delete
-                </button>
-              </div>
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Delete {groupToDelete ? 'Group' : 'Todo'}
+            </h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete this {groupToDelete ? 'group' : 'todo'}? This action cannot be undone.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setGroupToDelete(null);
+                  setTodoToDelete(null);
+                }}
+                className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (groupToDelete) {
+                    deleteGroup(groupToDelete);
+                  } else if (todoToDelete) {
+                    deleteTodo(todoToDelete);
+                  }
+                  setShowDeleteModal(false);
+                  setGroupToDelete(null);
+                  setTodoToDelete(null);
+                }}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Delete
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
         {/* AnimatedBottomSheet */}
         <AnimatedBottomSheet
