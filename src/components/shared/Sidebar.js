@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SimpleBar from 'simplebar-react';
 import { 
   Calendar, 
   Users, 
@@ -424,7 +425,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
       </div>
 
       {/* Navigation Links e Widgets - Área com scroll */}
-      <div className="flex-1 min-h-0" data-simplebar>
+      <SimpleBar className="flex-1 min-h-0">
         <div className="p-2 space-y-1">
           {navItems.map((item, index) => {
             const isActive = (item.label === 'Dashboard' && currentPage === 'dashboard') || 
@@ -736,7 +737,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
             )}
           </div>
         </div>
-      </div>
+      </SimpleBar>
 
       {/* Footer fixo com Status e Upgrade */}
       <div className="border-t border-neutral-700">

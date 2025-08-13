@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SimpleBar from 'simplebar-react';
 import UserCard from './components/dashboard/UserCard';
 import UserDetails from './components/dashboard/UserDetails';
 import Schedule from './components/schedule/Schedule';
@@ -269,7 +270,7 @@ function App() {
           {/* Segunda linha: Grid e coluna direita */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Grid de cards ou visualização por status/cargo */}
-            <div className="flex-1 min-h-0" data-simplebar>
+            <SimpleBar className="flex-1 min-h-0">
               {topTabActive === 'groups' ? (
                 <UserGroupsView 
                   users={usersWithIcons} 
@@ -299,10 +300,10 @@ function App() {
                   ))}
                 </div>
               )}
-            </div>
+            </SimpleBar>
 
             {/* Coluna direita */}
-            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
+            <SimpleBar className="pb-12" style={{ width: '350px' }}>
               {rightPanelContent === 'schedule' && <Schedule />}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />
@@ -329,7 +330,7 @@ function App() {
                   allUsers={usersWithIcons}
                 />
               )}
-            </div>
+            </SimpleBar>
           </div>
         </div>
       </div>

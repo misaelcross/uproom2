@@ -19,7 +19,7 @@ const TodoList = ({
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 w-full">
       {sortedTodos.map((todo) => (
         <TodoItem
           key={todo.id}

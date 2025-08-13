@@ -11,6 +11,7 @@ import {
   CheckSquare,
   Save
 } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import PollSurveyModal from './PollSurveyModal';
 import GroupSelector from './GroupSelector';
 import TodoSelector from './TodoSelector';
@@ -150,7 +151,8 @@ const CreateNudgeView = ({ onCancel }) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6 space-y-6" data-simplebar>
+      <SimpleBar className="flex-1">
+        <div className="p-6 space-y-6">
         {/* Mode Toggle */}
         <div className="flex items-center space-x-2 bg-neutral-800 rounded-lg p-1">
           <button
@@ -328,7 +330,8 @@ const CreateNudgeView = ({ onCancel }) => {
           selectedTodos={selectedTodos}
           onTodosChange={setSelectedTodos}
         />
-      </div>
+        </div>
+      </SimpleBar>
 
       {/* Footer with Send Button */}
       <div className="p-6 border-t border-neutral-700 space-y-3">

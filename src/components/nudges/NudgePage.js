@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import useNudgeStore from '../../store/nudgeStore';
 import { usersData } from '../../data/usersData';
+import SimpleBar from 'simplebar-react';
 
 import Sidebar from '../shared/Sidebar';
 import TopTabsNudges from './TopTabsNudges';
@@ -246,10 +247,17 @@ function NudgePage({ onNavigate }) {
     }
   };
 
-  // Obter o nudge selecionado do store global ou dos dados locais
+  // Obter o nudge selecionado do store global, dados locais ou drafts
   const selectedNudge = selectedNudgeId 
-    ? [...nudges, ...localNudges].find(n => n.id === selectedNudgeId)
-    : localNudges[0]; // Fallback para o primeiro nudge local
+    ? (() => {
+        // Se estamos na view de drafts, procurar nos drafts
+        if (sortBy === 'Drafts') {
+          return drafts.find(d => d.id === selectedNudgeId);
+        }
+        // Caso contrário, procurar nos nudges normais
+        return [...nudges, ...localNudges].find(n => n.id === selectedNudgeId);
+      })()
+    : null; // Não selecionar automaticamente nenhum item
 
   // Função para lidar com mudança de ordenação
   const handleSortChange = (sortOption) => {
@@ -634,8 +642,9 @@ function NudgePage({ onNavigate }) {
           {/* Segunda linha: Grid de nudges e coluna direita */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Grid de nudges */}
-            <div className="flex-1" data-simplebar>
-              <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
+            <SimpleBar className="flex-1">
+              <div className="p-6">
+                <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
                 {getSortedNudges().map((nudge) => (
                   sortBy === 'Drafts' ? (
                     <DraftCard 
@@ -670,12 +679,14 @@ function NudgePage({ onNavigate }) {
                     />
                   )
                 ))}
+                </div>
               </div>
-            </div>
+            </SimpleBar>
 
             {/* Coluna direita - Detalhes do nudge, criação de nudge ou detalhes do usuário */}
-            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
-              {selectedUser ? (
+            <SimpleBar className="pb-12" style={{ width: '350px' }}>
+              <div className="p-0">
+                {selectedUser ? (
                 <UserDetails 
                   user={selectedUser}
                   onBack={handleBackFromUserDetails}
@@ -722,7 +733,8 @@ function NudgePage({ onNavigate }) {
                   sortBy={sortBy}
                 />
               )}
-            </div>
+              </div>
+            </SimpleBar>
           </div>
         </div>
       </div>

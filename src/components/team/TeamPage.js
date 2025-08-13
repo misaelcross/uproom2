@@ -14,10 +14,12 @@ import {
   Clock,
   CheckCircle,
   XCircle,
+  AlertTriangle,
   AlertCircle,
   Users,
   Check
 } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import { usersData } from '../../data/usersData';
 import Sidebar from '../shared/Sidebar';
 import TopTabs from '../dashboard/TopTabs';
@@ -244,7 +246,7 @@ const TeamPage = ({ onNavigate }) => {
               </div>
 
               {/* Users Table */}
-              <div className="flex-1" data-simplebar>
+              <SimpleBar className="flex-1">
                 <table className="w-full">
                   <thead className="bg-neutral-800 sticky top-0">
                     <tr>
@@ -324,11 +326,11 @@ const TeamPage = ({ onNavigate }) => {
                     </div>
                   </div>
                 )}
-              </div>
+              </SimpleBar>
             </div>
 
             {/* Coluna direita - Detalhes do usuário */}
-            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
+            <SimpleBar className="pb-12" style={{ width: '350px' }}>
               {selectedUser ? (
                 <UserDetails 
                   user={selectedUser}
@@ -343,7 +345,7 @@ const TeamPage = ({ onNavigate }) => {
                   <p className="text-sm text-center">Click on a user from the table to view their details</p>
                 </div>
               )}
-            </div>
+            </SimpleBar>
           </div>
         </div>
       </div>

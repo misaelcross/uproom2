@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Users, CheckCircle, AlertTriangle, TrendingUp, Calendar, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import Sidebar from '../shared/Sidebar';
 
 import MonthCalendar from './MonthCalendar';
@@ -471,7 +472,7 @@ const SchedulePage = ({ onNavigate }) => {
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Content Area - My Schedule or Selected User Schedule */}
-            <div className="flex-1 min-h-0" data-simplebar>
+            <SimpleBar className="flex-1 min-h-0">
               {selectedUser ? (
                 /* Selected User Schedule - Full Width */
                 <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
@@ -510,7 +511,7 @@ const SchedulePage = ({ onNavigate }) => {
                 /* My Schedule - Default view */
                 <Schedule fullWidth={true} viewMode={timeFrame} />
               )}
-            </div>
+            </SimpleBar>
 
             {/* Right Column - w-80 (same as dashboard) */}
             <div className="w-80 flex flex-col gap-6 min-h-0">
@@ -542,7 +543,7 @@ const SchedulePage = ({ onNavigate }) => {
                   </div>
 
                   {/* Team Members List */}
-                  <div className="divide-y divide-neutral-700 flex-1 min-h-0" data-simplebar>
+                  <SimpleBar className="divide-y divide-neutral-700 flex-1 min-h-0">
                     {getFilteredAndSortedData().map((user) => {
                       const getStatusDotColor = (availability) => {
                         switch (availability) {
@@ -581,8 +582,8 @@ const SchedulePage = ({ onNavigate }) => {
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
+                      })}
+                    </SimpleBar>
                 </div>
               </div>
             </div>
