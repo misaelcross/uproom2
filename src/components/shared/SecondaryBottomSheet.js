@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { X, ChevronUp, Send, FileText, ThumbsUp } from 'lucide-react';
 import useNudgeStore from '../../store/nudgeStore';
@@ -21,6 +21,49 @@ const SecondaryBottomSheet = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeRange, setSelectedTimeRange] = useState('');
+  const [currentPage, setCurrentPage] = useState('nudges');
+
+  // Detectar a página atual baseada no DOM
+  useEffect(() => {
+    const detectCurrentPage = () => {
+      // Detectar baseado no atributo data-current-page do sidebar
+      const sidebar = document.querySelector('[data-current-page]');
+      if (sidebar) {
+        const page = sidebar.getAttribute('data-current-page');
+        setCurrentPage(page || 'nudges');
+      }
+    };
+
+    // Detectar imediatamente
+    detectCurrentPage();
+    
+    // Usar MutationObserver para detectar mudanças no DOM
+    const observer = new MutationObserver(() => {
+      detectCurrentPage();
+    });
+    
+    // Observar mudanças no body
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['data-current-page']
+    });
+    
+    return () => observer.disconnect();
+  }, []);
+
+  // Calcular posição baseada na página atual
+  const getRightPosition = () => {
+    switch (currentPage) {
+      case 'todos':
+        return 'right-[320px]'; // Para a página de todos com coluna direita de 320px
+      case 'nudges':
+        return 'right-[386px]'; // Para a página de nudges com coluna direita de 350px + padding
+      default:
+        return 'right-[386px]';
+    }
+  };
 
   // Determinar qual nudge mostrar
   const currentNudge = selectedNudgeId 
@@ -87,7 +130,7 @@ const SecondaryBottomSheet = () => {
   }
 
   return (
-    <div className="fixed bottom-0 right-[386px] z-40">
+    <div className={`fixed bottom-0 ${getRightPosition()} z-40`}>
       <animated.div
         style={{
           ...containerAnimation,

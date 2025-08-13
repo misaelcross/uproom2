@@ -316,7 +316,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
   const uncompletedReminders = reminders.filter(r => !r.completed).length;
 
   return (
-    <div className="w-[300px] h-full flex flex-col">
+    <div className="w-[300px] h-full flex flex-col" data-current-page={currentPage}>
       {/* Header com avatar do usuário e dropdown */}
       <div className="p-2 border-b border-neutral-700 relative">
         <div className="flex items-center justify-between">
