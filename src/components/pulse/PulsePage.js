@@ -18,7 +18,7 @@ const PulsePage = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>

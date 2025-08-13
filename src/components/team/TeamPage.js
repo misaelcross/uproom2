@@ -130,7 +130,7 @@ const TeamPage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -244,7 +244,7 @@ const TeamPage = ({ onNavigate }) => {
               </div>
 
               {/* Users Table */}
-              <div className="flex-1 overflow-auto">
+              <div className="flex-1" data-simplebar>
                 <table className="w-full">
                   <thead className="bg-neutral-800 sticky top-0">
                     <tr>
@@ -328,7 +328,7 @@ const TeamPage = ({ onNavigate }) => {
             </div>
 
             {/* Coluna direita - Detalhes do usuário */}
-            <div className="overflow-y-auto pb-12" style={{ width: '350px' }}>
+            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
               {selectedUser ? (
                 <UserDetails 
                   user={selectedUser}

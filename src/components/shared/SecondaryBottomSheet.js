@@ -148,7 +148,7 @@ const SecondaryBottomSheet = () => {
               {/* Content Area */}
               <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto pb-4">
+                <div className="flex-1 pb-4" data-simplebar>
                   <div className="space-y-6">
                     {/* Message Description with Left Border */}
                     <div className="border border-neutral-600 p-4 rounded-lg">

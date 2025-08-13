@@ -134,7 +134,7 @@ const GroupSelector = ({ selectedGroups, onGroupsChange, className = '' }) => {
             />
             
             {/* Dropdown Content */}
-            <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-20 max-h-64 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-20 max-h-64" data-simplebar>
               {filteredGroups.length > 0 ? (
                 filteredGroups.map((group) => (
                   <button

@@ -197,7 +197,7 @@ const TodoDetails = ({
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-4 space-y-6" data-simplebar>
         {/* Todo Title and Description */}
         <div className="space-y-3">
           {/* Title - Truncated to one line */}
@@ -300,7 +300,7 @@ const TodoDetails = ({
             
             {/* Mention Dropdown */}
             {showMentionForm && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-32 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-32" data-simplebar>
                 {mockUsers
                   .filter(user => user.name.toLowerCase().includes(mentionSearch.toLowerCase()))
                   .map(user => (
@@ -665,7 +665,7 @@ const TodoDetails = ({
               <div className="space-y-3">
                 {/* Existing Comments */}
                 {todo.comments && todo.comments.length > 0 && (
-                  <div className="space-y-3 max-h-48 overflow-y-auto">
+                  <div className="space-y-3 max-h-48" data-simplebar>
                     {todo.comments.map((comment) => (
                       <div key={comment.id} className="flex space-x-3 p-3 bg-neutral-800 rounded-lg">
                         <img 

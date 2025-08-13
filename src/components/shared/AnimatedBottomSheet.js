@@ -417,7 +417,7 @@ const AnimatedBottomSheet = ({
             {/* Conteúdo condicional baseado no modo de visualização */}
             {viewMode === 'detail' ? (
               /* Visualização detalhada do nudge */
-              <div className="space-y-6 overflow-y-auto max-h-96 px-1">
+              <div className="space-y-6 max-h-96 px-1" data-simplebar>
                 {/* Original Message */}
                 {!showReschedule && !showSuccess && (
                   <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 mb-4">
@@ -449,7 +449,7 @@ const AnimatedBottomSheet = ({
                 {!showReschedule && !showSuccess && (
                   <div className="space-y-4">
                     <h4 className="text-white text-sm font-medium border-b border-neutral-700 pb-2">Replies</h4>
-                    <div className="space-y-3 max-h-48 overflow-y-auto">
+                    <div className="space-y-3 max-h-48" data-simplebar>
                       {replies.map((reply, index) => {
                         const showDate = index === 0 || replies[index - 1].date !== reply.date;
                         return (
@@ -589,7 +589,7 @@ const AnimatedBottomSheet = ({
                     
                     {/* Search Results */}
                     {filteredUsers.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48" data-simplebar>
                         {filteredUsers.map((user) => (
                           <button
                             key={user.id}
@@ -701,7 +701,7 @@ const AnimatedBottomSheet = ({
                 </>
               ) : (
                 /* Tab Received */
-                <div className="space-y-3 overflow-y-auto max-h-96">
+                <div className="space-y-3 max-h-96" data-simplebar>
                   {globalNudges.length === 0 ? (
                     <div className="text-center py-8">
                       <div className="text-neutral-400 text-sm">No nudges received yet</div>

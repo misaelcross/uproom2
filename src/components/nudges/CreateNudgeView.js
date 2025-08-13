@@ -150,7 +150,7 @@ const CreateNudgeView = ({ onCancel }) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto">
+      <div className="flex-1 p-6 space-y-6" data-simplebar>
         {/* Mode Toggle */}
         <div className="flex items-center space-x-2 bg-neutral-800 rounded-lg p-1">
           <button
@@ -200,7 +200,7 @@ const CreateNudgeView = ({ onCancel }) => {
           
           {/* Search Results */}
           {filteredUsers.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+            <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48" data-simplebar>
               {filteredUsers.map((user) => (
                 <button
                   key={user.id}

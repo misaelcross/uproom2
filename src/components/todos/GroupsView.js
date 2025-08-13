@@ -557,7 +557,7 @@ const GroupsView = ({
               
               {/* Dropdown results - only show when typing */}
               {searchTerm && (
-                <div className="absolute top-full left-0 right-0 bg-neutral-700 border border-neutral-600 rounded-b-lg max-h-40 overflow-y-auto z-10">
+                <div className="absolute top-full left-0 right-0 bg-neutral-700 border border-neutral-600 rounded-b-lg max-h-40 z-10" data-simplebar>
                   {getFilteredUsers(folder.id).length > 0 ? (
                     getFilteredUsers(folder.id).map(user => (
                       <button

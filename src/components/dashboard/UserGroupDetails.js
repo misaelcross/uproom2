@@ -155,7 +155,7 @@ const UserGroupDetails = ({ group, onUserClick, onClose, allUsers }) => {
       </div>
 
       {/* Group Members */}
-      <div className="flex-1 overflow-y-auto px-6 py-3">
+      <div className="flex-1 px-6 py-3" data-simplebar>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-md text-white">Group Members</h3>
           <button
@@ -182,7 +182,7 @@ const UserGroupDetails = ({ group, onUserClick, onClose, allUsers }) => {
             
             {/* Search Results */}
             {searchTerm && availableUsers.length > 0 && (
-              <div className="mt-2 max-h-32 overflow-y-auto">
+              <div className="mt-2 max-h-32" data-simplebar>
                 {availableUsers.slice(0, 5).map((user) => (
                   <button
                     key={user.id}

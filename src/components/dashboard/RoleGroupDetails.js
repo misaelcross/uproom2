@@ -89,7 +89,7 @@ const RoleGroupDetails = ({ group, onUserClick, onClose }) => {
       </div>
 
       {/* Users List */}
-      <div className="flex-1 overflow-y-auto px-6 py-3">
+      <div className="flex-1 px-6 py-3" data-simplebar>
         <h3 className="text-md text-white mb-4">Role Members</h3>
         <div className="space-y-4">
           {group.users.map((user) => (

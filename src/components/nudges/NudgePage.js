@@ -608,7 +608,7 @@ function NudgePage({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900 pr-6">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -634,7 +634,7 @@ function NudgePage({ onNavigate }) {
           {/* Segunda linha: Grid de nudges e coluna direita */}
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Grid de nudges */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1" data-simplebar>
               <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
                 {getSortedNudges().map((nudge) => (
                   sortBy === 'Drafts' ? (
@@ -674,7 +674,7 @@ function NudgePage({ onNavigate }) {
             </div>
 
             {/* Coluna direita - Detalhes do nudge, criação de nudge ou detalhes do usuário */}
-            <div className="overflow-y-auto pb-12" style={{ width: '350px' }}>
+            <div className="pb-12" style={{ width: '350px' }} data-simplebar>
               {selectedUser ? (
                 <UserDetails 
                   user={selectedUser}

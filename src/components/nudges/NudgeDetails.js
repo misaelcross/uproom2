@@ -188,7 +188,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6" data-simplebar>
         {/* High Priority Badge */}
         {nudge.isHighPriority && (
           <div className="mb-4 flex justify-center">

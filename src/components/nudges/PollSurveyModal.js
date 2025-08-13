@@ -84,7 +84,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md max-h-[90vh]" data-simplebar>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-white">
