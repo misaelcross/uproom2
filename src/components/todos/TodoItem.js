@@ -9,6 +9,7 @@ const TodoItem = ({
   onSelect,
   onUpdatePriority
 }) => {
+
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -78,7 +79,7 @@ const TodoItem = ({
           className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
             todo.completed 
               ? 'bg-white border-white' 
-              : 'border-neutral-400 hover:border-white'
+              : `border-gray-400 hover:border-white`
           }`}
         >
           {todo.completed && <Check className="w-2.5 h-2.5 text-black" />}
@@ -134,7 +135,7 @@ const TodoItem = ({
                 className={`transition-colors ${
                   todo.starred 
                     ? 'text-white' 
-                    : 'text-neutral-600 hover:text-white'
+                    : 'text-neutral-400 hover:text-white'
                 }`}
               >
                 <Star className={`w-4 h-4 ${todo.starred ? 'fill-current' : ''}`} />
