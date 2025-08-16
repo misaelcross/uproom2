@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Archive, Clock } from 'lucide-react';
+import FloatingUserCard from '../shared/FloatingUserCard';
+import { usersData } from '../../data/usersData';
 
 const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
   const { user, nudges, totalCount, lastArchivedAt } = userGroup;
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   // Function to format timestamp
   const formatTimestamp = (timestamp) => {
@@ -16,6 +20,78 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
       const diffInDays = Math.floor(diffInHours / 24);
       return `${diffInDays}d`;
     }
+  };
+
+  const getStatusTextColor = (availability) => {
+    switch (availability) {
+      case 'Available': return 'text-green-400';
+      case 'In meeting': return 'text-blue-400';
+      case 'Break': return 'text-yellow-400';
+      case 'Focus': return 'text-purple-400';
+      case 'Emergency': return 'text-red-400';
+      case 'Away': return 'text-orange-400';
+      case 'Offline': return 'text-gray-400';
+      default: return 'text-green-400';
+    }
+  };
+
+  const handleUserMentionHover = (user, event) => {
+    setHoveredUser(user);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleUserMentionLeave = () => {
+    setHoveredUser(null);
+  };
+
+  // Função para renderizar texto com menções de usuário coloridas por status
+  const renderTextWithMentions = (text) => {
+    // Regex para encontrar menções @username
+    const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Adicionar texto antes da menção
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
+      
+      if (user) {
+        parts.push(
+          <span
+            key={match.index}
+            className={`font-semibold cursor-pointer transition-colors hover:opacity-80 ${getStatusTextColor(user.availability)}`}
+            onMouseEnter={(e) => handleUserMentionHover(user, e)}
+            onMouseLeave={handleUserMentionLeave}
+          >
+            @{mentionName}
+          </span>
+        );
+      } else {
+        parts.push(
+          <span key={match.index} className="font-semibold text-white">
+            @{mentionName}
+          </span>
+        );
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Adicionar texto restante
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
   };
 
   return (
@@ -58,7 +134,7 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
         {/* Preview of last archived nudge */}
         {nudges.length > 0 && (
           <p className="text-neutral-400 text-sm truncate">
-            {nudges[0].message}
+            {renderTextWithMentions(nudges[0].message)}
           </p>
         )}
       </div>
@@ -75,6 +151,15 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
           <span>Last: {formatTimestamp(lastArchivedAt)}</span>
         </div>
       </div>
+
+      {/* FloatingUserCard */}
+      {hoveredUser && (
+        <FloatingUserCard
+          user={hoveredUser}
+          position={mousePosition}
+          onClose={() => setHoveredUser(null)}
+        />
+      )}
     </div>
   );
 };

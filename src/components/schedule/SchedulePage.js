@@ -9,6 +9,7 @@ import TopTabsSchedule from './TopTabsSchedule';
 import ActionBarSchedule from './ActionBarSchedule';
 import LiveNotifications from '../shared/LiveNotifications';
 import Schedule from './Schedule';
+import EventDetailsSidebar from './EventDetailsSidebar';
 import { usersData } from '../../data/usersData';
 
 // Mock data for groups
@@ -53,6 +54,7 @@ const SchedulePage = ({ onNavigate }) => {
   
   const [selectedUser, setSelectedUser] = useState(null); // null = My Schedule, user = schedule do usuário selecionado
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [roleFilter, setRoleFilter] = useState([]);
   const [statusFilter, setStatusFilter] = useState([]);
@@ -425,6 +427,15 @@ const SchedulePage = ({ onNavigate }) => {
     setTimeFrame(newTimeFrame);
   };
 
+  // Event details sidebar handlers
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseEventDetails = () => {
+    setSelectedEvent(null);
+  };
+
   // AnimatedBottomSheet helper functions
   const toggleUserSelection = (user) => {
     setSelectedUsers(prev => {
@@ -504,12 +515,13 @@ const SchedulePage = ({ onNavigate }) => {
                       viewMode={timeFrame} 
                       scheduleData={generateUserSchedule(selectedUser)}
                       userName={selectedUser.name}
+                      onEventSelect={handleEventSelect}
                     />
                   </div>
                 </div>
               ) : (
                 /* My Schedule - Default view */
-                <Schedule fullWidth={true} viewMode={timeFrame} />
+                <Schedule fullWidth={true} viewMode={timeFrame} onEventSelect={handleEventSelect} />
               )}
             </SimpleBar>
 
@@ -523,24 +535,40 @@ const SchedulePage = ({ onNavigate }) => {
                 />
               </div>
 
-              {/* Team Members List - Always visible */}
+              {/* Conditional Content - Team Members or Event Details */}
               <div className="flex-1 min-h-0 flex flex-col">
-                <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
-                  <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
-                    <h2 className="text-white text-lg font-semibold">Team Members</h2>
-                    
-                    {/* Search Input */}
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                      />
-                      <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
-                    </div>
+                {selectedEvent ? (
+                  /* Event Details Sidebar */
+                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
+                    <EventDetailsSidebar
+                      event={selectedEvent}
+                      onClose={handleCloseEventDetails}
+                      onEdit={(event) => {
+                        console.log('Edit event:', event);
+                      }}
+                      onLinkContext={(event) => {
+                        console.log('Link context for event:', event);
+                      }}
+                    />
                   </div>
+                ) : (
+                  /* Team Members List - Default view */
+                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
+                    <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
+                      <h2 className="text-white text-lg font-semibold">Team Members</h2>
+                      
+                      {/* Search Input */}
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
+                        />
+                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
+                      </div>
+                    </div>
 
                   {/* Team Members List */}
                   <SimpleBar className="divide-y divide-neutral-700 flex-1 min-h-0">
@@ -584,7 +612,8 @@ const SchedulePage = ({ onNavigate }) => {
                       );
                       })}
                     </SimpleBar>
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

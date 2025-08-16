@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tab } from '@headlessui/react';
 import { ArrowLeft, Send, Users, Eye, MoreVertical, ChevronDown, Paperclip, Link } from 'lucide-react';
+import EventDetailsSidebar from '../schedule/EventDetailsSidebar';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -8,6 +9,7 @@ function classNames(...classes) {
 
 const UserDetails = ({ user, onBack }) => {
   const [message, setMessage] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
   const textareaRef = useRef(null);
   const tabs = ['Status', 'Schedule', 'Info'];
 
@@ -25,6 +27,15 @@ const UserDetails = ({ user, onBack }) => {
       console.log(`Sending nudge to ${user.name}: ${message}`);
       setMessage('');
     }
+  };
+
+  // Event details sidebar handlers
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseEventDetails = () => {
+    setSelectedEvent(null);
   };
 
   // Função para gerar schedule personalizado baseado no usuário
@@ -125,7 +136,11 @@ const UserDetails = ({ user, onBack }) => {
   }
 
   return (
-    <div className="bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
+    <div className="flex gap-4 h-full">
+      {/* Main User Details Panel */}
+      <div className={`bg-transparent border border-neutral-700 rounded-lg overflow-hidden transition-all duration-300 ${
+        selectedEvent ? 'flex-1' : 'w-full'
+      }`}>
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-700">
         <div className="flex items-center gap-3 mb-4">
@@ -146,10 +161,11 @@ const UserDetails = ({ user, onBack }) => {
               alt={user.name}
               className="w-12 h-12 rounded-full object-cover"
             />
-            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900 ${user.status === 'online' ? 'bg-green-500' :
+            <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-900 ${
+              user.status === 'online' ? 'bg-green-500' :
               user.status === 'away' ? 'bg-yellow-500' :
-                user.status === 'busy' ? 'bg-red-500' : 'bg-gray-500'
-              }`}></div>
+              user.status === 'busy' ? 'bg-red-500' : 'bg-gray-500'
+            }`}></div>
           </div>
           <div>
             <h2 className="text-white text-xl font-semibold">{user.name}</h2>
@@ -407,6 +423,20 @@ const UserDetails = ({ user, onBack }) => {
                             <div
                               key={event.id}
                               className={`rounded-lg p-2 border ${getStatusColors(eventStatus)} cursor-pointer transition-all duration-200`}
+                              onClick={() => handleEventSelect({
+                                ...event,
+                                date: `${dayData.dayName}, July ${dayData.day}, 2025`,
+                                duration: '1 hour',
+                                description: `${event.title} scheduled for ${user.name}`,
+                                location: 'Office',
+                                status: eventStatus,
+                                attendees: [
+                                  { name: user.name, avatar: user.avatar }
+                                ],
+                                linkedTasks: [],
+                                linkedNudges: [],
+                                linkedFiles: []
+                              })}
                             >
                               {/* Header with title and status */}
                               <div className="flex items-center justify-between mb-3">
@@ -433,6 +463,9 @@ const UserDetails = ({ user, onBack }) => {
                                   <button
                                     className="p-1 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
                                     title="Link tasks, nudges, and files"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                    }}
                                   >
                                     <Paperclip className="w-4 h-4" />
                                   </button>
@@ -529,6 +562,23 @@ const UserDetails = ({ user, onBack }) => {
           </Tab.Panels>
         </Tab.Group>
       </div>
+      </div>
+
+      {/* Event Details Sidebar */}
+      {selectedEvent && (
+        <div className="w-96 border border-neutral-700 rounded-lg overflow-hidden flex-shrink-0">
+          <EventDetailsSidebar
+            event={selectedEvent}
+            onClose={handleCloseEventDetails}
+            onEdit={(event) => {
+              console.log('Edit event:', event);
+            }}
+            onLinkContext={(event) => {
+              console.log('Link context for event:', event);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

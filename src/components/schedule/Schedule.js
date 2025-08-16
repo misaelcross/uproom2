@@ -3,12 +3,11 @@ import { ChevronDown, MoreVertical, Plus, Paperclip, Headset } from 'lucide-reac
 import SimpleBar from 'simplebar-react';
 import ScheduleMeetingModal from './ScheduleMeetingModal';
 import EventContextModal from './EventContextModal';
-import EventDetailsModal from './EventDetailsModal';
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null }) => {
+
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null }) => {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
-  const [isEventDetailsModalOpen, setIsEventDetailsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
   
@@ -267,23 +266,16 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
   // Function to handle opening event details modal
   const handleOpenEventDetails = (event) => {
-    setSelectedEvent(event);
-    setIsEventDetailsModalOpen(true);
-  };
-
-  // Function to handle opening context modal from event details
-  const handleLinkContextFromDetails = (event) => {
-    setIsEventDetailsModalOpen(false);
-    handleOpenContextModal(event, 'details');
+    if (onEventSelect) {
+      onEventSelect(event);
+    } else {
+      setSelectedEvent(event);
+    }
   };
 
   // Function to handle closing context modal
   const handleCloseContextModal = () => {
     setIsContextModalOpen(false);
-    // If context modal was opened from details modal, return to details modal
-    if (contextModalSource === 'details') {
-      setIsEventDetailsModalOpen(true);
-    }
     setContextModalSource(null);
   };
 
@@ -558,23 +550,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         onUpdateEvent={handleUpdateEvent}
       />
 
-      {/* Event Details Modal */}
-      <EventDetailsModal
-        isOpen={isEventDetailsModalOpen}
-        onClose={() => setIsEventDetailsModalOpen(false)}
-        event={selectedEvent}
-        onLinkContext={handleLinkContextFromDetails}
-        onEdit={(event) => {
-          setIsEventDetailsModalOpen(false);
-          // Aqui você pode abrir um modal de edição ou navegar para uma página de edição
-          console.log('Edit event:', event);
-        }}
-        onDelete={(event) => {
-          setIsEventDetailsModalOpen(false);
-          // Aqui você pode implementar a lógica de exclusão
-          console.log('Delete event:', event);
-        }}
-      />
+
     </div>
   );
 };

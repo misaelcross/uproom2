@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MoreVertical } from 'lucide-react';
 
-const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
+const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetReminder }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -62,6 +62,8 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup }) => {
     e.stopPropagation();
     if (option === 'Remove from Group' && onRemoveFromGroup) {
       onRemoveFromGroup();
+    } else if (option === 'Set Reminder' && onSetReminder) {
+      onSetReminder(user.name);
     } else {
       console.log(`${option} clicked for ${user.name}`);
     }

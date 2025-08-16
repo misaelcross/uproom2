@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
+import { usersData } from '../../data/usersData';
 
 const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
   const [replies, setReplies] = useState([
@@ -95,16 +96,23 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
     }
   };
 
+  const getStatusTextColor = (availability) => {
+    switch (availability) {
+      case 'Available': return 'text-green-400';
+      case 'In meeting': return 'text-blue-400';
+      case 'Break': return 'text-yellow-400';
+      case 'Focus': return 'text-purple-400';
+      case 'Emergency': return 'text-red-400';
+      case 'Away': return 'text-orange-400';
+      case 'Offline': return 'text-gray-400';
+      default: return 'text-green-400';
+    }
+  };
+
   // Função para renderizar texto com menções de usuário
   const renderTextWithMentions = (text) => {
-    // Simular dados de usuários mencionados (em um app real, isso viria de props ou contexto)
-    const mentionedUsers = [
-      { name: "Sarah Johnson", id: "user-1", title: "Frontend Developer", avatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" },
-      { name: "Mike Chen", id: "user-2", title: "Backend Developer", avatar: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop" }
-    ];
-
     // Regex para encontrar menções @username
-    const mentionRegex = /@(\w+(?:\s+\w+)*)/g;
+    const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
     const parts = [];
     let lastIndex = 0;
     let match;
@@ -115,14 +123,17 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         parts.push(text.slice(lastIndex, match.index));
       }
 
-      const mentionName = match[1];
-      const user = mentionedUsers.find(u => u.name.toLowerCase().includes(mentionName.toLowerCase()));
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
       
       if (user) {
         parts.push(
           <span
             key={match.index}
-            className="font-semibold text-white hover:text-neutral-200 cursor-pointer transition-colors"
+            className={`font-semibold cursor-pointer transition-colors hover:opacity-80 ${getStatusTextColor(user.availability)}`}
             onMouseEnter={(e) => handleUserMentionHover(user, e)}
             onMouseLeave={handleUserMentionLeave}
             onClick={() => handleUserMentionClick(user)}
@@ -131,7 +142,11 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           </span>
         );
       } else {
-        parts.push(`@${mentionName}`);
+        parts.push(
+          <span key={match.index} className="font-semibold text-white">
+            @{mentionName}
+          </span>
+        );
       }
 
       lastIndex = match.index + match[0].length;
@@ -382,6 +397,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         <FloatingUserCard
           user={hoveredUser}
           position={mousePosition}
+          isVisible={!!hoveredUser}
           onClose={() => setHoveredUser(null)}
         />
       )}

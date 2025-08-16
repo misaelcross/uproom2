@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SimpleBar from 'simplebar-react';
 import UserCard from './components/dashboard/UserCard';
 import UserDetails from './components/dashboard/UserDetails';
 import Schedule from './components/schedule/Schedule';
 import SchedulePage from './components/schedule/SchedulePage';
+import EventDetailsSidebar from './components/schedule/EventDetailsSidebar';
 import StatusGroupView from './components/dashboard/StatusGroupView';
 import StatusGroupDetails from './components/dashboard/StatusGroupDetails';
 import RoleGroupView from './components/dashboard/RoleGroupView';
@@ -31,6 +32,7 @@ function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [selectedRoleGroup, setSelectedRoleGroup] = useState(null);
   const [selectedUserGroup, setSelectedUserGroup] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
   const [previousContext, setPreviousContext] = useState(null);
   const [usersWithIcons, setUsersWithIcons] = useState([]);
   const [sortBy, setSortBy] = useState('Recent Activity');
@@ -43,6 +45,16 @@ function App() {
 
   // Hook do store de nudges
   const { simulateNewNudge } = useNudgeStore();
+
+  // Ref para o Sidebar
+  const sidebarRef = useRef(null);
+
+  // Função para lidar com Set Reminder
+  const handleSetReminder = (userName) => {
+    if (sidebarRef.current && sidebarRef.current.fillReminderWithUser) {
+      sidebarRef.current.fillReminderWithUser(userName);
+    }
+  };
 
   // Função para reverter sidebar direita para visualização padrão
   const resetRightSidebar = () => {
@@ -204,6 +216,15 @@ function App() {
     setRightPanelContent('schedule');
   };
 
+  // Event details sidebar handlers
+  const handleEventSelect = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const handleCloseEventDetails = () => {
+    setSelectedEvent(null);
+  };
+
   const toggleUserSelection = (user) => {
     setSelectedUsers(prev => {
       const isSelected = prev.find(u => u.id === user.id);
@@ -252,7 +273,7 @@ function App() {
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
-          <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
+          <Sidebar ref={sidebarRef} currentPage={currentPage} onNavigate={setCurrentPage} />
         </div>
 
         {/* Segunda coluna: flex-1 */}
@@ -295,7 +316,8 @@ function App() {
                     <UserCard 
                       key={user.id} 
                       user={user}
-                      onClick={() => showUserDetails(user)} 
+                      onClick={() => showUserDetails(user)}
+                      onSetReminder={handleSetReminder}
                     />
                   ))}
                 </div>
@@ -304,7 +326,19 @@ function App() {
 
             {/* Coluna direita */}
             <SimpleBar className="pb-12" style={{ width: '350px' }}>
-              {rightPanelContent === 'schedule' && <Schedule />}
+              {rightPanelContent === 'schedule' && !selectedEvent && <Schedule onEventSelect={handleEventSelect} />}
+              {rightPanelContent === 'schedule' && selectedEvent && (
+                <EventDetailsSidebar
+                  event={selectedEvent}
+                  onClose={handleCloseEventDetails}
+                  onEdit={(event) => {
+                    console.log('Edit event:', event);
+                  }}
+                  onLinkContext={(event) => {
+                    console.log('Link context for event:', event);
+                  }}
+                />
+              )}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />
               )}

@@ -15,6 +15,8 @@ import {
   FileText
 } from 'lucide-react';
 import useNudgeStore from '../../store/nudgeStore';
+import FloatingUserCard from './FloatingUserCard';
+import { usersData } from '../../data/usersData';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
@@ -116,6 +118,8 @@ const AnimatedBottomSheet = ({
   const [selectedTimeRange, setSelectedTimeRange] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [replyMessage, setReplyMessage] = useState('');
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [replies, setReplies] = useState([
     {
       id: 1,
@@ -173,6 +177,69 @@ const AnimatedBottomSheet = ({
         setSelectedNudge(null);
       }, 2000);
     }
+  };
+
+  // Funções para hover de usuário
+  const handleUserMentionHover = (event, userName) => {
+    const user = usersData.find(u => u.name === userName);
+    if (user) {
+      setHoveredUser(user);
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
+  };
+
+  const handleUserMentionLeave = () => {
+    setHoveredUser(null);
+  };
+
+  const handleUserMentionClick = (userName) => {
+    // Implementar ação de clique se necessário
+  };
+
+  // Função para obter cor do status
+  const getStatusTextColor = (availability) => {
+    switch (availability) {
+      case 'available':
+        return 'text-green-600';
+      case 'busy':
+        return 'text-red-600';
+      case 'away':
+        return 'text-yellow-600';
+      case 'offline':
+        return 'text-gray-500';
+      default:
+        return 'text-blue-600';
+    }
+  };
+
+  // Função para renderizar texto com menções
+  const renderTextWithMentions = (text) => {
+    if (!text) return text;
+    
+    const mentionRegex = /@([A-Za-z]+(?:\s+[A-Za-z]+)*)/g;
+    const parts = text.split(mentionRegex);
+    
+    return parts.map((part, index) => {
+      if (index % 2 === 1) {
+        const user = usersData.find(u => u.name === part);
+        if (user) {
+          const colorClass = getStatusTextColor(user.availability);
+          return (
+            <span
+              key={index}
+              className={`font-medium cursor-pointer hover:underline ${colorClass}`}
+              onMouseEnter={(e) => handleUserMentionHover(e, part)}
+              onMouseLeave={handleUserMentionLeave}
+              onClick={() => handleUserMentionClick(part)}
+            >
+              @{part}
+            </span>
+          );
+        }
+        return `@${part}`;
+      }
+      return part;
+    });
   };
 
   // Função para voltar do reagendamento
@@ -422,7 +489,7 @@ const AnimatedBottomSheet = ({
                 {!showReschedule && !showSuccess && (
                   <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 mb-4">
                     <div className="text-white text-base leading-relaxed">
-                      {selectedNudge?.fullMessage || selectedNudge?.message}
+                      {renderTextWithMentions(selectedNudge?.fullMessage || selectedNudge?.message)}
                     </div>
                     
                     {/* Attachments */}
@@ -764,6 +831,16 @@ const AnimatedBottomSheet = ({
           </div>
         </animated.div>
       </animated.div>
+      
+      {/* FloatingUserCard */}
+      {hoveredUser && (
+        <FloatingUserCard
+          user={hoveredUser}
+          position={mousePosition}
+          onClose={handleUserMentionLeave}
+          isVisible={!!hoveredUser}
+        />
+      )}
     </div>
   );
 };

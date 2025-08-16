@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import SimpleBar from 'simplebar-react';
 import { 
   Calendar, 
@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
-const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelContent }) => {
+const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRightPanelContent, onSetReminder }, ref) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [pauseNotificationsSubmenu, setPauseNotificationsSubmenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -76,6 +76,28 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
   const [statusMessage, setStatusMessage] = useState('');
   const [selectedStatusOption, setSelectedStatusOption] = useState(null);
   const [showStatusError, setShowStatusError] = useState(false);
+  const reminderInputRef = useRef(null);
+
+  // Função para preencher automaticamente o campo de lembrete
+  const fillReminderWithUser = (userName) => {
+    const reminderText = `@${userName} `;
+    setNewReminderText(reminderText);
+    setIsCreatingReminder(true);
+    
+    // Focar no input após um pequeno delay para garantir que ele foi renderizado
+    setTimeout(() => {
+      if (reminderInputRef.current) {
+        reminderInputRef.current.focus();
+        // Posicionar cursor no final do texto
+        reminderInputRef.current.setSelectionRange(reminderText.length, reminderText.length);
+      }
+    }, 100);
+  };
+
+  // Expor a função através de useImperativeHandle
+  useImperativeHandle(ref, () => ({
+    fillReminderWithUser
+  }), []);
 
   // Pause notifications options
   const pauseOptions = [
@@ -148,22 +170,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Funcao para calcular o progresso de cada barra do Pomodoro
-  const getPomodoroProgress = (barNumber) => {
-    const totalTime = 25 * 60; // 25 minutos em segundos
-    
-    if (barNumber < currentPomodoro) {
-      // Barras anteriores estao completas
-      return 100;
-    } else if (barNumber === currentPomodoro) {
-      // Barra atual mostra o progresso
-      const elapsed = totalTime - pomodoroTime;
-      return (elapsed / totalTime) * 100;
-    } else {
-      // Barras futuras estao vazias
-      return 0;
-    }
-  };
+
 
   const toggleReminder = (id) => {
     setReminders(prev => prev.map(reminder => 
@@ -241,13 +248,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
 
 
 
-  const startPomodoro = () => {
-    setPomodoroActive(true);
-  };
 
-  const pausePomodoro = () => {
-    setPomodoroActive(false);
-  };
 
   const selectStatus = (status) => {
     setSelectedStatusOption(status);
@@ -264,6 +265,16 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
     
     setCurrentStatus(selectedStatusOption.name);
     setIsAvailable(selectedStatusOption.name === 'Available');
+    
+    // Auto-start pomodoro when Focus is selected
+    if (selectedStatusOption.name === 'Focus') {
+      setPomodoroActive(true);
+      setPomodoroTime(25 * 60); // Reset timer
+      setCurrentPomodoro(1);
+    } else {
+      setPomodoroActive(false);
+    }
+    
     setStatusDropdownOpen(false);
     setSelectedStatusOption(null);
     setStatusMessage('');
@@ -636,6 +647,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
                       <div className="mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 border-neutral-500 rounded flex-shrink-0" />
                       <div className="flex-1 flex items-center space-x-3">
                         <input
+                          ref={reminderInputRef}
                           type="text"
                           value={newReminderText}
                           onChange={(e) => setNewReminderText(e.target.value)}
@@ -673,70 +685,46 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
           </div>
         </div>
 
-        {/* Pomodoro Section */}
-        <div className="px-4 pb-4">
-          <div className="border border-neutral-700 rounded-lg overflow-hidden">
-            {/* Header do Pomodoro */}
-            <div className="flex items-center justify-between p-4">
-              <h3 className="text-sm font-medium text-white">Pomodoro</h3>
-              <button
-                onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
-                className="p-1 hover:bg-neutral-600 rounded transition-colors"
-              >
-                {pomodoroCollapsed ? (
-                  <ChevronDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
-                ) : (
-                  <X className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
-                )}
-              </button>
-            </div>
-            
-            {/* Conteúdo do Pomodoro */}
-            {!pomodoroCollapsed && (
-              <div className="border-t border-neutral-700 p-4">
-                <div className="flex items-center justify-between">
-                  {/* Left side: Title and loading bars */}
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-white mb-3">Working on Q4 Project</h4>
-                    
-                    {/* Pomodoro indicators */}
-                    <div className="flex space-x-1">
-                      {[1, 2, 3, 4].map((num) => {
-                        const progress = getPomodoroProgress(num);
-                        return (
-                          <div
-                            key={num}
-                            className="w-6 h-1 bg-neutral-600 rounded-full relative overflow-hidden"
-                          >
-                            <div
-                              className="h-full bg-neutral-800 rounded-full transition-all duration-1000 ease-linear"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                        );
-                      })}
+        {/* Pomodoro Section - Only show when Focus status is active */}
+        {currentStatus === 'Focus' && (
+          <div className="px-4 pb-4">
+            <div className="border border-neutral-700 rounded-lg overflow-hidden">
+              {/* Header do Pomodoro */}
+              <div className="flex items-center justify-between p-4">
+                <h3 className="text-sm font-medium text-white">Pomodoro</h3>
+                <button
+                  onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
+                  className="p-1 hover:bg-neutral-600 rounded transition-colors"
+                >
+                  {pomodoroCollapsed ? (
+                    <ChevronDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                  ) : (
+                    <X className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                  )}
+                </button>
+              </div>
+              
+              {/* Conteúdo do Pomodoro */}
+              {!pomodoroCollapsed && (
+                <div className="border-t border-neutral-700 p-4">
+                  <div className="flex items-center justify-between">
+                    {/* Left side: Title and Focus badge */}
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-white mb-3">Product Review</h4>
+                      
+
+                    </div>
+
+                    {/* Right side: Timer only */}
+                    <div className="flex items-center">
+                      <span className="text-sm text-neutral-400">{formatTime(pomodoroTime)}</span>
                     </div>
                   </div>
-
-                  {/* Right side: Timer and button */}
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-neutral-400">{formatTime(pomodoroTime)}</span>
-                    <button
-                      onClick={pomodoroActive ? pausePomodoro : startPomodoro}
-                      className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-full transition-colors"
-                    >
-                      {pomodoroActive ? (
-                        <Pause className="h-4 w-4 text-white" />
-                      ) : (
-                        <Play className="h-4 w-4 text-white" />
-                      )}
-                    </button>
-                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </SimpleBar>
 
       {/* Footer fixo com Status e Upgrade */}
@@ -757,7 +745,7 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
               >
                 <span
                   className={`inline-block h-4 w-4 transform rounded-full bg-neutral-800 transition-transform ${
-                    isAvailable ? 'translate-x-6' : 'translate-x-1'
+                    currentStatus !== 'Offline' ? 'translate-x-6' : 'translate-x-1'
                   }`}
                 />
               </div>
@@ -858,6 +846,8 @@ const Sidebar = ({ currentPage, onNavigate, rightPanelContent, setRightPanelCont
       </div>
     </div>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

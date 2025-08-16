@@ -14,7 +14,7 @@ import LiveNotifications from '../shared/LiveNotifications';
 import { usersData } from '../../data/usersData';
 
 const TodosPage = ({ onNavigate }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState('Today');
+  const [selectedPeriod, setSelectedPeriod] = useState('Day');
   const [showPeriodDropdown, setShowPeriodDropdown] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [newTodoText, setNewTodoText] = useState('');
@@ -551,6 +551,26 @@ const TodosPage = ({ onNavigate }) => {
     return todos.filter(todo => todo.missed && !todo.completed).length;
   };
 
+  // Get count of pending todos
+  const getPendingTodosCount = () => {
+    return todos.filter(todo => !todo.completed && !todo.missed).length;
+  };
+
+  // Handle date navigation
+  const handleDateNavigation = (direction) => {
+    // This is a placeholder function for date navigation
+    // In a real implementation, this would update the current date state
+    // and filter todos based on the selected date
+    console.log(`Navigate ${direction} day`);
+    
+    // Example implementation:
+    // if (direction === 'previous') {
+    //   setCurrentDate(prevDate => new Date(prevDate.getTime() - 24 * 60 * 60 * 1000));
+    // } else if (direction === 'next') {
+    //   setCurrentDate(prevDate => new Date(prevDate.getTime() + 24 * 60 * 60 * 1000));
+    // }
+  };
+
   // Helper functions for AnimatedBottomSheet
   const toggleUserSelection = (user) => {
     setSelectedUsers(prev => {
@@ -592,8 +612,17 @@ const TodosPage = ({ onNavigate }) => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               onCreateGroup={() => setShowCreateGroup(true)}
+              selectedPeriod={selectedPeriod}
+              setSelectedPeriod={setSelectedPeriod}
+              showPeriodDropdown={showPeriodDropdown}
+              setShowPeriodDropdown={setShowPeriodDropdown}
             />
           </div>
+
+          {/* Todo Header with Date */}
+          <TodoHeader 
+            onNavigateDate={handleDateNavigation}
+          />
 
           {/* Main Content Area */}
           <div className="flex gap-6 flex-1 min-h-0">
