@@ -1,14 +1,23 @@
 import React from 'react';
 
-const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
+const UserGroupsView = ({ users, onUserClick, onGroupClick, createdGroups = [] }) => {
   // Grupos de exemplo criados pelo usuário
-  const userGroups = {
+  const defaultGroups = {
     "Q3 Overview": [
       users[0], users[1], users[2], users[3], users[4], users[5]
     ],
     "Client - The Fade Genius": [
       users[6], users[7], users[8], users[9]
     ]
+  };
+
+  // Combinar grupos padrão com grupos criados dinamicamente
+  const allGroups = {
+    ...defaultGroups,
+    ...createdGroups.reduce((acc, group) => {
+      acc[group.name] = group.members;
+      return acc;
+    }, {})
   };
 
   // Função para obter contagem de usuários
@@ -18,7 +27,7 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick }) => {
 
   return (
     <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-      {Object.entries(userGroups).map(([groupName, groupUsers]) => {
+      {Object.entries(allGroups).map(([groupName, groupUsers]) => {
         const userCount = getUserCount(groupUsers);
         
         return (

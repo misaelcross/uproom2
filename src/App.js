@@ -9,6 +9,9 @@ import ScheduleMeetingSidebar from './components/schedule/ScheduleMeetingSidebar
 import EmployeeListSidebar from './components/schedule/EmployeeListSidebar';
 import EmployeeAvailabilitySidebar from './components/schedule/EmployeeAvailabilitySidebar';
 import MeetingConfirmationSidebar from './components/schedule/MeetingConfirmationSidebar';
+import CreateGroupSidebar from './components/dashboard/CreateGroupSidebar';
+import GroupMemberSelectionSidebar from './components/dashboard/GroupMemberSelectionSidebar';
+import GroupConfirmationSidebar from './components/dashboard/GroupConfirmationSidebar';
 import StatusGroupView from './components/dashboard/StatusGroupView';
 import StatusGroupDetails from './components/dashboard/StatusGroupDetails';
 import useNudgeStore from './store/nudgeStore';
@@ -44,6 +47,12 @@ function App() {
   const [selectedDateInfo, setSelectedDateInfo] = useState(null);
   const [previousContext, setPreviousContext] = useState(null);
   const [usersWithIcons, setUsersWithIcons] = useState([]);
+  
+  // Estados para criação de grupos
+  const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
+  const [groupCreationStep, setGroupCreationStep] = useState('initial'); // 'initial', 'members', 'confirmation'
+  const [selectedGroupMembers, setSelectedGroupMembers] = useState([]);
+  const [createdGroups, setCreatedGroups] = useState([]);
   const [sortBy, setSortBy] = useState('Recent Activity');
   const [topTabActive, setTopTabActive] = useState('overview');
   
@@ -334,6 +343,67 @@ function App() {
     setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+  // Funções para criação de grupos
+  const handleOpenCreateGroup = () => {
+    setIsCreateGroupOpen(true);
+    setGroupCreationStep('initial');
+  };
+
+  const handleCloseCreateGroup = () => {
+    setIsCreateGroupOpen(false);
+    setGroupCreationStep('initial');
+    setSelectedGroupMembers([]);
+  };
+
+  const handleShowMemberSelection = () => {
+    setGroupCreationStep('members');
+  };
+
+  const handleSelectGroupMember = (member) => {
+    setSelectedGroupMembers(prev => {
+      const isSelected = prev.find(m => m.id === member.id);
+      if (isSelected) {
+        return prev.filter(m => m.id !== member.id);
+      } else {
+        return [...prev, member];
+      }
+    });
+  };
+
+  const handleContinueToConfirmation = () => {
+    setGroupCreationStep('confirmation');
+  };
+
+  const handleBackToMemberSelection = () => {
+    setGroupCreationStep('members');
+  };
+
+  const handleBackToInitial = () => {
+    setGroupCreationStep('initial');
+    setSelectedGroupMembers([]);
+  };
+
+  const handleConfirmGroupCreation = async (groupData) => {
+    try {
+      const newGroup = {
+        id: `group-${Date.now()}`,
+        ...groupData,
+        memberCount: groupData.members.length,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Adicionar o novo grupo à lista de grupos criados
+      setCreatedGroups(prev => [...prev, newGroup]);
+      
+      console.log('Group created:', newGroup);
+      alert(`Group "${groupData.name}" created successfully!`);
+      handleCloseCreateGroup();
+    } catch (error) {
+      console.error('Error creating group:', error);
+      throw error; // Re-throw para que o componente possa lidar com o erro
+    }
+  };
+
 
 
   // Se estiver na página de nudges, renderizar NudgePage
@@ -379,7 +449,7 @@ function App() {
               usersData={usersWithIcons}
               onUserClick={showUserDetails}
             />
-            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} />
+            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} />
           </div>
 
           {/* Segunda linha: Grid e coluna direita */}
@@ -391,6 +461,7 @@ function App() {
                   users={usersWithIcons} 
                   onUserClick={showUserDetails}
                   onGroupClick={showUserGroupDetails}
+                  createdGroups={createdGroups}
                 />
               ) : sortBy === 'Status' ? (
                  <StatusGroupView 
@@ -420,7 +491,7 @@ function App() {
 
             {/* Coluna direita */}
             <SimpleBar className="pb-12" style={{ width: '350px' }}>
-              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
+              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
               {rightPanelContent === 'schedule' && selectedEvent && (
                 <EventDetailsSidebar
                   event={selectedEvent}
@@ -467,6 +538,36 @@ function App() {
                       timeSlot={selectedTimeSlot}
                       dateInfo={selectedDateInfo}
                       onConfirm={handleConfirmMeeting}
+                    />
+                  )}
+                </>
+              )}
+              {rightPanelContent === 'schedule' && isCreateGroupOpen && (
+                <>
+                  {groupCreationStep === 'initial' && (
+                    <CreateGroupSidebar
+                      isOpen={isCreateGroupOpen}
+                      onClose={handleCloseCreateGroup}
+                      onShowMemberSelection={handleShowMemberSelection}
+                    />
+                  )}
+                  {groupCreationStep === 'members' && (
+                    <GroupMemberSelectionSidebar
+                      isOpen={true}
+                      onClose={handleCloseCreateGroup}
+                      onBack={handleBackToInitial}
+                      selectedMembers={selectedGroupMembers}
+                      onMemberToggle={handleSelectGroupMember}
+                      onContinue={handleContinueToConfirmation}
+                    />
+                  )}
+                  {groupCreationStep === 'confirmation' && (
+                    <GroupConfirmationSidebar
+                      isOpen={true}
+                      onClose={handleCloseCreateGroup}
+                      onBack={handleBackToMemberSelection}
+                      selectedMembers={selectedGroupMembers}
+                      onConfirm={handleConfirmGroupCreation}
                     />
                   )}
                 </>

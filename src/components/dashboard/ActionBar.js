@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
-const ActionBar = ({ onUserSelect, onSortChange }) => {
+const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState('Sort');
@@ -170,7 +170,10 @@ const ActionBar = ({ onUserSelect, onSortChange }) => {
       </div>
 
       {/* Create Group Button */}
-      <button className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors">
+      <button 
+        onClick={onCreateGroup}
+        className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
+      >
         <Users className="h-4 w-4 text-neutral-300" />
         <span className="text-neutral-300 text-sm font-medium">Create group</span>
       </button>
