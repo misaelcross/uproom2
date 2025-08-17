@@ -5,8 +5,13 @@ import UserDetails from './components/dashboard/UserDetails';
 import Schedule from './components/schedule/Schedule';
 import SchedulePage from './components/schedule/SchedulePage';
 import EventDetailsSidebar from './components/schedule/EventDetailsSidebar';
+import ScheduleMeetingSidebar from './components/schedule/ScheduleMeetingSidebar';
+import EmployeeListSidebar from './components/schedule/EmployeeListSidebar';
+import EmployeeAvailabilitySidebar from './components/schedule/EmployeeAvailabilitySidebar';
+import MeetingConfirmationSidebar from './components/schedule/MeetingConfirmationSidebar';
 import StatusGroupView from './components/dashboard/StatusGroupView';
 import StatusGroupDetails from './components/dashboard/StatusGroupDetails';
+import useNudgeStore from './store/nudgeStore';
 import RoleGroupView from './components/dashboard/RoleGroupView';
 import RoleGroupDetails from './components/dashboard/RoleGroupDetails';
 import UserGroupsView from './components/dashboard/UserGroupsView';
@@ -23,7 +28,6 @@ import TopTabs from './components/dashboard/TopTabs';
 import LiveNotifications from './components/shared/LiveNotifications';
 import ActionBar from './components/dashboard/ActionBar';
 import { usersData } from './data/usersData';
-import useNudgeStore from './store/nudgeStore';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('dashboard'); // 'dashboard' ou 'nudges'
@@ -33,6 +37,11 @@ function App() {
   const [selectedRoleGroup, setSelectedRoleGroup] = useState(null);
   const [selectedUserGroup, setSelectedUserGroup] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
+  const [isScheduleMeetingOpen, setIsScheduleMeetingOpen] = useState(false); // Schedule meeting sidebar state
+  const [schedulingStep, setSchedulingStep] = useState('initial'); // 'initial', 'employees', 'availability', 'confirmation'
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [selectedDateInfo, setSelectedDateInfo] = useState(null);
   const [previousContext, setPreviousContext] = useState(null);
   const [usersWithIcons, setUsersWithIcons] = useState([]);
   const [sortBy, setSortBy] = useState('Recent Activity');
@@ -225,6 +234,91 @@ function App() {
     setSelectedEvent(null);
   };
 
+  const handleOpenScheduleMeeting = () => {
+    setIsScheduleMeetingOpen(true);
+    setSchedulingStep('initial');
+  };
+
+  const handleCloseScheduleMeeting = () => {
+    setIsScheduleMeetingOpen(false);
+    setSchedulingStep('initial');
+    setSelectedEmployee(null);
+    setSelectedTimeSlot(null);
+    setSelectedDateInfo(null);
+  };
+
+  const handleShowEmployeeList = () => {
+    setSchedulingStep('employees');
+  };
+
+  const handleSelectEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setSchedulingStep('availability');
+  };
+
+  const handleSelectTimeSlot = (timeSlot, dateInfo) => {
+    setSelectedTimeSlot(timeSlot);
+    setSelectedDateInfo(dateInfo);
+    setSchedulingStep('confirmation');
+  };
+
+  const handleBackToEmployees = () => {
+    setSelectedEmployee(null);
+    setSchedulingStep('employees');
+  };
+
+  const handleBackToAvailability = () => {
+    setSelectedTimeSlot(null);
+    setSelectedDateInfo(null);
+    setSchedulingStep('availability');
+  };
+
+  const addNudge = useNudgeStore(state => state.addNewNudge);
+
+  const handleConfirmMeeting = async (meetingData) => {
+    try {
+      const { employee, timeSlot, dateInfo, message } = meetingData;
+      
+      // Create nudge for meeting request
+      const meetingNudge = {
+        id: `meeting-${Date.now()}`,
+        senderId: 'current-user', // You would get this from your auth context
+        senderName: 'You',
+        senderTitle: 'Meeting Organizer',
+        senderAvatar: '/path/to/your/avatar.jpg', // You would get this from your auth context
+        recipientId: employee.id,
+        recipientName: employee.name,
+        message: `Meeting request: ${dateInfo.dayName}, ${dateInfo.monthDay} at ${timeSlot.time}`,
+        fullMessage: `Hi ${employee.name}! I would like to schedule a meeting with you on ${dateInfo.dayName}, ${dateInfo.monthDay} at ${timeSlot.time} (30 minutes).${message ? `\n\nMessage: ${message}` : ''}\n\nPlease confirm your availability.`,
+        timestamp: new Date().toISOString(),
+        type: 'meeting_request',
+        priority: 'normal',
+        isRead: false,
+        isPinned: false,
+        isHighPriority: false,
+        attachments: [],
+        replies: [],
+        meetingDetails: {
+          date: dateInfo.monthDay,
+          time: timeSlot.time,
+          duration: '30 minutes',
+          organizer: 'You',
+          participant: employee.name
+        }
+      };
+      
+      // Add nudge to store
+      addNudge(meetingNudge);
+      
+      console.log('Meeting request sent:', meetingNudge);
+      alert(`Meeting request sent to ${employee.name}!`);
+      handleCloseScheduleMeeting();
+    } catch (error) {
+      console.error('Error confirming meeting:', error);
+      alert('Failed to send meeting request. Please try again.');
+    }
+  };
+
   const toggleUserSelection = (user) => {
     setSelectedUsers(prev => {
       const isSelected = prev.find(u => u.id === user.id);
@@ -326,7 +420,7 @@ function App() {
 
             {/* Coluna direita */}
             <SimpleBar className="pb-12" style={{ width: '350px' }}>
-              {rightPanelContent === 'schedule' && !selectedEvent && <Schedule onEventSelect={handleEventSelect} />}
+              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
               {rightPanelContent === 'schedule' && selectedEvent && (
                 <EventDetailsSidebar
                   event={selectedEvent}
@@ -338,6 +432,44 @@ function App() {
                     console.log('Link context for event:', event);
                   }}
                 />
+              )}
+              {rightPanelContent === 'schedule' && isScheduleMeetingOpen && (
+                <>
+                  {schedulingStep === 'initial' && (
+                    <ScheduleMeetingSidebar
+                      isOpen={isScheduleMeetingOpen}
+                      onClose={handleCloseScheduleMeeting}
+                      onShowEmployeeList={handleShowEmployeeList}
+                    />
+                  )}
+                  {schedulingStep === 'employees' && (
+                    <EmployeeListSidebar
+                      isOpen={true}
+                      onClose={handleCloseScheduleMeeting}
+                      onSelectEmployee={handleSelectEmployee}
+                    />
+                  )}
+                  {schedulingStep === 'availability' && (
+                    <EmployeeAvailabilitySidebar
+                      isOpen={true}
+                      onClose={handleCloseScheduleMeeting}
+                      onBack={handleBackToEmployees}
+                      employee={selectedEmployee}
+                      onSelectTimeSlot={handleSelectTimeSlot}
+                    />
+                  )}
+                  {schedulingStep === 'confirmation' && (
+                    <MeetingConfirmationSidebar
+                      isOpen={true}
+                      onClose={handleCloseScheduleMeeting}
+                      onBack={handleBackToAvailability}
+                      employee={selectedEmployee}
+                      timeSlot={selectedTimeSlot}
+                      dateInfo={selectedDateInfo}
+                      onConfirm={handleConfirmMeeting}
+                    />
+                  )}
+                </>
               )}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />

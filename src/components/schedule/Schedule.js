@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { ChevronDown, MoreVertical, Plus, Paperclip, Headset } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
-import ScheduleMeetingModal from './ScheduleMeetingModal';
+import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
 import EventContextModal from './EventContextModal';
 
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null }) => {
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, onScheduleMeeting = null }) => {
+  const [isScheduleSidebarOpen, setIsScheduleSidebarOpen] = useState(false);
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
@@ -324,9 +324,15 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         </h2>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setIsScheduleModalOpen(true)}
-            className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
-          >
+              onClick={() => {
+                if (onScheduleMeeting) {
+                  onScheduleMeeting();
+                } else {
+                  setIsScheduleSidebarOpen(true);
+                }
+              }}
+              className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
+            >
             <Headset className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-3 px-3 py-2 border border-neutral-700 text-white rounded-lg">
@@ -536,10 +542,10 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         )}
       </SimpleBar>
 
-      {/* Schedule Meeting Modal */}
-      <ScheduleMeetingModal
-        isOpen={isScheduleModalOpen}
-        onClose={() => setIsScheduleModalOpen(false)}
+      {/* Schedule Meeting Sidebar */}
+      <ScheduleMeetingSidebar
+        isOpen={isScheduleSidebarOpen}
+        onClose={() => setIsScheduleSidebarOpen(false)}
       />
 
       {/* Event Context Modal */}

@@ -36,7 +36,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
   return (
     <div className="w-full h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-neutral-700 flex-shrink-0">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700 flex-shrink-0">
         <h2 className="text-white text-lg font-semibold">Event Details</h2>
         <button
           onClick={onClose}
@@ -48,7 +48,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
 
       {/* Content */}
       <SimpleBar className="flex-1" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-        <div className="p-4 space-y-6">
+        <div className="px-6 py-5 space-y-6">
         {/* Event Title and Status */}
         <div>
           <h1 className="text-white text-xl font-bold mb-2">{event.title}</h1>
