@@ -87,7 +87,7 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
     <div className="h-full bg-transparent border border-neutral-600 rounded-lg overflow-hidden">
       <div className="h-full bg-transparent">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-600">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-neutral-600">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
@@ -108,7 +108,7 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
         {/* Meeting Details */}
         <div className="space-y-4">
           {/* Employee Info */}
-          <div className="p-4 border-b border-neutral-700">
+          <div className="px-6 py-4 border-b border-neutral-700">
             <div className="flex items-center gap-3 rounded-lg">
               <div className="relative">
                 <img
@@ -130,7 +130,7 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
             </div>
           </div>
 
-          <div className="px-4 pb-4 space-y-3">
+          <div className="px-6 pb-6 space-y-3">
           
           {/* Date & Time */}
           <div className="space-y-3">

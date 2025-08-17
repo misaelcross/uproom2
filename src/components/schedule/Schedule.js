@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, MoreVertical, Plus, Paperclip, Headset } from 'lucide-react';
+import { MoreVertical, Plus, Paperclip } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
 import EventContextModal from './EventContextModal';
@@ -333,12 +333,8 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
               }}
               className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
             >
-            <Headset className="w-4 h-4" />
+            <span className="text-sm">Ask to colaborate</span>
           </button>
-          <div className="flex items-center gap-3 px-3 py-2 border border-neutral-700 text-white rounded-lg">
-            <span className="text-sm">Jul 2025</span>
-            <ChevronDown className="w-4 h-4" />
-          </div>
         </div>
       </div>
 

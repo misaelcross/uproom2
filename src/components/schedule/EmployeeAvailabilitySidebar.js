@@ -91,7 +91,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
     <div className="h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
       <div className="h-full bg-transparent">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-neutral-700">
           <div className="flex items-center gap-3">
             <button
               onClick={onBack}
@@ -110,7 +110,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         </div>
 
         {/* Employee Info */}
-        <div className="p-4 border-b border-neutral-700">
+        <div className="px-6 py-4 border-b border-neutral-700">
           <div className="flex items-center gap-3">
             <div className="relative">
               <img
@@ -131,7 +131,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         </div>
 
         {/* Date Header */}
-        <div className="p-4 border-b border-neutral-700">
+        <div className="px-6 py-4 border-b border-neutral-700">
           <div className="flex items-center gap-2 text-neutral-300">
             <Calendar className="w-4 h-4" />
             <span className="font-medium">{todayData.dayName}, {todayData.monthDay}</span>
@@ -139,7 +139,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         </div>
 
         {/* Time Slots */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="p-6 flex-1 overflow-y-auto">
           {todayData.timeSlots.length === 0 ? (
             <div className="text-center py-8">
               <Clock className="w-12 h-12 text-neutral-400 mx-auto mb-3" />

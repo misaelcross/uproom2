@@ -52,7 +52,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
     <div className="h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
       <div className="h-full bg-transparent">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-700">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700">
           <h2 className="text-lg font-semibold text-white">Select Team Member</h2>
           <button
             onClick={onClose}

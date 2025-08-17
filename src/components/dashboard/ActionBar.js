@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
-const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup }) => {
+const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onInvite }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState('Sort');
@@ -179,7 +179,10 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup }) => {
       </button>
 
       {/* Invite Button */}
-      <button className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors">
+      <button 
+        onClick={onInvite}
+        className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
+      >
         <UserPlus className="h-4 w-4 text-white" />
         <span className="text-white text-sm font-medium">Invite</span>
       </button>
