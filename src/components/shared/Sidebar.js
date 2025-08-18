@@ -644,7 +644,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                     </div>
                   ))}
                   
-                  {/* New reminder creation */
+                  {/* New reminder creation */}
                   {isCreatingReminder && (
                     <div className="flex items-start space-x-2">
                       <div className="mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 border-neutral-500 rounded flex-shrink-0" />
