@@ -317,11 +317,11 @@ const MonthlyCalendar = ({
                       );
                     })}
                     
-                    {/* Show more events indicator */}
+                    {/* Ver Mais button */}
                     {dayData.events.length > 2 && (
-                      <div className="text-[8px] text-neutral-400 text-center py-0.5 mt-auto flex-shrink-0">
-                        +{dayData.events.length - 2} more
-                      </div>
+                      <button className="mt-auto bg-neutral-700/50 hover:bg-neutral-600/50 border border-neutral-600 rounded text-[9px] text-neutral-300 py-1 px-2 transition-colors duration-200 flex-shrink-0">
+                        Ver Mais ({dayData.events.length - 2})
+                      </button>
                     )}
                   </div>
                 </>

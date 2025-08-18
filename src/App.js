@@ -12,7 +12,6 @@ import MeetingConfirmationSidebar from './components/schedule/MeetingConfirmatio
 import CreateGroupSidebar from './components/dashboard/CreateGroupSidebar';
 import GroupMemberSelectionSidebar from './components/dashboard/GroupMemberSelectionSidebar';
 import GroupConfirmationSidebar from './components/dashboard/GroupConfirmationSidebar';
-import InviteSidebar from './components/dashboard/InviteSidebar';
 import StatusGroupView from './components/dashboard/StatusGroupView';
 import StatusGroupDetails from './components/dashboard/StatusGroupDetails';
 import useNudgeStore from './store/nudgeStore';
@@ -54,9 +53,6 @@ function App() {
   const [groupCreationStep, setGroupCreationStep] = useState('initial'); // 'initial', 'members', 'confirmation'
   const [selectedGroupMembers, setSelectedGroupMembers] = useState([]);
   const [createdGroups, setCreatedGroups] = useState([]);
-  
-  // Estados para convite de usuários
-  const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [sortBy, setSortBy] = useState('Recent Activity');
   const [topTabActive, setTopTabActive] = useState('overview');
   
@@ -408,15 +404,6 @@ function App() {
     }
   };
 
-  // Funções para controlar o sidebar de convite
-  const handleOpenInvite = () => {
-    setIsInviteOpen(true);
-  };
-
-  const handleCloseInvite = () => {
-    setIsInviteOpen(false);
-  };
-
 
 
   // Se estiver na página de nudges, renderizar NudgePage
@@ -462,7 +449,7 @@ function App() {
               usersData={usersWithIcons}
               onUserClick={showUserDetails}
             />
-            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} onInvite={handleOpenInvite} />
+            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} />
           </div>
 
           {/* Segunda linha: Grid e coluna direita */}
@@ -504,7 +491,7 @@ function App() {
 
             {/* Coluna direita */}
             <SimpleBar className="pb-12" style={{ width: '350px' }}>
-              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && !isInviteOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
+              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
               {rightPanelContent === 'schedule' && selectedEvent && (
                 <EventDetailsSidebar
                   event={selectedEvent}
@@ -584,12 +571,6 @@ function App() {
                     />
                   )}
                 </>
-              )}
-              {rightPanelContent === 'schedule' && isInviteOpen && (
-                <InviteSidebar
-                  isOpen={isInviteOpen}
-                  onClose={handleCloseInvite}
-                />
               )}
               {rightPanelContent === 'userDetails' && selectedUser && (
                 <UserDetails user={selectedUser} onBack={goBackFromUserDetails} />

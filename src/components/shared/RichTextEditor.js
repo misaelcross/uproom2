@@ -203,12 +203,11 @@ const MentionDropdown = ({ search, onSelect, onClose, position }) => {
 
   return (
     <div 
-      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto"
+      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto mb-3.5"
       style={{ 
-        top: position.top - 14, 
+        bottom: position.bottom + 14, 
         left: position.left,
-        minWidth: '200px',
-        transform: 'translateY(-100%)'
+        minWidth: '200px'
       }}
     >
       {filteredUsers.map(user => (
@@ -327,17 +326,19 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
         const beforeMatch = beforeText && beforeText.match(/@(\w*)$/);
         
         if (beforeMatch) {
-          // Delete the partial @ mention
           const beforeMatchRange = Editor.range(editor, before, start);
           Transforms.select(editor, beforeMatchRange);
           Transforms.delete(editor);
+          
+          const mention = {
+            type: 'mention',
+            character: `@${user.username}`,
+            children: [{ text: '' }],
+          };
+          
+          Transforms.insertNodes(editor, mention);
+          Transforms.move(editor);
         }
-        
-        // Insert the complete mention as plain text
-        Transforms.insertText(editor, `@${user.username} `);
-      } else {
-        // If no selection or not collapsed, just insert the mention
-        Transforms.insertText(editor, `@${user.username} `);
       }
     } catch (error) {
       console.error('Error in handleMentionSelect:', error);
@@ -365,7 +366,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
         const editorRect = editorRef.current.getBoundingClientRect();
         
         setMentionPosition({
-          top: rect.top - editorRect.top,
+          bottom: editorRect.bottom - rect.top,
           left: rect.left - editorRect.left
         });
       }

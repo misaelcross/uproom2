@@ -37,6 +37,7 @@ const AddTodoInput = ({ newTodoText, setNewTodoText, onAddTodo }) => {
   const handleAddTodo = () => {
     if (newTodoText.trim()) {
       onAddTodo();
+      setNewTodoText(''); // Clear the input field
       setShowSnackbar(true); // Show success notification
     }
   };
@@ -77,13 +78,7 @@ const AddTodoInput = ({ newTodoText, setNewTodoText, onAddTodo }) => {
           open={showSnackbar}
           autoHideDuration={3000}
           onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          sx={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            zIndex: 9999
-          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
           <Alert
             onClose={handleCloseSnackbar}
