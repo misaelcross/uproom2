@@ -3,6 +3,7 @@ import { MoreVertical, Plus, Paperclip } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
 import EventContextModal from './EventContextModal';
+import MonthlyCalendar from './MonthlyCalendar';
 
 
 const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, onScheduleMeeting = null }) => {
@@ -314,6 +315,18 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
       </div>
     );
   };
+
+  // If Month view, render MonthlyCalendar component
+  if (viewMode === 'Month') {
+    return (
+      <MonthlyCalendar
+        fullWidth={fullWidth}
+        scheduleData={scheduleData}
+        userName={userName}
+        onEventSelect={onEventSelect}
+      />
+    );
+  }
 
   return (
     <div className={`border border-neutral-700 rounded-lg h-full flex flex-col ${fullWidth ? 'w-full' : 'max-w-md'}`}>

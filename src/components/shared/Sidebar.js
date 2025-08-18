@@ -72,6 +72,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
   const [newReminderText, setNewReminderText] = useState('');
   const [hoveredReminder, setHoveredReminder] = useState(null);
   const [remindersCollapsed, setRemindersCollapsed] = useState(false);
+  const [completedRemindersCollapsed, setCompletedRemindersCollapsed] = useState(true);
   const [pomodoroCollapsed, setPomodoroCollapsed] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [selectedStatusOption, setSelectedStatusOption] = useState(null);
@@ -325,6 +326,8 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
   ];
 
   const uncompletedReminders = reminders.filter(r => !r.completed).length;
+  const completedReminders = reminders.filter(r => r.completed);
+  const activeReminders = reminders.filter(r => !r.completed);
 
   return (
     <div className="w-[300px] h-full flex flex-col" data-current-page={currentPage}>
@@ -563,7 +566,8 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             {!remindersCollapsed && (
               <div className="border-t border-neutral-700 p-4">
                 <div className="space-y-3">
-                  {getSortedReminders().map((reminder) => (
+                  {/* Lembretes ativos (não concluídos) */}
+                  {activeReminders.map((reminder) => (
                     <div 
                       key={reminder.id} 
                       className="flex items-start space-x-2 group"
@@ -572,23 +576,14 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                     >
                       <button
                         onClick={() => toggleReminder(reminder.id)}
-                        className={`mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 flex items-center justify-center transition-colors rounded flex-shrink-0 ${
-                          reminder.completed 
-                            ? 'bg-green-500 border-green-500' 
-                            : 'border-neutral-500 hover:border-neutral-400'
-                        }`}
+                        className="mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 flex items-center justify-center transition-colors rounded flex-shrink-0 border-neutral-500 hover:border-neutral-400"
                       >
-                        {reminder.completed && (
-                          <Check className="h-3 w-3 text-white" />
-                        )}
                       </button>
                       <div className="flex-1 flex flex-col space-y-1">
                         <div className="flex items-start justify-between">
                           <button
                             onClick={() => toggleReminder(reminder.id)}
-                            className={`text-xs text-left hover:opacity-80 transition-opacity flex-1 ${
-                              reminder.completed ? 'text-neutral-500 line-through' : 'text-neutral-300'
-                            }`}
+                            className="text-xs text-left hover:opacity-80 transition-opacity flex-1 text-neutral-300"
                           >
                             {reminder.text}
                           </button>
@@ -623,7 +618,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                                     </span>
                                   </div>
                                 );
-                              })()}
+                              })()} 
                             </div>
                           )}
                           
@@ -640,6 +635,101 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Acordeão para lembretes finalizados */}
+                  {completedReminders.length > 0 && (
+                    <div className="border-t border-neutral-700 pt-1 mt-1">
+                      <button
+                        onClick={() => setCompletedRemindersCollapsed(!completedRemindersCollapsed)}
+                        className="w-full flex items-center justify-between p-2 hover:bg-neutral-800 rounded transition-colors"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <ChevronRight className={`h-3 w-3 text-neutral-400 transition-transform ${
+                            !completedRemindersCollapsed ? 'rotate-90' : ''
+                          }`} />
+                          <span className="text-xs text-neutral-400">Finished</span>
+                          <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                            {completedReminders.length}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {/* Lembretes finalizados */}
+                      {!completedRemindersCollapsed && (
+                        <div className="space-y-3 mt-3 pl-2">
+                          {completedReminders.map((reminder) => (
+                            <div 
+                              key={reminder.id} 
+                              className="flex items-start space-x-2 group"
+                              onMouseEnter={() => setHoveredReminder(reminder.id)}
+                              onMouseLeave={() => setHoveredReminder(null)}
+                            >
+                              <button
+                                onClick={() => toggleReminder(reminder.id)}
+                                className="mt-0.5 w-4 h-4 min-w-[16px] min-h-[16px] border-2 flex items-center justify-center transition-colors rounded flex-shrink-0 bg-white"
+                              >
+                                <Check className="h-3 w-3 text-black" />
+                              </button>
+                              <div className="flex-1 flex flex-col space-y-1">
+                                <div className="flex items-start justify-between">
+                                  <button
+                                    onClick={() => toggleReminder(reminder.id)}
+                                    className="text-xs text-left hover:opacity-80 transition-opacity flex-1 text-neutral-500 line-through"
+                                  >
+                                    {reminder.text}
+                                  </button>
+                                  {hoveredReminder === reminder.id && (
+                                    <button
+                                      onClick={() => deleteReminder(reminder.id)}
+                                      className="ml-2 p-1 hover:bg-neutral-600 rounded transition-colors opacity-0 group-hover:opacity-100"
+                                    >
+                                      <Trash2 className="h-3 w-3 text-neutral-400 hover:text-red-400" />
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                {/* Mentions and date */}
+                                <div className="flex items-center space-x-2 text-xs">
+                                  {/* Single mention */}
+                                  {reminder.mentions && reminder.mentions.length > 0 && (
+                                    <div className="flex items-center space-x-1">
+                                      {(() => {
+                                        const firstMention = reminder.mentions[0];
+                                        const avatar = getUserAvatarFromMention(firstMention);
+                                        return avatar ? (
+                                          <img
+                                            src={avatar}
+                                            alt={firstMention}
+                                            className="w-6 h-6 rounded-full border border-neutral-600"
+                                          />
+                                        ) : (
+                                          <div className="w-6 h-6 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center">
+                                            <span className="text-[10px] text-white font-medium">
+                                              {firstMention.replace("@", "").charAt(0).toUpperCase()}
+                                            </span>
+                                          </div>
+                                        );
+                                      })()} 
+                                    </div>
+                                  )}
+                                  
+                                  {/* Due date */}
+                                  {reminder.dueDate && (
+                                    <div className="flex items-center space-x-1">
+                                      <Clock className="w-3 h-3 text-neutral-500" />
+                                      <span className="text-neutral-500">
+                                        {new Date(reminder.dueDate).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   {/* New reminder creation */}
                   {isCreatingReminder && (
