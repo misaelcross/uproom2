@@ -3,6 +3,7 @@ import { MoreVertical, Plus, Paperclip } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
 import EventContextModal from './EventContextModal';
+import MonthlyCalendar from './MonthlyCalendar';
 
 
 const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, onScheduleMeeting = null }) => {
@@ -340,7 +341,15 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
       {/* Scrollable Content */}
       <SimpleBar className="flex-1 px-6 pb-6">
-        {viewMode === 'Week' ? (
+        {viewMode === 'Month' ? (
+          /* Month View - Calendar Grid */
+          <MonthlyCalendar 
+            fullWidth={true}
+            scheduleData={scheduleData}
+            userName={userName}
+            onEventSelect={onEventSelect}
+          />
+        ) : viewMode === 'Week' ? (
           /* Week View - Days in columns */
           <div className="grid grid-cols-7 gap-2 h-full">
             {scheduleData.map((dayData) => (

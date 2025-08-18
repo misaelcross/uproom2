@@ -219,38 +219,7 @@ const MonthlyCalendar = ({
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className={`bg-neutral-900 rounded-lg border border-neutral-700 ${fullWidth ? 'h-full' : 'h-[600px]'} flex flex-col`}>
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-neutral-700">
-        <div className="flex items-center gap-4">
-          <h2 className="text-white text-lg font-semibold">
-            {userName ? `${userName}'s Schedule` : 'My Schedule'}
-          </h2>
-          <span className="text-neutral-400 text-sm">Monthly View</span>
-        </div>
-        
-        {/* Month Navigation */}
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigateMonth(-1)}
-            className="p-2 hover:bg-neutral-800 rounded-lg transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4 text-neutral-400" />
-          </button>
-          
-          <h3 className="text-white font-medium min-w-[120px] text-center">
-            {calendarData.monthName} {calendarData.year}
-          </h3>
-          
-          <button
-            onClick={() => navigateMonth(1)}
-            className="p-2 hover:bg-neutral-800 rounded-lg transition-colors"
-          >
-            <ChevronRight className="w-4 h-4 text-neutral-400" />
-          </button>
-        </div>
-      </div>
-
+    <>
       {/* Calendar Grid */}
       <SimpleBar className="flex-1 p-4">
         <div className="grid grid-cols-7 gap-1">
@@ -330,7 +299,7 @@ const MonthlyCalendar = ({
           ))}
         </div>
       </SimpleBar>
-    </div>
+    </>
   );
 };
 

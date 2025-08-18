@@ -85,9 +85,6 @@ const TeamPage = ({ onNavigate }) => {
   };
 
   const getRoleColor = (role) => {
-<<<<<<< HEAD
-    return 'bg-gray-500/10 text-gray-400';
-=======
     switch (role) {
       case 'admin':
         return 'bg-transparent text-purple-400 border border-neutral-700';
@@ -98,7 +95,6 @@ const TeamPage = ({ onNavigate }) => {
       default:
         return 'bg-transparent text-gray-400 border border-neutral-700';
     }
->>>>>>> 7229304f488fcda1c0fb0b597420c525c19d4448
   };
 
   // Helper function to capitalize first letter
