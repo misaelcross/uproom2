@@ -334,7 +334,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
               }}
               className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
             >
-            <span className="text-sm">Ask to colaborate</span>
+            <span className="text-sm">Colaborate</span>
           </button>
         </div>
       </div>

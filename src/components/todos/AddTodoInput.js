@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RichTextEditor from '../shared/RichTextEditor';
+import TipTapEditor from '../shared/TipTapEditor';
 import { Snackbar, Alert } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -60,7 +60,7 @@ const AddTodoInput = ({ newTodoText, setNewTodoText, onAddTodo }) => {
     <ThemeProvider theme={darkTheme}>
       <div className="border-t border-neutral-700 pt-4 mt-6">
         <div className="relative" onKeyDown={handleKeyDown}>
-          <RichTextEditor
+          <TipTapEditor
             value={newTodoText}
             onChange={setNewTodoText}
             placeholder="Add a new to-do..."

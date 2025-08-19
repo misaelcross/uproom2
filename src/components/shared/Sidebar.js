@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { createPortal } from 'react-dom';
 import SimpleBar from 'simplebar-react';
 import { 
   Calendar, 
@@ -27,7 +28,9 @@ import {
   User,
   RefreshCw,
   LogOut,
-  Activity
+  Activity,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 
@@ -74,6 +77,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
   const [remindersCollapsed, setRemindersCollapsed] = useState(false);
   const [completedRemindersCollapsed, setCompletedRemindersCollapsed] = useState(true);
   const [pomodoroCollapsed, setPomodoroCollapsed] = useState(false);
+  const [pomodoroFullScreen, setPomodoroFullScreen] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
   const [selectedStatusOption, setSelectedStatusOption] = useState(null);
   const [showStatusError, setShowStatusError] = useState(false);
@@ -776,22 +780,35 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
         </div>
 
         {/* Pomodoro Section - Only show when Focus status is active */}
-        {currentStatus === 'Focus' && (
+        {currentStatus === 'Focus' && !pomodoroFullScreen && (
           <div className="px-4 pb-4">
             <div className="border border-neutral-700 rounded-lg overflow-hidden">
               {/* Header do Pomodoro */}
               <div className="flex items-center justify-between p-4">
                 <h3 className="text-sm font-medium text-white">Pomodoro</h3>
-                <button
-                  onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
-                  className="p-1 hover:bg-neutral-600 rounded transition-colors"
-                >
-                  {pomodoroCollapsed ? (
-                    <ChevronDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
-                  ) : (
-                    <X className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
-                  )}
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPomodoroFullScreen(!pomodoroFullScreen)}
+                    className="p-1 hover:bg-neutral-600 rounded transition-colors"
+                    title={pomodoroFullScreen ? "Exit full screen" : "Enter full screen"}
+                  >
+                    {pomodoroFullScreen ? (
+                      <Minimize className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                    ) : (
+                      <Maximize className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
+                    className="p-1 hover:bg-neutral-600 rounded transition-colors"
+                  >
+                    {pomodoroCollapsed ? (
+                      <ChevronDown className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                    ) : (
+                      <X className="h-3 w-3 text-neutral-400 hover:text-neutral-300" />
+                    )}
+                  </button>
+                </div>
               </div>
               
               {/* Conteúdo do Pomodoro */}
@@ -801,8 +818,6 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                     {/* Left side: Title and Focus badge */}
                     <div className="flex-1">
                       <h4 className="text-sm font-medium text-white mb-3">Product Review</h4>
-                      
-
                     </div>
 
                     {/* Right side: Timer only */}
@@ -816,6 +831,88 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
           </div>
         )}
       </SimpleBar>
+
+      {/* Pomodoro Full Screen Portal */}
+      {currentStatus === 'Focus' && pomodoroFullScreen && createPortal(
+        <div className="fixed inset-0 z-50 bg-neutral-900 p-4">
+          <div className="border border-neutral-700 rounded-lg overflow-hidden h-full flex flex-col">
+            {/* Header do Pomodoro */}
+            <div className="flex items-center justify-between p-4">
+              <h3 className="text-sm font-medium text-white">Pomodoro</h3>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setPomodoroFullScreen(false)}
+                  className="p-1 hover:bg-neutral-700 rounded transition-colors"
+                  title="Minimizar"
+                >
+                  <Minimize className="w-4 h-4 text-neutral-400" />
+                </button>
+                <button
+                  onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
+                  className="p-1 hover:bg-neutral-700 rounded transition-colors"
+                >
+                  <X className="w-4 h-4 text-neutral-400" />
+                </button>
+              </div>
+            </div>
+
+            {/* Conteúdo do Pomodoro em tela cheia */}
+            {!pomodoroCollapsed && (
+              <div className="flex-1 flex flex-col justify-center border-t border-neutral-700 p-4">
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <h4 className="text-2xl font-bold text-white mb-8">Product Review</h4>
+                  
+                  {/* Large timer display */}
+                  <div className="mb-12">
+                    <div className="text-8xl font-mono font-bold text-white mb-4">
+                      {formatTime(pomodoroTime)}
+                    </div>
+                    <div className="text-lg text-neutral-400">
+                      Pomodoro {currentPomodoro} of 4
+                    </div>
+                  </div>
+                  
+                  {/* Control buttons */}
+                  <div className="flex items-center gap-4">
+                    <button
+                      onClick={() => setPomodoroActive(!pomodoroActive)}
+                      className="flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg hover:bg-neutral-200 transition-colors font-medium"
+                    >
+                      {pomodoroActive ? (
+                        <><Pause className="w-5 h-5" /> Pause</>
+                      ) : (
+                        <><Play className="w-5 h-5" /> Start</>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPomodoroTime(25 * 60);
+                        setPomodoroActive(false);
+                      }}
+                      className="px-6 py-3 border border-neutral-600 text-white rounded-lg hover:bg-neutral-800 transition-colors font-medium"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  
+                  {/* Progress indicator */}
+                  <div className="mt-8 flex items-center gap-2">
+                    {[1, 2, 3, 4].map((num) => (
+                      <div
+                        key={num}
+                        className={`w-3 h-3 rounded-full ${
+                          num <= currentPomodoro ? "bg-white" : "bg-neutral-600"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Footer fixo com Status e Upgrade */}
       <div className="border-t border-neutral-700">

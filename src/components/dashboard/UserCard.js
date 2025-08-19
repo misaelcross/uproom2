@@ -76,12 +76,12 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
     'Remove from Group',
     'Send Nudge',
     'Set Reminder',
-    'Ask to Collaborate',
+    'Collaborate',
     'Request to Join Meeting'
   ] : [
     'Send Nudge',
     'Set Reminder',
-    'Ask to Collaborate',
+    'Collaborate',
     'Request to Join Meeting',
     'Add to a Group'
   ];

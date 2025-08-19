@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { createEditor, Editor, Transforms, Range, Node } from 'slate';
 import { Slate, Editable, withReact, useSlate, useSelected, useFocused } from 'slate-react';
 import { withHistory } from 'slate-history';
 import { Bold, Italic, Strikethrough, Underline, Smile, AtSign } from 'lucide-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 // Mock users data for mentions
 const mockUsers = [
@@ -194,21 +196,28 @@ const EmojiPicker = ({ onSelect, onClose }) => {
 
 // Mention dropdown component
 const MentionDropdown = ({ search, onSelect, onClose, position }) => {
-  const filteredUsers = mockUsers.filter(user =>
+  const filteredUsers = mockUsers.filter(user => 
     user.name.toLowerCase().includes(search.toLowerCase()) ||
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
   if (filteredUsers.length === 0) return null;
 
+  const dropdownLeft = Math.max(10, Math.min(position.left, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 220));
+  const dropdownTop = position.top - 56;
+
   return (
     <div 
-      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto mb-3.5"
+      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-[9999] max-h-48 overflow-auto"
       style={{ 
-        bottom: position.bottom + 14, 
-        left: position.left,
-        minWidth: '200px'
+        top: dropdownTop,
+        left: dropdownLeft,
+        minWidth: '200px',
+        maxWidth: '200px',
+        transform: 'translateY(-134%) translateX(250%)',
+        pointerEvents: 'auto'
       }}
+      data-simplebar
     >
       {filteredUsers.map(user => (
         <button
@@ -319,17 +328,30 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
       
       if (selection && Range.isCollapsed(selection)) {
         const [start] = Range.edges(selection);
-        const wordBefore = Editor.before(editor, start, { unit: 'word' });
-        const before = wordBefore && Editor.before(editor, wordBefore);
-        const beforeRange = before && Editor.range(editor, before, start);
-        const beforeText = beforeRange && Editor.string(editor, beforeRange);
-        const beforeMatch = beforeText && beforeText.match(/@(\w*)$/);
         
-        if (beforeMatch) {
-          const beforeMatchRange = Editor.range(editor, before, start);
-          Transforms.select(editor, beforeMatchRange);
-          Transforms.delete(editor);
+        // Look for @ symbol before cursor
+        const beforePoint = Editor.before(editor, start, { unit: 'character' });
+        let atPoint = beforePoint;
+        let searchText = '';
+        
+        // Find the @ symbol and collect search text
+        while (atPoint) {
+          const char = Editor.string(editor, { anchor: atPoint, focus: Editor.after(editor, atPoint) });
+          if (char === '@') {
+            break;
+          }
+          searchText = char + searchText;
+          const prevPoint = Editor.before(editor, atPoint, { unit: 'character' });
+          if (!prevPoint) break;
+          atPoint = prevPoint;
+        }
+        
+        if (atPoint) {
+          // Select from @ to current cursor position
+          const range = { anchor: atPoint, focus: start };
+          Transforms.select(editor, range);
           
+          // Replace with mention
           const mention = {
             type: 'mention',
             character: `@${user.username}`,
@@ -337,8 +359,16 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
           };
           
           Transforms.insertNodes(editor, mention);
-          Transforms.move(editor);
+          
+          // Add space after mention
+          Transforms.insertText(editor, ' ');
+        } else {
+          // Fallback: just insert the username as text
+          Transforms.insertText(editor, `@${user.username} `);
         }
+      } else {
+        // Fallback: just insert the username as text
+        Transforms.insertText(editor, `@${user.username} `);
       }
     } catch (error) {
       console.error('Error in handleMentionSelect:', error);
@@ -366,13 +396,55 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
         const editorRect = editorRef.current.getBoundingClientRect();
         
         setMentionPosition({
-          bottom: editorRect.bottom - rect.top,
+          top: rect.top - editorRect.top,
           left: rect.left - editorRect.left
         });
       }
     } else if (showMentionDropdown && event.key === 'Escape') {
       setShowMentionDropdown(false);
       setMentionSearch('');
+    } else if (showMentionDropdown && selection && Range.isCollapsed(selection)) {
+      // Update search term as user types after @
+      setTimeout(() => {
+        try {
+          const [start] = Range.edges(selection);
+          const beforePoint = Editor.before(editor, start, { unit: 'character' });
+          let atPoint = beforePoint;
+          let searchText = '';
+          
+          // Find the @ symbol and collect search text
+          while (atPoint) {
+            const char = Editor.string(editor, { anchor: atPoint, focus: Editor.after(editor, atPoint) });
+            if (char === '@') {
+              break;
+            }
+            if (char === ' ' || char === '\n') {
+              // Stop if we hit whitespace (no @ found)
+              atPoint = null;
+              break;
+            }
+            searchText = char + searchText;
+            const prevPoint = Editor.before(editor, atPoint, { unit: 'character' });
+            if (!prevPoint) break;
+            atPoint = prevPoint;
+          }
+          
+          if (atPoint) {
+            // We found @, update search term
+            const currentChar = Editor.string(editor, { anchor: beforePoint, focus: start });
+            const newSearchText = searchText + currentChar;
+            setMentionSearch(newSearchText);
+          } else {
+            // No @ found, close dropdown
+            setShowMentionDropdown(false);
+            setMentionSearch('');
+          }
+        } catch (error) {
+          // If there's an error, just close the dropdown
+          setShowMentionDropdown(false);
+          setMentionSearch('');
+        }
+      }, 0);
     }
   }, [editor, showMentionDropdown]);
 
@@ -399,13 +471,13 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
           onMentionTrigger={handleMentionTrigger}
         />
         
-        <div className="relative">
+        <div className="relative overflow-visible">
           <Editable
             renderLeaf={Leaf}
             renderElement={Element}
             placeholder={placeholder}
             onKeyDown={handleKeyDown}
-            className="px-4 py-3 pr-16 text-white placeholder-neutral-400 focus:outline-none min-h-[44px] bg-transparent"
+            className="px-4 py-3 text-white placeholder-neutral-400 focus:outline-none min-h-[44px] bg-transparent"
           />
           
           {showEmojiPicker && (
@@ -414,7 +486,8 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
               onClose={() => setShowEmojiPicker(false)}
             />
           )}
-          
+        </div>
+        
           {showMentionDropdown && (
             <MentionDropdown
               search={mentionSearch}
@@ -423,7 +496,6 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
               position={mentionPosition}
             />
           )}
-        </div>
       </Slate>
     </div>
   );
