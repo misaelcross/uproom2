@@ -150,10 +150,21 @@ const TodoItem = ({
             <div className="mt-2 flex flex-wrap gap-3 sm:space-y-1 sm:block">
               {/* Comments */}
               {todo.comments && todo.comments.length > 0 && (
-                <div className="flex items-center gap-1 text-xs sm:text-sm text-neutral-400">
-                  <MessageCircle className="w-3 h-3" />
-                  <span className="hidden sm:inline">{todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}</span>
-                  <span className="sm:hidden">{todo.comments.length}</span>
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  {/* Last commenter's avatar */}
+                  <img 
+                    src={todo.comments[todo.comments.length - 1].author.avatar} 
+                    alt={todo.comments[todo.comments.length - 1].author.name}
+                    className="w-6 h-6 rounded-full flex-shrink-0"
+                  />
+                  {/* Number of comments in bold white */}
+                  <span className="font-bold text-white">
+                    {todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}
+                  </span>
+                  {/* Last comment date */}
+                  <span className="text-neutral-400">
+                    {new Date(todo.comments[todo.comments.length - 1].createdAt).toLocaleDateString()}
+                  </span>
                 </div>
               )}
               

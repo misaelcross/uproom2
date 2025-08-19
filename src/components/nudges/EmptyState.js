@@ -50,17 +50,6 @@ const EmptyState = ({ onCreateNudge, onCreatePoll, onViewArchived, sortBy }) => 
 
   return (
     <div className="h-full flex flex-col bg-neutral-900 border border-neutral-700 rounded-lg">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-6 border-b border-neutral-700">
-        <div className="w-10 h-10 bg-neutral-800 rounded-full flex items-center justify-center">
-          <Icon className="w-5 h-5 text-neutral-400" />
-        </div>
-        <div>
-          <h2 className="text-white font-medium">{title}</h2>
-          <p className="text-neutral-400 text-sm">{subtitle}</p>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-8">
         {/* Main illustration */}
@@ -75,25 +64,22 @@ const EmptyState = ({ onCreateNudge, onCreatePoll, onViewArchived, sortBy }) => 
 
         {/* Quick Actions */}
         {sortBy !== 'Archived' && (
-          <div className="w-full max-w-sm space-y-3">
-            <h4 className="text-sm font-medium text-neutral-300 mb-4">Quick Actions</h4>
-            
+          <div className="w-full max-w-sm space-y-3">            
             {quickActions.filter(action => 
               sortBy === 'Drafts' ? action.label !== 'View Archived' : true
             ).map((action, index) => (
               <button
                 key={index}
                 onClick={action.onClick}
-                className="w-full flex items-center gap-4 p-4 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 hover:border-neutral-600 rounded-lg transition-all duration-200 group"
+                className="w-full flex items-center gap-4 p-4 hover:bg-neutral-800 border border-neutral-700 hover:border-neutral-600 rounded-lg transition-all duration-200 group"
               >
-                <div className="w-10 h-10 bg-neutral-700 group-hover:bg-neutral-600 rounded-lg flex items-center justify-center transition-colors">
+                <div className="w-10 h-10 group-hover:bg-neutral-700 rounded-lg flex items-center justify-center transition-colors">
                   <action.icon className="w-5 h-5 text-neutral-300" />
                 </div>
                 <div className="flex-1 text-left">
                   <div className="text-white font-medium">{action.label}</div>
                   <div className="text-neutral-400 text-sm">{action.description}</div>
                 </div>
-                <Plus className="w-4 h-4 text-neutral-500 group-hover:text-neutral-400 transition-colors" />
               </button>
             ))}
           </div>

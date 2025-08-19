@@ -527,18 +527,9 @@ const SchedulePage = ({ onNavigate }) => {
 
             {/* Right Column - 350px (same as dashboard) */}
             <div className="flex flex-col gap-6 min-h-0" style={{ width: '350px' }}>
-              {/* Calendar at the top */}
-              <div className="w-full flex-shrink-0">
-                <MonthCalendar 
-                  selectedDate={selectedDate}
-                  onDateSelect={handleDateSelect}
-                />
-              </div>
-
-              {/* Conditional Content - Team Members or Event Details */}
-              <div className="flex-1 min-h-0 flex flex-col">
-                {selectedEvent ? (
-                  /* Event Details Sidebar */
+              {selectedEvent ? (
+                /* Event Details - Full Height */
+                <div className="flex-1 min-h-0 flex flex-col">
                   <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
                     <EventDetailsSidebar
                       event={selectedEvent}
@@ -551,9 +542,21 @@ const SchedulePage = ({ onNavigate }) => {
                       }}
                     />
                   </div>
-                ) : (
-                  /* Team Members List - Default view */
-                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
+                </div>
+              ) : (
+                /* Default Layout - Calendar + Team Members */
+                <>
+                  {/* Calendar at the top */}
+                  <div className="w-full flex-shrink-0">
+                    <MonthCalendar 
+                      selectedDate={selectedDate}
+                      onDateSelect={handleDateSelect}
+                    />
+                  </div>
+
+                  {/* Team Members List */}
+                  <div className="flex-1 min-h-0 flex flex-col">
+                    <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
                     <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
                       <h2 className="text-white text-lg font-semibold">Team Members</h2>
                       
@@ -612,9 +615,10 @@ const SchedulePage = ({ onNavigate }) => {
                       );
                       })}
                     </SimpleBar>
+                    </div>
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
           </div>
         </div>

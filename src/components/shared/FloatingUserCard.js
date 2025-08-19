@@ -20,14 +20,14 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
 
   const getStatusColor = (availability) => {
     switch (availability) {
-      case 'Available': return 'text-green-500';
-      case 'In meeting': return 'text-blue-500';
-      case 'Break': return 'text-yellow-500';
-      case 'Focus': return 'text-purple-500';
-      case 'Emergency': return 'text-red-500';
-      case 'Away': return 'text-orange-500';
-      case 'Offline': return 'text-gray-500';
-      default: return 'text-green-500';
+      case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10' };
+      case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'hover:bg-blue-500/10' };
+      case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10', hoverBg: 'hover:bg-yellow-500/10' };
+      case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10', hoverBg: 'hover:bg-purple-500/10' };
+      case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10', hoverBg: 'hover:bg-red-500/10' };
+      case 'Away': return { text: 'text-orange-400', bg: 'bg-orange-500/10', hoverBg: 'hover:bg-orange-500/10' };
+      case 'Offline': return { text: 'text-gray-400', bg: 'bg-gray-500/10', hoverBg: 'hover:bg-gray-500/10' };
+      default: return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10' };
     }
   };
 
@@ -84,8 +84,8 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
 
       {/* Badge de status */}
       <div className="flex items-center gap-2">
-        <div className={`border border-neutral-700 rounded px-2 pb-1 ${getStatusColor(user.availability)}`}>
-          <span className="text-xs font-medium">{user.availability}</span>
+        <div className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(user.availability).text} ${getStatusColor(user.availability).bg}`}>
+          <span>{user.availability}</span>
         </div>
         {/* Ícones dos apps */}
         {(() => {

@@ -73,7 +73,7 @@ const Element = ({ attributes, children, element }) => {
         </span>
       );
     default:
-      return <p {...attributes}>{children}</p>;
+      return <p {...attributes} className="mt-0">{children}</p>;
   }
 };
 

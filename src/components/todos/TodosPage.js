@@ -7,6 +7,7 @@ import TodoList from './TodoList';
 import AddTodoInput from './AddTodoInput';
 import GroupsView from './GroupsView';
 import TodoDetails from './TodoDetails';
+import DynamicTodoHeader from './DynamicTodoHeader';
 import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 import TopTabsTodos from './TopTabsTodos';
 import ActionBarTodos from './ActionBarTodos';
@@ -61,10 +62,7 @@ const TodosPage = ({ onNavigate }) => {
         {
           id: 1,
           text: 'I have reviewed the initial draft. Looks good overall!',
-          author: {
-            name: 'Sarah Chen',
-            avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
-          },
+          author: usersData.find(user => user.id === 2), // Sarah Johnson
           createdAt: new Date(Date.now() - 2 * 60 * 1000).toISOString() // 2 minutes ago
         }
       ],
@@ -136,9 +134,9 @@ const TodosPage = ({ onNavigate }) => {
       isShared: false,
       order: 0,
       assignedUsers: [
-        { id: 1, name: 'John Doe', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' },
-        { id: 2, name: 'Sarah Chen', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }
-      ]
+        usersData.find(user => user.id === 1), // John Smith
+        usersData.find(user => user.id === 2)  // Sarah Johnson
+      ].filter(Boolean)
     },
     { id: 2, name: 'Personal', icon: 'User', count: 1, isShared: false, order: 1, assignedUsers: [] },
     { id: 3, name: 'Learning', icon: 'BookOpen', count: 0, isShared: false, order: 2, assignedUsers: [] },
@@ -152,8 +150,10 @@ const TodosPage = ({ onNavigate }) => {
       order: 4,
       expirationDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
       assignedUsers: [
-        { id: 3, name: 'Mike Johnson', avatar: 'https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' }
-      ]
+        usersData.find(user => user.id === 3), // Marcus Chen
+        usersData.find(user => user.id === 4), // Emily Davis
+        usersData.find(user => user.id === 5)  // David Rodriguez
+      ].filter(Boolean)
     },
     {
       id: 6,
@@ -162,7 +162,10 @@ const TodosPage = ({ onNavigate }) => {
       count: 0,
       isShared: false,
       parentId: 1,
-      assignedUsers: []
+      assignedUsers: [
+        usersData.find(user => user.id === 6), // Lisa Park
+        usersData.find(user => user.id === 7)  // Michael Brown
+      ].filter(Boolean)
     },
     {
       id: 7,
@@ -171,7 +174,10 @@ const TodosPage = ({ onNavigate }) => {
       count: 0,
       isShared: false,
       parentId: 1,
-      assignedUsers: []
+      assignedUsers: [
+        usersData.find(user => user.id === 8), // Jessica Lee
+        usersData.find(user => user.id === 10) // Kevin Wilson
+      ].filter(Boolean)
     }
   ]);
 
@@ -443,8 +449,17 @@ const TodosPage = ({ onNavigate }) => {
     ));
   };
   
-  // Create sub-folder
+  // Create sub-folder with single-level restriction
   const createSubFolder = (parentId, name) => {
+    // Find the parent folder
+    const parentFolder = groups.find(group => group.id === parentId);
+    
+    // Only allow subfolder creation if parent is a root folder (no parentId)
+    if (parentFolder && parentFolder.parentId) {
+      console.warn('Cannot create subfolder: Parent folder is already a subfolder. Only one level of nesting is allowed.');
+      return;
+    }
+    
     const newSubFolder = {
       id: Date.now(),
       name: name,
@@ -628,6 +643,9 @@ const TodosPage = ({ onNavigate }) => {
           <div className="flex gap-6 flex-1 min-h-0">
             {/* Main Content */}
             <div className="flex-1 flex flex-col h-full relative">
+              {/* Dynamic Header - only shows when folder is selected */}
+              <DynamicTodoHeader selectedGroup={selectedGroup} />
+              
               {/* Todo List with scroll */}
               <SimpleBar className="flex-1 pb-20">
                 <TodoList

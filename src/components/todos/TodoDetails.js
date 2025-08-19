@@ -182,7 +182,7 @@ const TodoDetails = ({
           </div>
           <button
             onClick={handleDeleteClick}
-            className="text-red-400 hover:text-red-300 transition-colors"
+            className="text-neutral-400 hover:text-neutral-500 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -725,7 +725,7 @@ const TodoDetails = ({
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-white hover:bg-neutral-200 text-black rounded-lg transition-colors"
               >
                 Delete
               </button>

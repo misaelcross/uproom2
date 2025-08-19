@@ -51,16 +51,8 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
   };
 
   const getRoleColor = (role) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-transparent text-purple-400 border border-neutral-700';
-      case 'manager':
-        return 'bg-transparent text-blue-400 border border-neutral-700';
-      case 'user':
-        return 'bg-transparent text-gray-400 border border-neutral-700';
-      default:
-        return 'bg-transparent text-gray-400 border border-neutral-700';
-    }
+    // All role badges use the same gray styling as offline status
+    return 'bg-gray-500/10 text-gray-400';
   };
 
   // Helper function to capitalize first letter
@@ -140,7 +132,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
           </button>
           <button
             onClick={() => onDelete(user)}
-            className="flex items-center justify-center px-3 py-2 bg-red-500/10 hover:bg-red-500/30 rounded-lg text-red-400 text-sm transition-colors"
+            className="flex items-center justify-center px-3 py-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-400 rounded-lg text-sm transition-colors"
           >
             <Trash2 className="h-4 w-4" />
           </button>

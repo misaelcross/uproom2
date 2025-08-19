@@ -34,7 +34,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
   };
 
   return (
-    <div className="w-full h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden flex flex-col">
+    <div className="w-full h-full bg-transparent rounded-lg overflow-hidden flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700 flex-shrink-0">
         <h2 className="text-white text-lg font-semibold">Event Details</h2>
@@ -220,7 +220,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
           >
             Close
           </button>
-          <button className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+          <button className="px-6 py-2 bg-white hover:bg-neutral-200 text-black rounded-lg transition-colors">
             Delete Event
           </button>
         </div>

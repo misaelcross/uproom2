@@ -17,6 +17,7 @@ import Sidebar from '../shared/Sidebar';
 import LiveNotifications from '../shared/LiveNotifications';
 import ActionBar from '../dashboard/ActionBar';
 import UserDetails from './UserDetails';
+import TeamEmptyState from './TeamEmptyState';
 
 const TeamPage = ({ onNavigate }) => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -85,16 +86,8 @@ const TeamPage = ({ onNavigate }) => {
   };
 
   const getRoleColor = (role) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-transparent text-purple-400 border border-neutral-700';
-      case 'manager':
-        return 'bg-transparent text-blue-400 border border-neutral-700';
-      case 'user':
-        return 'bg-transparent text-gray-400 border border-neutral-700';
-      default:
-        return 'bg-transparent text-gray-400 border border-neutral-700';
-    }
+    // All role badges use the same gray styling as offline status
+    return 'bg-gray-500/10 text-gray-400';
   };
 
   // Helper function to capitalize first letter
@@ -207,7 +200,7 @@ const TeamPage = ({ onNavigate }) => {
 
                     <button
                       onClick={handleBulkDelete}
-                      className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-red-400 hover:bg-red-500/30 rounded-lg transition-colors text-sm"
+                      className="flex items-center gap-2 px-3 py-2 bg-red-500/10 text-white hover:bg-neutral-300 rounded-lg transition-colors text-sm"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete
@@ -310,11 +303,12 @@ const TeamPage = ({ onNavigate }) => {
                   onDelete={(user) => console.log('Delete user:', user)}
                 />
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-neutral-400">
-                  <Users className="h-16 w-16 mb-4 opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">Select a user</h3>
-                  <p className="text-sm text-center">Click on a user from the table to view their details</p>
-                </div>
+                <TeamEmptyState
+                  onAddUser={() => console.log('Add new user')}
+                  onImportUsers={() => console.log('Import users')}
+                  onManageRoles={() => console.log('Manage roles')}
+                  onBulkEdit={() => console.log('Bulk edit')}
+                />
               )}
             </SimpleBar>
           </div>

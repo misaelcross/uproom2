@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MoreVertical } from 'lucide-react';
+import ActivityProgressBar from './ActivityProgressBar';
 
 const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetReminder }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const dropdownRef = useRef(null);
 
   // Fechar dropdown quando clicar fora
@@ -88,6 +90,8 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
     <div 
       className={`bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:border-neutral-700 relative ${getStatusColor(user.availability).hoverBg}`}
       onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Header com avatar, nome, cargo e menu */}
       <div className="flex items-start gap-3 mb-3">
@@ -143,36 +147,46 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
       </div>
 
       {/* Badge de status */}
-      <div className="flex items-center gap-2">
-        <div className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(user.availability).text} ${getStatusColor(user.availability).bg}`}>
-          <span>{user.availability}</span>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 h-9">
+          <div className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(user.availability).text} ${getStatusColor(user.availability).bg}`}>
+            <span>{user.availability}</span>
+          </div>
+          {/* Ícones dos apps */}
+          {(() => {
+            const icons = getUserIcons();
+            if (icons.length === 0) return null;
+            
+            const visibleIcons = icons.slice(0, 2);
+            const remainingCount = icons.length - 2;
+            
+            return (
+              <div className="flex items-center gap-1">
+                {visibleIcons.map((iconUrl, index) => (
+                  <img 
+                    key={index}
+                    src={iconUrl} 
+                    alt="App icon" 
+                    className="w-5 h-5 object-contain"
+                  />
+                ))}
+                {remainingCount > 0 && (
+                  <span className="text-neutral-400 text-xs font-medium">
+                    +{remainingCount}
+                  </span>
+                )}
+              </div>
+            );
+          })()} 
         </div>
-        {/* Ícones dos apps */}
-        {(() => {
-          const icons = getUserIcons();
-          if (icons.length === 0) return null;
-          
-          const visibleIcons = icons.slice(0, 2);
-          const remainingCount = icons.length - 2;
-          
-          return (
-            <div className="flex items-center gap-1">
-              {visibleIcons.map((iconUrl, index) => (
-                <img 
-                  key={index}
-                  src={iconUrl} 
-                  alt="App icon" 
-                  className="w-5 h-5 object-contain"
-                />
-              ))}
-              {remainingCount > 0 && (
-                <span className="text-neutral-400 text-xs font-medium">
-                  +{remainingCount}
-                </span>
-              )}
-            </div>
-          );
-        })()}
+        
+        {/* Progress Bar Container - positioned on the right */}
+        <div className="flex-shrink-0 min-w-0 max-w-[200px]">
+          <ActivityProgressBar 
+            user={user} 
+            isVisible={isHovered}
+          />
+        </div>
       </div>
     </div>
   );

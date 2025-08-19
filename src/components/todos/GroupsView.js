@@ -350,7 +350,14 @@ const GroupsView = ({
             className="flex-1 flex items-center cursor-pointer"
             onClick={() => {
               onSelectGroup(folder);
-              toggleFolderExpansion(folder.id);
+              // Only expand if this folder is being selected (not deselected)
+              if (!selectedGroup || selectedGroup.id !== folder.id) {
+                // Close all other folders first
+                setExpandedFolders(new Set([folder.id]));
+              } else {
+                // If clicking the same folder, toggle its expansion
+                toggleFolderExpansion(folder.id);
+              }
             }}
           >
             <div className="flex items-center gap-3">
@@ -373,25 +380,7 @@ const GroupsView = ({
                 <span className="text-white">{folder.name}</span>
               )}
               
-              {/* Show assigned people */}
-              {folder.assignedUsers && folder.assignedUsers.length > 0 && (
-                <div className="flex -space-x-1">
-                  {folder.assignedUsers.slice(0, 3).map((user, index) => (
-                    <img
-                      key={user.id}
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-5 h-5 rounded-full border border-neutral-600"
-                      title={user.name}
-                    />
-                  ))}
-                  {folder.assignedUsers.length > 3 && (
-                    <div className="w-5 h-5 rounded-full bg-neutral-600 border border-neutral-600 flex items-center justify-center text-xs text-neutral-300">
-                      +{folder.assignedUsers.length - 3}
-                    </div>
-                  )}
-                </div>
-              )}
+
             </div>
           </div>
           
@@ -447,17 +436,20 @@ const GroupsView = ({
                         <Edit3 className="w-4 h-4" />
                         <span>Edit</span>
                       </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowCreateSubFolder(folder.id);
-                          setOpenDropdown(null);
-                        }}
-                        className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm"
-                      >
-                        <FolderPlus className="w-4 h-4" />
-                        <span>Add Sub-folder</span>
-                      </button>
+                      {/* Only show Add Sub-folder option for root folders (no parentId) */}
+                      {!folder.parentId && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowCreateSubFolder(folder.id);
+                            setOpenDropdown(null);
+                          }}
+                          className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm"
+                        >
+                          <FolderPlus className="w-4 h-4" />
+                          <span>Add Sub-folder</span>
+                        </button>
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -475,7 +467,7 @@ const GroupsView = ({
                           onDeleteGroup(folder.id);
                           setOpenDropdown(null);
                         }}
-                        className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-red-500 hover:bg-neutral-700 transition-colors text-sm last:rounded-b-lg"
+                        className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-neutral-500 hover:bg-neutral-700 transition-colors text-sm last:rounded-b-lg"
                       >
                         <Trash2 className="w-4 h-4" />
                         <span>Delete</span>
@@ -608,19 +600,21 @@ const GroupsView = ({
               <SortableFolder key={subFolder.id} folder={subFolder} level={level + 1} />
             ))}
             
-            {/* Botão para criar nova subfolder - sempre visível quando expandido */}
-            <div style={{ marginLeft: `${(level + 1) * 20}px` }}>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowCreateSubFolder(folder.id);
-                }}
-                className="flex items-center space-x-2 p-2 text-sm text-neutral-400 hover:text-white hover:bg-neutral-700 rounded-md transition-colors"
-              >
-                <FolderPlus className="w-4 h-4" />
-                <span>Create New Subfolder</span>
-              </button>
-            </div>
+            {/* Only show Create New Subfolder button for root folders (level 0) */}
+            {level === 0 && (
+              <div style={{ marginLeft: `${(level + 1) * 20}px` }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCreateSubFolder(folder.id);
+                  }}
+                  className="flex items-center space-x-2 p-2 text-sm text-neutral-400 hover:text-white hover:bg-neutral-700 rounded-md transition-colors"
+                >
+                  <FolderPlus className="w-4 h-4" />
+                  <span>Create New Subfolder</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
