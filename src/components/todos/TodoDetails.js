@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SimpleBar from 'simplebar-react';
-import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText } from 'lucide-react';
 import TodoStep from './TodoStep';
 
 const TodoDetails = ({ 
@@ -18,7 +18,10 @@ const TodoDetails = ({
   onAddComment 
 }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [isEditingTodoDescription, setIsEditingTodoDescription] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
+  const [editedDescription, setEditedDescription] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showDurationForm, setShowDurationForm] = useState(false);
@@ -39,7 +42,23 @@ const TodoDetails = ({
   const [description, setDescription] = useState(todo?.description || '');
   const [showMentionForm, setShowMentionForm] = useState(false);
   const [mentionSearch, setMentionSearch] = useState('');
+  const [showDescriptionField, setShowDescriptionField] = useState(!!todo?.description);
+  const [todoDescription, setTodoDescription] = useState(todo?.notes || '');
+  const [editedTodoDescription, setEditedTodoDescription] = useState('');
   const descriptionRef = useRef(null);
+  const titleRef = useRef(null);
+  const descriptionEditRef = useRef(null);
+
+  // Save description when it changes (debounced)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (description !== todo?.description && description.trim() !== '') {
+        onUpdateTodoDescription(todo.id, description);
+      }
+    }, 1000); // Save after 1 second of no changes
+
+    return () => clearTimeout(timeoutId);
+  }, [description, todo?.description, todo.id, onUpdateTodoDescription]);
 
   const mockUsers = [
     { id: 1, name: 'John Doe', title: 'Frontend Developer', avatar: '/api/placeholder/32/32' },
@@ -48,11 +67,33 @@ const TodoDetails = ({
     { id: 4, name: 'Sarah Wilson', title: 'Product Manager', avatar: '/api/placeholder/32/32' }
   ];
 
+  // Function to clean HTML mentions and return plain text
+  const cleanMentionText = (text) => {
+    if (!text) return '';
+    // Remove HTML tags from mentions like <span class="mention bg-white text-black px-1 py-0.5 rounded text-sm">@John Doe</span>
+    return text.replace(/<[^>]*>/g, '');
+  };
+
   useEffect(() => {
     if (isEditingTitle) {
       setEditedTitle(todo.description || '');
     }
   }, [isEditingTitle, todo.description]);
+
+  useEffect(() => {
+    if (isEditingDescription) {
+      setEditedDescription(description || '');
+    }
+  }, [isEditingDescription, description]);
+
+  // Sync duration state when todo changes
+  useEffect(() => {
+    setDuration(todo?.duration || null);
+    setReminders(todo?.reminders || []);
+    setRepeat(todo?.repeat || null);
+    setTodoDescription(todo?.notes || '');
+    setDescription(todo?.description || '');
+  }, [todo]);
 
   const handleSaveTitle = () => {
     if (editedTitle.trim() && editedTitle !== todo.description) {
@@ -61,9 +102,52 @@ const TodoDetails = ({
     setIsEditingTitle(false);
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelEditTitle = () => {
+    setEditedTitle(todo.description || '');
     setIsEditingTitle(false);
-    setEditedTitle('');
+  };
+
+  const handleSaveDescription = () => {
+    if (editedDescription.trim() !== description) {
+      setDescription(editedDescription.trim());
+      onUpdateTodoDescription(todo.id, editedDescription.trim());
+    }
+    setIsEditingDescription(false);
+  };
+
+  const handleCancelEditDescription = () => {
+    setEditedDescription(description || '');
+    setIsEditingDescription(false);
+  };
+
+  const handleStartEditingTodoDescription = () => {
+    setEditedTodoDescription(todoDescription || '');
+    setIsEditingTodoDescription(true);
+  };
+
+  const handleSaveTodoDescription = () => {
+    if (editedTodoDescription.trim() !== todoDescription) {
+      setTodoDescription(editedTodoDescription.trim());
+      if (onUpdateNotes) {
+        onUpdateNotes(todo.id, editedTodoDescription.trim());
+      }
+    }
+    setIsEditingTodoDescription(false);
+  };
+
+  const handleCancelEditTodoDescription = () => {
+    setEditedTodoDescription(todoDescription || '');
+    setIsEditingTodoDescription(false);
+  };
+
+  const handleStartEditingTitle = () => {
+    setEditedTitle(todo.description || '');
+    setIsEditingTitle(true);
+  };
+
+  const handleStartEditingDescription = () => {
+    setEditedDescription(description || '');
+    setIsEditingDescription(true);
   };
 
   const handleDeleteClick = () => {
@@ -208,47 +292,53 @@ const TodoDetails = ({
               )}
             </button>
             
-            <div className="flex-1 flex items-center space-x-2">
+            <div className="flex-1 flex items-start space-x-2">
               {isEditingTitle ? (
-                <>
-                  <input
-                    type="text"
+                <div className="flex-1 space-y-2">
+                  <textarea
+                    ref={titleRef}
                     value={editedTitle}
                     onChange={(e) => setEditedTitle(e.target.value)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === 'Enter' && e.ctrlKey) {
                         handleSaveTitle();
                       } else if (e.key === 'Escape') {
-                        handleCancelEdit();
+                        handleCancelEditTitle();
                       }
                     }}
-                    className="flex-1 bg-transparent text-white text-lg font-medium border-b border-white focus:outline-none"
+                    className="w-full bg-transparent text-white text-lg font-medium border border-white rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
+                    style={{ minHeight: '40px' }}
                     autoFocus
+                    rows={1}
+                    onInput={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
                   />
-                  <button
-                    onClick={handleSaveTitle}
-                    className="text-green-400 hover:text-green-300 transition-colors"
-                  >
-                    <Check className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={handleCancelEdit}
-                    className="text-red-400 hover:text-red-300 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleSaveTitle}
+                      className="px-3 py-1 bg-white text-black rounded text-sm hover:bg-neutral-200 transition-colors"
+                   >
+                     Save
+                   </button>
+                   <button
+                     onClick={handleCancelEditTitle}
+                     className="px-3 py-1 border border-neutral-600 text-white rounded text-sm hover:bg-neutral-700 transition-colors"
+                   >
+                     Cancel
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <h1
-                    onClick={() => setIsEditingTitle(true)}
-                    className={`flex-1 text-lg font-medium cursor-pointer hover:text-neutral-300 transition-colors truncate ${
-                      todo.completed ? 'line-through text-neutral-500' : 'text-white'
-                    }`}
-                  >
-                    {todo.description || 'Untitled Todo'}
-                  </h1>
-                </>
+                <h1
+                  onClick={handleStartEditingTitle}
+                  className={`flex-1 text-lg font-medium cursor-pointer hover:text-neutral-300 transition-colors whitespace-pre-wrap break-words ${
+                    todo.completed ? 'line-through text-neutral-500' : 'text-white'
+                  }`}
+                >
+                  {cleanMentionText(todo.description) || 'Untitled Todo'}
+                </h1>
               )}
             </div>
             
@@ -264,70 +354,66 @@ const TodoDetails = ({
             )}
           </div>
 
-          {/* Description Field with @ mentions support */}
-          <div className="relative">
-            <textarea
-              ref={descriptionRef}
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value);
-                const text = e.target.value;
-                const cursorPosition = e.target.selectionStart;
-                const textBeforeCursor = text.substring(0, cursorPosition);
-                const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-                
-                if (lastAtIndex !== -1 && lastAtIndex === cursorPosition - 1) {
-                  setShowMentionForm(true);
-                  setMentionSearch('');
-                } else if (lastAtIndex !== -1) {
-                  const mentionText = textBeforeCursor.substring(lastAtIndex + 1);
-                  if (!mentionText.includes(' ') && mentionText.length > 0) {
-                    setShowMentionForm(true);
-                    setMentionSearch(mentionText);
-                  } else {
-                    setShowMentionForm(false);
-                  }
-                } else {
-                  setShowMentionForm(false);
-                }
-              }}
-              placeholder="Add description... (use @ to mention someone)"
-              className="w-full h-24 bg-transparent border border-neutral-600 rounded-lg px-3 py-2 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
-            />
-            
-            {/* Mention Dropdown */}
-            {showMentionForm && (
-              <SimpleBar className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-10 max-h-32">
-                {mockUsers
-                  .filter(user => user.name.toLowerCase().includes(mentionSearch.toLowerCase()))
-                  .map(user => (
-                    <div 
-                      key={`mention-${user.id}`}
-                      onClick={() => {
-                        const cursorPosition = descriptionRef.current.selectionStart;
-                        const textBeforeCursor = description.substring(0, cursorPosition);
-                        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
-                        const textAfterCursor = description.substring(cursorPosition);
-                        
-                        const newText = description.substring(0, lastAtIndex) + `@${user.name} ` + textAfterCursor;
-                        setDescription(newText);
-                        setShowMentionForm(false);
-                      }}
-                      className="flex items-center space-x-2 p-2 hover:bg-neutral-700 rounded cursor-pointer"
-                    >
-                      <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
-                      <div>
-                        <p className="text-white text-sm">{user.name}</p>
-                        <p className="text-neutral-400 text-xs">{user.title}</p>
-                      </div>
-                    </div>
-                  ))}
-              </SimpleBar>
+          {/* Description Field */}
+          <div className="mt-4">
+            {isEditingTodoDescription ? (
+              <div className="space-y-2">
+                <textarea
+                  value={editedTodoDescription}
+                  onChange={(e) => setEditedTodoDescription(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                      handleSaveTodoDescription();
+                    } else if (e.key === 'Escape') {
+                      handleCancelEditTodoDescription();
+                    }
+                  }}
+                  placeholder="Add a description..."
+                  className="w-full bg-neutral-800 text-white rounded border border-neutral-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none placeholder-neutral-400"
+                  rows={3}
+                  autoFocus
+                />
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSaveTodoDescription}
+                    className="px-3 py-1 bg-white text-black rounded text-sm hover:bg-neutral-200 transition-colors"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={handleCancelEditTodoDescription}
+                    className="px-3 py-1 border border-neutral-600 text-white rounded text-sm hover:bg-neutral-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {todoDescription ? (
+                  <div
+                    onClick={handleStartEditingTodoDescription}
+                    className="cursor-pointer hover:text-neutral-200 transition-colors"
+                  >
+                    <p className="text-neutral-300 whitespace-pre-wrap">{todoDescription}</p>
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleStartEditingTodoDescription}
+                    className="flex items-center space-x-2 text-neutral-400 hover:text-neutral-300 transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Description</span>
+                  </button>
+                )}
+              </div>
             )}
           </div>
+
+
         </div>
 
-        {/* Context Information from Nudge */}
+        {/* Context from Nudge */}
         {todo.sourceNudge && (
           <div className="space-y-4 p-4 bg-neutral-800 border border-neutral-700 rounded-lg">
             <h3 className="text-lg font-medium text-white">Context from Nudge</h3>
@@ -386,7 +472,7 @@ const TodoDetails = ({
         )}
 
         {/* Steps Section */}
-        <div className="space-y-4">
+        <div className="space-y-2 mt-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-white">Steps</h3>
             <span className="text-sm text-neutral-400">
@@ -454,7 +540,13 @@ const TodoDetails = ({
           <div className="grid grid-cols-3 gap-2">
             {/* Reminder */}
             <button
-              onClick={() => setShowReminderForm(!showReminderForm)}
+              onClick={() => {
+                setShowReminderForm(!showReminderForm);
+                if (!showReminderForm) {
+                  setShowDurationForm(false);
+                  setShowRepeatForm(false);
+                }
+              }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
             >
               <Bell className="w-5 h-5 text-neutral-400 mb-1" />
@@ -463,7 +555,13 @@ const TodoDetails = ({
 
             {/* Duration */}
             <button
-              onClick={() => setShowDurationForm(!showDurationForm)}
+              onClick={() => {
+                setShowDurationForm(!showDurationForm);
+                if (!showDurationForm) {
+                  setShowReminderForm(false);
+                  setShowRepeatForm(false);
+                }
+              }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
             >
               <Clock className="w-5 h-5 text-neutral-400 mb-1" />
@@ -472,7 +570,13 @@ const TodoDetails = ({
 
             {/* Repeat */}
             <button
-              onClick={() => setShowRepeatForm(!showRepeatForm)}
+              onClick={() => {
+                setShowRepeatForm(!showRepeatForm);
+                if (!showRepeatForm) {
+                  setShowReminderForm(false);
+                  setShowDurationForm(false);
+                }
+              }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
             >
               <Repeat className="w-5 h-5 text-neutral-400 mb-1" />
@@ -702,7 +806,7 @@ const TodoDetails = ({
               </div>
               
               {/* Transparent spacer div */}
-              <div className="h-16 bg-transparent"></div>
+              <div className="h-44 bg-transparent"></div>
             </div>
           </div>
         </div>
@@ -714,7 +818,7 @@ const TodoDetails = ({
           <div className="bg-neutral-800 border border-neutral-600 rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-medium text-white mb-4">Delete To-do</h3>
             <p className="text-neutral-400 mb-6">
-              Are you sure you want to delete "{todo.description}"? This action cannot be undone.
+              Are you sure you want to delete "{cleanMentionText(todo.description)}"? This action cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button

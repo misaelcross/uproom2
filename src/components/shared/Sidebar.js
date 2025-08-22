@@ -362,7 +362,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             <div className="p-2">
               {/* Seção da empresa */}
               <div className="flex items-center gap-3 p-2 border-b border-neutral-700 mb-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center">
                   <span className="text-white font-semibold text-sm">UR</span>
                 </div>
                 <span className="text-white font-medium">Universe Reactive</span>

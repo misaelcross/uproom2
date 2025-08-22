@@ -17,6 +17,7 @@ import {
 import useNudgeStore from '../../store/nudgeStore';
 import FloatingUserCard from './FloatingUserCard';
 import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
@@ -197,49 +198,68 @@ const AnimatedBottomSheet = ({
   };
 
   // Função para obter cor do status
-  const getStatusTextColor = (availability) => {
-    switch (availability) {
-      case 'available':
-        return 'text-green-600';
-      case 'busy':
-        return 'text-red-600';
-      case 'away':
-        return 'text-yellow-600';
-      case 'offline':
-        return 'text-gray-500';
-      default:
-        return 'text-blue-600';
-    }
-  };
+
 
   // Função para renderizar texto com menções
-  const renderTextWithMentions = (text) => {
+  const renderTextWithMentions = (text, isNudgeOpen = false) => {
     if (!text) return text;
     
-    const mentionRegex = /@([A-Za-z]+(?:\s+[A-Za-z]+)*)/g;
-    const parts = text.split(mentionRegex);
-    
-    return parts.map((part, index) => {
-      if (index % 2 === 1) {
-        const user = usersData.find(u => u.name === part);
-        if (user) {
-          const colorClass = getStatusTextColor(user.availability);
-          return (
+    const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Add text before mention
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
+      
+      if (user) {
+        if (isNudgeOpen) {
+          const colors = getStatusColors(user.availability);
+          parts.push(
             <span
-              key={index}
-              className={`font-medium cursor-pointer hover:underline ${colorClass}`}
-              onMouseEnter={(e) => handleUserMentionHover(e, part)}
+              key={match.index}
+              className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+              onMouseEnter={(e) => handleUserMentionHover(e, user.name)}
               onMouseLeave={handleUserMentionLeave}
-              onClick={() => handleUserMentionClick(part)}
+              onClick={() => handleUserMentionClick(user.name)}
             >
-              @{part}
+              {formatMentionName(user.name)}
             </span>
           );
+        } else {
+          // Para preview, texto formatado unificado
+          parts.push(formatMentionName(user.name));
         }
-        return `@${part}`;
+      } else {
+        if (isNudgeOpen) {
+          parts.push(
+            <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+              @{mentionName}
+            </span>
+          );
+        } else {
+          parts.push(`@${mentionName}`);
+        }
       }
-      return part;
-    });
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts;
   };
 
   // Função para voltar do reagendamento
@@ -489,7 +509,7 @@ const AnimatedBottomSheet = ({
                 {!showReschedule && !showSuccess && (
                   <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 mb-4">
                     <div className="text-white text-base leading-relaxed">
-                      {renderTextWithMentions(selectedNudge?.fullMessage || selectedNudge?.message)}
+                      {renderTextWithMentions(selectedNudge?.fullMessage || selectedNudge?.message, true)}
                     </div>
                     
                     {/* Attachments */}
@@ -812,7 +832,7 @@ const AnimatedBottomSheet = ({
                               <p className={`text-sm ${
                                 nudge.isRead ? 'text-neutral-400' : 'text-neutral-200'
                               } truncate flex-1`}>
-                                {nudge.message}
+                                {renderTextWithMentions(nudge.message, false)}
                               </p>
                               {!nudge.isRead && (
                                 <div className="ml-3 w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">

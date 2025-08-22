@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
 const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
   const [replies, setReplies] = useState([
@@ -96,18 +97,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
     }
   };
 
-  const getStatusTextColor = (availability) => {
-    switch (availability) {
-      case 'Available': return 'text-green-400';
-      case 'In meeting': return 'text-blue-400';
-      case 'Break': return 'text-yellow-400';
-      case 'Focus': return 'text-purple-400';
-      case 'Emergency': return 'text-red-400';
-      case 'Away': return 'text-orange-400';
-      case 'Offline': return 'text-gray-400';
-      default: return 'text-green-400';
-    }
-  };
+
 
   // Função para renderizar texto com menções de usuário
   const renderTextWithMentions = (text) => {
@@ -130,20 +120,21 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
       );
       
       if (user) {
+        const colors = getStatusColors(user.availability);
         parts.push(
           <span
             key={match.index}
-            className={`font-semibold cursor-pointer transition-colors hover:opacity-80 ${getStatusTextColor(user.availability)}`}
+            className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
             onMouseEnter={(e) => handleUserMentionHover(user, e)}
             onMouseLeave={handleUserMentionLeave}
             onClick={() => handleUserMentionClick(user)}
           >
-            @{mentionName}
+            {formatMentionName(user.name)}
           </span>
         );
       } else {
         parts.push(
-          <span key={match.index} className="font-semibold text-white">
+          <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
             @{mentionName}
           </span>
         );

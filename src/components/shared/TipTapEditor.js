@@ -2,6 +2,7 @@ import React, { useCallback, useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
 import { Bold, Italic, Strikethrough, Underline, Smile, AtSign } from 'lucide-react';
 import 'simplebar-react/dist/simplebar.min.css';
@@ -42,7 +43,7 @@ const ToolbarButton = ({ onClick, isActive, children, title }) => (
     title={title}
     className={`p-2 rounded-md transition-colors ${
       isActive 
-        ? 'bg-blue-600 text-white' 
+        ? 'bg-neutral-600 text-white' 
         : 'text-neutral-400 hover:text-white hover:bg-neutral-700'
     }`}
   >
@@ -131,7 +132,7 @@ const MentionList = React.forwardRef((props, ref) => {
   const selectItem = (index) => {
     const item = props.items[index];
     if (item) {
-      props.command({ id: item.id, label: item.username });
+      props.command({ id: item.id, label: item.name });
     }
   };
 
@@ -192,7 +193,7 @@ const MentionList = React.forwardRef((props, ref) => {
             />
             <div className="flex flex-col">
               <span className="text-white text-sm font-medium">{item.name}</span>
-              <span className="text-neutral-400 text-xs">@{item.username}</span>
+              <span className="text-neutral-400 text-xs">@{item.name}</span>
             </div>
           </button>
         ))
@@ -211,7 +212,7 @@ const suggestion = {
     return mockUsers
       .filter(user => 
         user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.username.toLowerCase().includes(query.toLowerCase())
+        user.name.toLowerCase().includes(query.toLowerCase())
       )
       .slice(0, 5);
   },
@@ -232,9 +233,10 @@ const suggestion = {
         popup.style.zIndex = '9999';
         document.body.appendChild(popup);
 
-        // Position the popup
+        // Position the popup above the cursor
         const rect = props.clientRect();
-        popup.style.top = `${rect.bottom + window.scrollY}px`;
+        const dropdownHeight = 200; // Estimated height of dropdown
+        popup.style.top = `${rect.top + window.scrollY - dropdownHeight}px`;
         popup.style.left = `${rect.left + window.scrollX}px`;
 
         // Render React component
@@ -250,9 +252,10 @@ const suggestion = {
           return;
         }
 
-        // Update position
+        // Update position above the cursor
         const rect = props.clientRect();
-        popup.style.top = `${rect.bottom + window.scrollY}px`;
+        const dropdownHeight = 200; // Estimated height of dropdown
+        popup.style.top = `${rect.top + window.scrollY - dropdownHeight}px`;
         popup.style.left = `${rect.left + window.scrollX}px`;
 
         // Update React component
@@ -285,14 +288,21 @@ const suggestion = {
 // Main TipTap Editor Component
 const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef(null);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Placeholder.configure({
+        placeholder,
+        showOnlyWhenEditable: true,
+        showOnlyCurrent: false,
+        includeChildren: true,
+      }),
       Mention.configure({
         HTMLAttributes: {
-          class: 'mention bg-blue-600 text-white px-1 py-0.5 rounded text-sm',
+          class: 'mention bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold',
         },
         suggestion,
       }),
@@ -301,6 +311,15 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) =>
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange?.(html);
+    },
+    onFocus: () => {
+      setIsEditing(true);
+    },
+    onBlur: () => {
+      // Only hide editing state if editor is empty
+      if (!editor?.getText().trim()) {
+        setIsEditing(false);
+      }
     },
     editorProps: {
       attributes: {
@@ -335,19 +354,39 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) =>
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Sync editor content with value prop
+  useEffect(() => {
+    if (editor && editor.getHTML() !== value) {
+      if (!value || value === '<p></p>' || value.trim() === '') {
+        editor.commands.clearContent();
+        setIsEditing(false);
+      } else {
+        editor.commands.setContent(value);
+      }
+    }
+  }, [value, editor]);
+
+  // Reset editing state when value changes externally (like clearing after adding todo)
+  useEffect(() => {
+    if (!value || value === '<p></p>' || value.trim() === '') {
+      setIsEditing(false);
+    }
+  }, [value]);
+
   return (
     <div ref={editorRef} className="bg-neutral-800 border border-neutral-600 rounded-lg overflow-hidden relative">
-      <Toolbar 
-        editor={editor}
-        showEmojiPicker={showEmojiPicker}
-        setShowEmojiPicker={setShowEmojiPicker}
-        onMentionTrigger={handleMentionTrigger}
-      />
+      {isEditing && (
+        <Toolbar 
+          editor={editor}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
+          onMentionTrigger={handleMentionTrigger}
+        />
+      )}
       
       <div className="relative">
         <EditorContent 
-          editor={editor} 
-          placeholder={placeholder}
+          editor={editor}
         />
         
         {showEmojiPicker && (

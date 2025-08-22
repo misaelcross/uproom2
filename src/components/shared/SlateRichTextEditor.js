@@ -66,8 +66,8 @@ const Element = ({ attributes, children, element }) => {
         <span
           {...attributes}
           contentEditable={false}
-          className={`inline-block px-2 py-1 mx-1 bg-blue-500/20 text-blue-400 rounded-md text-sm ${
-            selected && focused ? 'ring-2 ring-blue-400' : ''
+          className={`inline-block px-2 py-1 mx-1 bg-white text-black rounded-md text-sm ${
+            selected && focused ? 'ring-2 ring-gray-400' : ''
           }`}
         >
           @{element.character}
@@ -197,8 +197,7 @@ const EmojiPicker = ({ onSelect, onClose }) => {
 // Mention dropdown component
 const MentionDropdown = ({ search, onSelect, onClose, position }) => {
   const filteredUsers = mockUsers.filter(user => 
-    user.name.toLowerCase().includes(search.toLowerCase()) ||
-    user.username.toLowerCase().includes(search.toLowerCase())
+    user.name.toLowerCase().includes(search.toLowerCase())
   );
 
   if (filteredUsers.length === 0) return null;
@@ -236,7 +235,7 @@ const MentionDropdown = ({ search, onSelect, onClose, position }) => {
           />
           <div className="flex flex-col">
             <span className="text-white text-sm font-medium">{user.name}</span>
-            <span className="text-neutral-400 text-xs">@{user.username}</span>
+            <span className="text-neutral-400 text-xs">@{user.name}</span>
           </div>
         </button>
       ))}
@@ -354,7 +353,7 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
           // Replace with mention
           const mention = {
             type: 'mention',
-            character: `@${user.username}`,
+            character: user.name,
             children: [{ text: '' }],
           };
           
@@ -363,17 +362,17 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type something..." }) 
           // Add space after mention
           Transforms.insertText(editor, ' ');
         } else {
-          // Fallback: just insert the username as text
-          Transforms.insertText(editor, `@${user.username} `);
+          // Fallback: just insert the full name as text
+          Transforms.insertText(editor, `@${user.name} `);
         }
       } else {
-        // Fallback: just insert the username as text
-        Transforms.insertText(editor, `@${user.username} `);
+        // Fallback: just insert the full name as text
+        Transforms.insertText(editor, `@${user.name} `);
       }
     } catch (error) {
       console.error('Error in handleMentionSelect:', error);
-      // Fallback: just insert the username as text
-      Transforms.insertText(editor, `@${user.username} `);
+      // Fallback: just insert the full name as text
+      Transforms.insertText(editor, `@${user.name} `);
     }
     
     setShowMentionDropdown(false);

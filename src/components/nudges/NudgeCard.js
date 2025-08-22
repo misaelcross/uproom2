@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
 const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive, onMarkUnread, onPinNudge, onMarkResolved, onMarkPriority, onMarkRead }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -32,18 +33,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
     }
   };
 
-  const getStatusTextColor = (availability) => {
-    switch (availability) {
-      case 'Available': return 'text-green-400';
-      case 'In meeting': return 'text-blue-400';
-      case 'Break': return 'text-yellow-400';
-      case 'Focus': return 'text-purple-400';
-      case 'Emergency': return 'text-red-400';
-      case 'Away': return 'text-orange-400';
-      case 'Offline': return 'text-gray-400';
-      default: return 'text-green-400';
-    }
-  };
+
 
   const handleUserMentionHover = (user, event) => {
     setHoveredUser(user);
@@ -55,7 +45,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
   };
 
   // Função para renderizar texto com menções de usuário coloridas por status
-  const renderTextWithMentions = (text) => {
+  const renderTextWithMentions = (text, isPreview = false) => {
     // Regex para encontrar menções @username
     const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
     const parts = [];
@@ -75,22 +65,33 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
       );
       
       if (user) {
-        parts.push(
-          <span
-            key={match.index}
-            className={`font-semibold cursor-pointer transition-colors hover:opacity-80 ${getStatusTextColor(user.availability)}`}
-            onMouseEnter={(e) => handleUserMentionHover(user, e)}
-            onMouseLeave={handleUserMentionLeave}
-          >
-            @{mentionName}
-          </span>
-        );
+        if (isPreview) {
+          // Para preview, apenas texto simples formatado
+          parts.push(formatMentionName(user.name));
+        } else {
+          // Para visualização completa, com cores e interações
+          const colors = getStatusColors(user.availability);
+          parts.push(
+            <span
+              key={match.index}
+              className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+              onMouseEnter={(e) => handleUserMentionHover(user, e)}
+              onMouseLeave={handleUserMentionLeave}
+            >
+              {formatMentionName(user.name)}
+            </span>
+          );
+        }
       } else {
-        parts.push(
-          <span key={match.index} className="font-semibold text-white">
-            @{mentionName}
-          </span>
-        );
+        if (isPreview) {
+          parts.push(`@${mentionName}`);
+        } else {
+          parts.push(
+            <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+              @{mentionName}
+            </span>
+          );
+        }
       }
 
       lastIndex = match.index + match[0].length;
@@ -119,14 +120,29 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
     return words.slice(0, maxWords).join(' ') + '...';
   };
 
+  // Define colors based on priority
+  const getPriorityHoverColors = () => {
+    if (nudge.isHighPriority || nudge.priority === 'high') {
+      return nudge.isRead 
+        ? 'bg-transparent border border-neutral-800 hover:bg-red-500/10 hover:border-red-500/20'
+        : 'bg-neutral-800 border border-neutral-600 hover:bg-red-500/10 hover:border-red-500/20';
+    } else if (nudge.priority === 'medium') {
+      return nudge.isRead 
+        ? 'bg-transparent border border-neutral-800 hover:bg-orange-500/10 hover:border-orange-500/20'
+        : 'bg-neutral-800 border border-neutral-600 hover:bg-orange-500/10 hover:border-orange-500/20';
+    } else {
+      return nudge.isRead 
+        ? 'bg-transparent border border-neutral-800 hover:bg-neutral-800/50 hover:border-neutral-700'
+        : 'bg-neutral-800 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500';
+    }
+  };
+
   return (
     <div 
       className={`cursor-pointer transition-all duration-200 rounded-lg p-4 group ${
         isSelected 
           ? 'border border-white' 
-          : nudge.isRead 
-            ? 'bg-transparent border border-neutral-800 hover:bg-neutral-800/50 hover:border-neutral-700'
-            : 'bg-neutral-800 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500'
+          : getPriorityHoverColors()
       }`}
       onClick={onClick}
     >
@@ -256,7 +272,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
               wordBreak: 'break-word'
             }}
           >
-            {renderTextWithMentions(truncateMessage(nudge.message || nudge.fullMessage))}
+            {renderTextWithMentions(truncateMessage(nudge.message || nudge.fullMessage), true)}
           </p>
           
           {/* Notification Badge - Fixed width to prevent text reflow */}

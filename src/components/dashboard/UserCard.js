@@ -26,14 +26,14 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
 
   const getStatusColor = (availability) => {
     switch (availability) {
-      case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10' };
-      case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'hover:bg-blue-500/10' };
-      case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10', hoverBg: 'hover:bg-yellow-500/10' };
-      case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10', hoverBg: 'hover:bg-purple-500/10' };
-      case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10', hoverBg: 'hover:bg-red-500/10' };
-      case 'Away': return { text: 'text-orange-400', bg: 'bg-orange-500/10', hoverBg: 'hover:bg-orange-500/10' };
-      case 'Offline': return { text: 'text-gray-400', bg: 'bg-gray-500/10', hoverBg: 'hover:bg-gray-500/10' };
-      default: return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10' };
+      case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
+      case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
+      case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10', hoverBg: 'hover:bg-yellow-500/10', hoverBorder: 'hover:border-yellow-500/20' };
+      case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10', hoverBg: 'hover:bg-purple-500/10', hoverBorder: 'hover:border-purple-500/20' };
+      case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10', hoverBg: 'hover:bg-red-500/10', hoverBorder: 'hover:border-red-500/20' };
+      case 'Away': return { text: 'text-orange-400', bg: 'bg-orange-500/10', hoverBg: 'hover:bg-orange-500/10', hoverBorder: 'hover:border-orange-500/20' };
+      case 'Offline': return { text: 'text-gray-400', bg: 'bg-gray-500/10', hoverBg: 'hover:bg-gray-500/10', hoverBorder: 'hover:border-gray-500/20' };
+      default: return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
     }
   };
 
@@ -88,7 +88,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
 
   return (
     <div 
-      className={`bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 hover:border-neutral-700 relative ${getStatusColor(user.availability).hoverBg}`}
+      className={`bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 relative ${getStatusColor(user.availability).hoverBg} ${getStatusColor(user.availability).hoverBorder}`}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

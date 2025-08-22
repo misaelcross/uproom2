@@ -136,10 +136,10 @@ const UserDetails = ({ user, onBack }) => {
   }
 
   return (
-    <div className="flex gap-4 h-full">
+    <div className="flex h-full rounded-lg overflow-hidden">
       {/* Main User Details Panel */}
-      <div className={`bg-transparent border border-neutral-700 rounded-lg overflow-hidden transition-all duration-300 ${
-        selectedEvent ? 'flex-1' : 'w-full'
+      <div className={`bg-transparent border border-neutral-700 overflow-hidden transition-all duration-300 ${
+        selectedEvent ? 'flex-1 rounded-l-lg border-r-0' : 'w-full rounded-lg'
       }`}>
       {/* Header */}
       <div className="px-6 py-4 border-b border-neutral-700">
@@ -566,7 +566,7 @@ const UserDetails = ({ user, onBack }) => {
 
       {/* Event Details Sidebar */}
       {selectedEvent && (
-        <div className="w-96 border border-neutral-700 rounded-lg overflow-hidden flex-shrink-0">
+        <div className="flex flex-w-0 w-[349px]">
           <EventDetailsSidebar
             event={selectedEvent}
             onClose={handleCloseEventDetails}
@@ -576,6 +576,7 @@ const UserDetails = ({ user, onBack }) => {
             onLinkContext={(event) => {
               console.log('Link context for event:', event);
             }}
+            borderClasses="border border-neutral-700 rounded-lg"
           />
         </div>
       )}

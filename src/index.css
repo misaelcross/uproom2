@@ -18,3 +18,20 @@
 .simplebar-scrollbar:hover::before {
   background-color: #9ca3af !important; /* neutral-400 on hover */
 }
+
+/* TipTap Placeholder styles */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #9ca3af !important; /* neutral-400 */
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #9ca3af !important; /* neutral-400 */
+  pointer-events: none;
+  height: 0;
+}

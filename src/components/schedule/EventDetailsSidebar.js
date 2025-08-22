@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Clock, Calendar, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
-const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
+const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg" }) => {
   if (!event) return null;
 
   // Helper function to format event status
@@ -34,7 +34,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext }) => {
   };
 
   return (
-    <div className="w-full h-full bg-transparent rounded-lg overflow-hidden flex flex-col">
+    <div className={`w-full h-full bg-transparent overflow-hidden flex flex-col ${borderClasses}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700 flex-shrink-0">
         <h2 className="text-white text-lg font-semibold">Event Details</h2>

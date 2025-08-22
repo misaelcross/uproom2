@@ -10,6 +10,13 @@ const TodoItem = ({
   onUpdatePriority
 }) => {
 
+  // Function to clean HTML mentions and return plain text
+  const cleanMentionText = (text) => {
+    if (!text) return '';
+    // Remove HTML tags from mentions like <span class="mention bg-white text-black px-1 py-0.5 rounded text-sm">@John Doe</span>
+    return text.replace(/<[^>]*>/g, '');
+  };
+
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -20,7 +27,7 @@ const TodoItem = ({
     { value: 'None', label: 'None', text: 'text-neutral-400', bg: 'bg-neutral-500/10' }
   ];
 
-  const currentPriority = priorities.find(p => p.value === (todo.priority || 'None'));
+  const currentPriority = priorities.find(p => p.value === (todo.priority || 'None')) || priorities.find(p => p.value === 'None');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -93,7 +100,7 @@ const TodoItem = ({
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               )}
               <span className={`text-white text-sm sm:text-base truncate ${todo.completed ? 'line-through opacity-60' : ''}`}>
-                {todo.description}
+                {cleanMentionText(todo.description)}
               </span>
             </div>
             

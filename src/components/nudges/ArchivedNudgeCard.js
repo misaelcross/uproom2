@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Archive, Clock } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
 const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
   const { user, nudges, totalCount, lastArchivedAt } = userGroup;
@@ -22,18 +23,7 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
     }
   };
 
-  const getStatusTextColor = (availability) => {
-    switch (availability) {
-      case 'Available': return 'text-green-400';
-      case 'In meeting': return 'text-blue-400';
-      case 'Break': return 'text-yellow-400';
-      case 'Focus': return 'text-purple-400';
-      case 'Emergency': return 'text-red-400';
-      case 'Away': return 'text-orange-400';
-      case 'Offline': return 'text-gray-400';
-      default: return 'text-green-400';
-    }
-  };
+
 
   const handleUserMentionHover = (user, event) => {
     setHoveredUser(user);
@@ -45,7 +35,9 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
   };
 
   // Função para renderizar texto com menções de usuário coloridas por status
-  const renderTextWithMentions = (text) => {
+  const renderTextWithMentions = (text, isPreview = false) => {
+    if (!text) return text;
+    
     // Regex para encontrar menções @username
     const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
     const parts = [];
@@ -65,22 +57,33 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
       );
       
       if (user) {
-        parts.push(
-          <span
-            key={match.index}
-            className={`font-semibold cursor-pointer transition-colors hover:opacity-80 ${getStatusTextColor(user.availability)}`}
-            onMouseEnter={(e) => handleUserMentionHover(user, e)}
-            onMouseLeave={handleUserMentionLeave}
-          >
-            @{mentionName}
-          </span>
-        );
+        if (isPreview) {
+          // Para preview, apenas texto simples formatado
+          parts.push(formatMentionName(user.name));
+        } else {
+          // Para visualização completa, com cores e interações
+          const colors = getStatusColors(user.availability);
+          parts.push(
+            <span
+              key={match.index}
+              className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+              onMouseEnter={(e) => handleUserMentionHover(user, e)}
+              onMouseLeave={handleUserMentionLeave}
+            >
+              {formatMentionName(user.name)}
+            </span>
+          );
+        }
       } else {
-        parts.push(
-          <span key={match.index} className="font-semibold text-white">
-            @{mentionName}
-          </span>
-        );
+        if (isPreview) {
+          parts.push(`@${mentionName}`);
+        } else {
+          parts.push(
+            <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+              @{mentionName}
+            </span>
+          );
+        }
       }
 
       lastIndex = match.index + match[0].length;
@@ -134,7 +137,7 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
         {/* Preview of last archived nudge */}
         {nudges.length > 0 && (
           <p className="text-neutral-400 text-sm truncate">
-            {renderTextWithMentions(nudges[0].message)}
+            {renderTextWithMentions(nudges[0].message, true)}
           </p>
         )}
       </div>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { X, ChevronUp, Send, FileText, ThumbsUp } from 'lucide-react';
 import useNudgeStore from '../../store/nudgeStore';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
+import { usersData } from '../../data/usersData';
 
 const SecondaryBottomSheet = () => {
   const { 
@@ -22,6 +24,66 @@ const SecondaryBottomSheet = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeRange, setSelectedTimeRange] = useState('');
   const [currentPage, setCurrentPage] = useState('nudges');
+
+  // Função para renderizar texto com menções
+  const renderTextWithMentions = (text, isPreview = false) => {
+    if (!text) return text;
+    
+    const mentionRegex = /@([\w\s]+?)(?=\s|$|[.,!?])/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Add text before mention
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
+      
+      if (user) {
+        if (isPreview) {
+          // Para preview, texto formatado unificado
+          parts.push(formatMentionName(user.name));
+        } else {
+          // Para visualização completa, com cores e interações
+          const colors = getStatusColors(user.availability);
+          parts.push(
+            <span
+              key={match.index}
+              className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+            >
+              {formatMentionName(user.name)}
+            </span>
+          );
+        }
+      } else {
+        if (isPreview) {
+          parts.push(`@${mentionName}`);
+        } else {
+          parts.push(
+            <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+              @{mentionName}
+            </span>
+          );
+        }
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts;
+  };
 
   // Detectar a página atual baseada no DOM
   useEffect(() => {
@@ -195,7 +257,7 @@ const SecondaryBottomSheet = () => {
                   <div className="space-y-6">
                     {/* Message Description with Left Border */}
                     <div className="border border-neutral-600 p-4 rounded-lg">
-                      <p className="text-white text-sm leading-relaxed">{currentNudge.message}</p>
+                      <p className="text-white text-sm leading-relaxed">{renderTextWithMentions(currentNudge.message)}</p>
                     </div>
 
                     {/* Attachments */}
@@ -230,7 +292,7 @@ const SecondaryBottomSheet = () => {
                                      ? 'bg-neutral-800 rounded-tl-lg rounded-tr-lg rounded-bl-lg' 
                                      : 'bg-neutral-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
                                  }`}>
-                                   <p className="text-white text-sm">{reply.message}</p>
+                                   <p className="text-white text-sm">{renderTextWithMentions(reply.message)}</p>
                                    <p className="text-xs text-neutral-400 mt-1">{new Date(reply.timestamp).toLocaleTimeString()}</p>
                                  </div>
                                </div>

@@ -530,18 +530,16 @@ const SchedulePage = ({ onNavigate }) => {
               {selectedEvent ? (
                 /* Event Details - Full Height */
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
-                    <EventDetailsSidebar
-                      event={selectedEvent}
-                      onClose={handleCloseEventDetails}
-                      onEdit={(event) => {
-                        console.log('Edit event:', event);
-                      }}
-                      onLinkContext={(event) => {
-                        console.log('Link context for event:', event);
-                      }}
-                    />
-                  </div>
+                  <EventDetailsSidebar
+                    event={selectedEvent}
+                    onClose={handleCloseEventDetails}
+                    onEdit={(event) => {
+                      console.log('Edit event:', event);
+                    }}
+                    onLinkContext={(event) => {
+                      console.log('Link context for event:', event);
+                    }}
+                  />
                 </div>
               ) : (
                 /* Default Layout - Calendar + Team Members */
