@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Paperclip, Link, ArrowLeft, Headset, Utensils, Target, AlertTriangle, Clock, CircleCheck, Power } from 'lucide-react';
+import { Send, Paperclip, Link, ArrowLeft, Headphones, CirclePause, Target, AlertTriangle, Clock, CircleCheck, Power } from 'lucide-react';
 import UserCard from './UserCard';
 
 const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
@@ -21,13 +21,13 @@ const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
   const statusConfig = {
     'In meeting': {
       label: 'In Meeting',
-      icon: Headset,
+      icon: Headphones,
       color: 'text-blue-400',
       bgColor: 'bg-blue-500/10'
     },
     'Away': {
       label: 'Away',
-      icon: Clock,
+      icon: CirclePause,
       color: 'text-orange-400',
       bgColor: 'bg-orange-500/10'
     },
@@ -51,7 +51,7 @@ const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
     },
     'Break': {
       label: 'Break',
-      icon: Utensils,
+      icon: Clock,
       color: 'text-yellow-400',
       bgColor: 'bg-yellow-500/10'
     },

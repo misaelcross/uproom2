@@ -3,7 +3,8 @@ import {
   Search,
   Filter,
   Calendar,
-  Check
+  Check,
+  ChevronDown
 } from 'lucide-react';
 
 const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet, timeFrame = 'Day', onTimeFrameChange }) => {
@@ -63,10 +64,11 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet, timeFram
       <div className="relative" ref={timeFrameDropdownRef}>
         <button 
           onClick={handleTimeFrameClick}
-          className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
         >
-          <Filter className="h-4 w-4 text-neutral-300" />
-          <span className="text-neutral-300 text-sm font-medium">{timeFrame}</span>
+          <Filter className="h-4 w-4 text-white" />
+          <span className="text-white text-sm font-medium">{timeFrame}</span>
+          <ChevronDown className="h-4 w-4 text-white" />
         </button>
         
         {/* Dropdown Menu */}

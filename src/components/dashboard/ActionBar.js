@@ -12,7 +12,7 @@ import { usersData } from '../../data/usersData';
 const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Sort');
+  const [selectedSort, setSelectedSort] = useState('Newest');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
