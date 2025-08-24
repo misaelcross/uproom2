@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Paperclip } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
@@ -9,6 +9,16 @@ const MonthlyCalendar = ({
   onEventSelect = null 
 }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1600);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Default schedule data for monthly view
   const defaultScheduleData = [
@@ -246,7 +256,7 @@ const MonthlyCalendar = ({
                   
                   {/* Events */}
                   <div className="space-y-1 flex-1 flex flex-col">
-                    {dayData.events.slice(0, 2).map((event) => {
+                    {dayData.events.slice(0, isLargeScreen ? 2 : 1).map((event) => {
                       const getStatusColors = (status) => {
                         switch(status) {
                           case 'Focus':
@@ -286,10 +296,10 @@ const MonthlyCalendar = ({
                       );
                     })}
                     
-                    {/* Ver Mais button */}
-                    {dayData.events.length > 2 && (
+                    {/* See More button */}
+                    {dayData.events.length > (isLargeScreen ? 2 : 1) && (
                       <button className="mt-auto bg-neutral-700/50 hover:bg-neutral-600/50 border border-neutral-600 rounded text-[9px] text-neutral-300 py-1 px-2 transition-colors duration-200 flex-shrink-0">
-                        Ver Mais ({dayData.events.length - 2})
+                        See More ({dayData.events.length - (isLargeScreen ? 2 : 1)})
                       </button>
                     )}
                   </div>

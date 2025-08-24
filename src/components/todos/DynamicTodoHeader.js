@@ -29,21 +29,41 @@ const DynamicTodoHeader = ({ selectedGroup, onBack }) => {
 
       {/* Right side - People avatars */}
       <div className="flex items-center gap-2">
-        <div className="flex gap-2">
-          {selectedGroup.assignedUsers.map((user, index) => (
-            <img
-              key={user.id}
-              src={user.avatar}
-              alt={user.name}
-              className="w-9 h-9 rounded-full border-2 border-neutral-800 cursor-pointer hover:border-neutral-600 transition-colors"
-              title={user.name}
-              onMouseEnter={(e) => {
-                setHoveredUser(user);
-                setMousePosition({ x: e.clientX, y: e.clientY });
-              }}
-              onMouseLeave={() => setHoveredUser(null)}
-            />
-          ))}
+        <div className="flex -space-x-2">
+          {selectedGroup.assignedUsers.map((user, index) => {
+            const getStatusDotColor = (availability) => {
+              switch (availability) {
+                case 'Available': return 'bg-green-500';
+                case 'In meeting': return 'bg-blue-500';
+                case 'Break': return 'bg-yellow-500';
+                case 'Focus': return 'bg-purple-500';
+                case 'Emergency': return 'bg-red-500';
+                case 'Away': return 'bg-orange-500';
+                case 'Offline': return 'bg-gray-500';
+                default: return 'bg-green-500';
+              }
+            };
+
+            return (
+              <div key={user.id} className="relative" style={{ zIndex: index + 1 }}>
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-9 h-9 rounded-full border border-neutral-800 cursor-pointer hover:border-neutral-200 transition-colors"
+                  style={{ 
+                    boxShadow: '-4px 4px 12px rgba(0, 0, 0, 0.35)'
+                  }}
+                  title={user.name}
+                  onMouseEnter={(e) => {
+                    setHoveredUser(user);
+                    setMousePosition({ x: e.clientX, y: e.clientY });
+                  }}
+                  onMouseLeave={() => setHoveredUser(null)}
+                />
+                <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

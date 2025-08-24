@@ -325,15 +325,15 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
                 )}
                 
                 {/* Reply bubble */}
-                <div className={`flex ${reply.isFromMe ? 'justify-start' : 'justify-end'}`}>
-                  <div className={`max-w-[70%] p-3 border border-neutral-700 ${
+                <div className={`flex ${reply.isFromMe ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[70%] p-3 ${
                     reply.isFromMe 
-                      ? 'bg-neutral-800 text-white rounded-lg rounded-bl-none' 
-                      : 'bg-neutral-900 text-white rounded-lg rounded-br-none'
+                      ? 'bg-transparent border border-neutral-700 text-white rounded-lg rounded-br-none' 
+                      : 'bg-neutral-800 border border-neutral-700 text-white rounded-lg rounded-bl-none'
                   }`}>
                     <p className="text-sm leading-relaxed">{reply.message}</p>
                     <div className={`text-xs text-neutral-400 mt-1 ${
-                      reply.isFromMe ? 'text-left' : 'text-right'
+                      reply.isFromMe ? 'text-right' : 'text-left'
                     }`}>
                       {reply.timestamp}
                     </div>
@@ -348,8 +348,8 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
       {/* Actions */}
       <div className="p-6 border-t border-neutral-700">
         {showSuccess && (
-          <div className="mb-4 p-3 bg-green-500/20 border border-green-500/30 rounded-lg">
-            <p className="text-green-400 text-sm">Action completed successfully!</p>
+          <div className="mb-4 p-3 bg-neutral-800/50 border border-neutral-500/30 rounded-lg">
+            <p className="text-white text-sm">Action completed successfully!</p>
           </div>
         )}
         

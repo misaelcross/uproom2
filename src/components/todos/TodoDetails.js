@@ -764,12 +764,15 @@ const TodoDetails = ({
               {todo.comments && todo.comments.length > 0 && (
                 <SimpleBar className="space-y-3 max-h-48">
                   {todo.comments.map((comment) => (
-                    <div key={comment.id} className="flex space-x-3 bg-neutral-900">
-                      <img 
-                        src={comment.author.avatar} 
-                        alt={comment.author.name}
-                        className="w-8 h-8 rounded-full flex-shrink-0"
-                      />
+                    <div key={comment.id} className="flex space-x-3">
+                      <div className="relative w-8 h-8 flex-shrink-0">
+                        <img 
+                          src={comment.author.avatar} 
+                          alt={comment.author.name}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                      </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
                           <span className="text-white text-sm font-medium">{comment.author.name}</span>

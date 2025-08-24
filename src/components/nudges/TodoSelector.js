@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, CheckSquare, Clock, AlertCircle, X, Plus } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 
 // Mock todos data
 const todosData = [
@@ -55,6 +57,43 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showCreateNew, setShowCreateNew] = useState(false);
   const [newTodoTitle, setNewTodoTitle] = useState('');
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const dropdownRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // Calculate dropdown position
+  const updateDropdownPosition = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
+          inputRef.current && !inputRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Update position when dropdown opens
+  useEffect(() => {
+    if (isDropdownOpen) {
+      updateDropdownPosition();
+    }
+  }, [isDropdownOpen]);
 
   // Filter todos based on search term
   const filteredTodos = useMemo(() => {
@@ -136,6 +175,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
       <div className="relative">
         <div className="relative">
           <input
+            ref={inputRef}
             type="text"
             placeholder="Search todos or create new..."
             value={searchTerm}
@@ -146,17 +186,18 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
         </div>
 
-        {/* Dropdown */}
-        {isDropdownOpen && (
-          <>
-            {/* Backdrop */}
-            <div 
-              className="fixed inset-0 z-10" 
-              onClick={() => setIsDropdownOpen(false)}
-            />
-            
-            {/* Dropdown Content */}
-            <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-20 max-h-64" data-simplebar>
+        {/* Search Results - Rendered as Portal */}
+        {(isDropdownOpen && (filteredTodos.length > 0 || searchTerm.trim())) && createPortal(
+          <div 
+            ref={dropdownRef}
+            className="fixed bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-[9999] max-h-48 overflow-hidden"
+            style={{
+              top: `${dropdownPosition.top}px`,
+              left: `${dropdownPosition.left}px`,
+              width: `${dropdownPosition.width}px`
+            }}
+          >
+            <SimpleBar style={{ maxHeight: '192px' }}>
               {/* Create New Todo Option */}
               {searchTerm.trim() && (
                 <button
@@ -187,7 +228,6 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                       <div className="text-white text-sm font-medium truncate">{todo.title}</div>
                       <div className="text-neutral-400 text-xs truncate">{todo.project}</div>
                     </div>
-
                   </button>
                 ))
               ) : searchTerm.trim() ? (
@@ -199,8 +239,9 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
                   Start typing to search todos
                 </div>
               )}
-            </div>
-          </>
+            </SimpleBar>
+          </div>,
+          document.body
         )}
 
         {/* Create New Todo Modal */}

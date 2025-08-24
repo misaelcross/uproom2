@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoreVertical, Plus, Paperclip, X, Save, Users, Link } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
@@ -11,6 +11,16 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
   const [isAddingEvent, setIsAddingEvent] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsLargeScreen(window.innerWidth >= 1600);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
 
   const [newEvent, setNewEvent] = useState({
@@ -432,11 +442,16 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         className={`rounded p-1.5 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200`}
                       >
                         {/* Header with title and status */}
-                        <div className="flex items-start justify-between mb-1">
-                          <div className="text-xs font-medium text-white truncate flex-1 pr-1">
+                        <div className="mb-1">
+                          {/* Title */}
+                          <div className="text-xs font-medium text-white truncate mb-1">
                             {event.title}
                           </div>
-                          <div className="flex items-center">
+                          {/* Status badge - responsive positioning */}
+                          <div className={`flex items-center ${isLargeScreen ? 'hidden' : 'flex'}`}>
+                            {event.status && getStatusBadge(event.status, 'xs')}
+                          </div>
+                          <div className={`items-center justify-end -mt-4 ${isLargeScreen ? 'flex' : 'hidden'}`}>
                             {event.status && getStatusBadge(event.status, 'xs')}
                           </div>
                         </div>
@@ -470,11 +485,14 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           {/* Avatar and additional people count */}
                           <div className="flex items-center gap-1">
                             {event.avatar && (
-                              <img 
-                                src={event.avatar} 
-                                alt="Avatar" 
-                                className="w-4 h-4 rounded-full object-cover border border-gray-200"
-                              />
+                              <div className="relative">
+                                <img 
+                                  src={event.avatar} 
+                                  alt="Avatar" 
+                                  className="w-4 h-4 rounded-full object-cover border border-gray-200"
+                                />
+                                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                              </div>
                             )}
                             {event.additionalPeople && (
                               <span className="text-xs text-white">
@@ -712,11 +730,14 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                             {/* Avatar and additional people count */}
                             <div className="flex items-center gap-1">
                               {event.avatar && (
-                                <img 
-                                  src={event.avatar} 
-                                  alt="Avatar" 
-                                  className="w-6 h-6 rounded-full object-cover border border-gray-200"
-                                />
+                                <div className="relative">
+                                  <img 
+                                    src={event.avatar} 
+                                    alt="Avatar" 
+                                    className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                                  />
+                                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                                </div>
                               )}
                               {event.additionalPeople && (
                                 <span className="text-xs text-white">

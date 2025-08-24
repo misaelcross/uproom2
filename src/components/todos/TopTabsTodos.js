@@ -13,7 +13,7 @@ const TopTabsTodos = ({ activeTab, setActiveTab, catchUpCount = 0 }) => {
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          To-dos
+          To-do
         </button>
         <button
           onClick={() => setActiveTab('catchup')}

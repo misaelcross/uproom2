@@ -158,12 +158,15 @@ const TodoItem = ({
               {/* Comments */}
               {todo.comments && todo.comments.length > 0 && (
                 <div className="flex items-center gap-2 text-xs sm:text-sm">
-                  {/* Last commenter's avatar */}
-                  <img 
-                    src={todo.comments[todo.comments.length - 1].author.avatar} 
-                    alt={todo.comments[todo.comments.length - 1].author.name}
-                    className="w-6 h-6 rounded-full flex-shrink-0"
-                  />
+                  {/* Last commenter's avatar with status indicator */}
+                  <div className="relative flex-shrink-0">
+                    <img 
+                      src={todo.comments[todo.comments.length - 1].author.avatar} 
+                      alt={todo.comments[todo.comments.length - 1].author.name}
+                      className="w-6 h-6 rounded-full"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                  </div>
                   {/* Number of comments in bold white */}
                   <span className="font-bold text-white">
                     {todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}

@@ -301,7 +301,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', count: null },
-    { icon: Check, label: 'To-dos', count: 2 },
+    { icon: Check, label: 'To-do', count: 2 },
     { icon: Calendar, label: 'Schedule', count: null },
     { icon: Zap, label: 'Nudge', count: null },
     { icon: Users, label: 'Team', count: null },
@@ -430,7 +430,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             const isActive = (item.label === 'Dashboard' && currentPage === 'dashboard') || 
                            (item.label === 'Nudge' && currentPage === 'nudges') ||
                            (item.label === 'Schedule' && currentPage === 'schedule') ||
-                           (item.label === 'To-dos' && currentPage === 'todos') ||
+                           (item.label === 'To-do' && currentPage === 'todos') ||
                            (item.label === 'Team' && currentPage === 'team') ||
                            (item.label === 'Pulse' && currentPage === 'pulse');
             
@@ -444,7 +444,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                     onNavigate('nudges');
                   } else if (item.label === 'Schedule') {
                     onNavigate('schedule');
-                  } else if (item.label === 'To-dos') {
+                  } else if (item.label === 'To-do') {
                     onNavigate('todos');
                   } else if (item.label === 'Team') {
                     onNavigate('team');

@@ -643,7 +643,7 @@ function NudgePage({ onNavigate }) {
           <div className="flex flex-1 min-h-0">
             {/* Grid de nudges */}
             <SimpleBar className="flex-1">
-              <div className="p-6">
+              <div className="pr-6">
                 <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))' }}>
                 {getSortedNudges().map((nudge) => (
                   sortBy === 'Drafts' ? (

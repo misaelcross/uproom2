@@ -66,7 +66,7 @@ const FloatingUserCard = ({ user, position, isVisible }) => {
             alt={`${user.name} Profile`} 
             className="w-9 h-9 rounded-full object-cover"
           />
-          <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getStatusDotColor(user.availability)} rounded-full border-2 border-gray-900`}></div>
+          <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
         </div>
         <div className="flex-1">
           <h3 className="text-white font-medium text-base">{user.name}</h3>

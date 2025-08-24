@@ -58,7 +58,7 @@ const AddTodoInput = ({ newTodoText, setNewTodoText, onAddTodo }) => {
 
   return (
     <ThemeProvider theme={darkTheme}>
-      <div className="border-t border-neutral-700 pt-4 mt-6">
+      <div className="mt-2">
         <div className="relative" onKeyDown={handleKeyDown}>
           <TipTapEditor
             value={newTodoText}

@@ -703,7 +703,7 @@ const SchedulePage = ({ onNavigate }) => {
                                 alt={user.name}
                                 className="w-8 h-8 rounded-full object-cover"
                               />
-                              <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(user.availability)} rounded-full border border-gray-900`}></div>
+                              <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="text-white font-medium text-sm truncate">{user.name}</div>
