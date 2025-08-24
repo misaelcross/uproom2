@@ -33,7 +33,7 @@ const TopTabsNudges = ({ activeTab, setActiveTab }) => {
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          High Priority
+          Priority
         </button>
         <button
           onClick={() => setActiveTab('polls')}

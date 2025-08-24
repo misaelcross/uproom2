@@ -375,14 +375,12 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) =>
 
   return (
     <div ref={editorRef} className="bg-neutral-800 border border-neutral-600 rounded-lg overflow-hidden relative">
-      {isEditing && (
-        <Toolbar 
-          editor={editor}
-          showEmojiPicker={showEmojiPicker}
-          setShowEmojiPicker={setShowEmojiPicker}
-          onMentionTrigger={handleMentionTrigger}
-        />
-      )}
+      <Toolbar 
+        editor={editor}
+        showEmojiPicker={showEmojiPicker}
+        setShowEmojiPicker={setShowEmojiPicker}
+        onMentionTrigger={handleMentionTrigger}
+      />
       
       <div className="relative">
         <EditorContent 
