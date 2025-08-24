@@ -6,7 +6,7 @@ import {
   Link,
   X,
   BarChart3,
-  Users,
+  Megaphone,
   User,
   CheckSquare,
   Save
@@ -157,7 +157,7 @@ const CreateNudgeView = ({ onCancel }) => {
         <div className="flex items-center space-x-2 bg-neutral-800 rounded-lg p-1">
           <button
             onClick={() => setIsAnnouncementMode(false)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md transition-colors ${
               !isAnnouncementMode 
                 ? 'bg-neutral-700 text-white' 
                 : 'text-neutral-400 hover:text-neutral-200'
@@ -168,13 +168,13 @@ const CreateNudgeView = ({ onCancel }) => {
           </button>
           <button
             onClick={() => setIsAnnouncementMode(true)}
-            className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
+            className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md transition-colors ${
               isAnnouncementMode 
                 ? 'bg-neutral-700 text-white' 
                 : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            <Users className="w-4 h-4" />
+            <Megaphone className="w-4 h-4" />
             <span className="text-sm font-medium">Announcement</span>
           </button>
         </div>
@@ -196,7 +196,7 @@ const CreateNudgeView = ({ onCancel }) => {
             placeholder="Search for team member..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-transparent border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+            className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-3 pr-10 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
           />
           <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-neutral-400" />
           

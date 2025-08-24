@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import { MoreVertical, Plus, Paperclip } from 'lucide-react';
+import { MoreVertical, Plus, Paperclip, X, Save, Users, Link } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
-import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
+
 import EventContextModal from './EventContextModal';
 import MonthlyCalendar from './MonthlyCalendar';
 
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, onScheduleMeeting = null }) => {
-  const [isScheduleSidebarOpen, setIsScheduleSidebarOpen] = useState(false);
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null }) => {
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
+  const [isAddingEvent, setIsAddingEvent] = useState(false);
+  
+
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    time: '',
+    people: [],
+    links: []
+  });
   
   // Default schedule data for current user
   const defaultScheduleData = [
@@ -274,6 +282,52 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
     }
   };
 
+
+
+  // Function to handle saving new event
+  const handleSaveEvent = () => {
+    if (!newEvent.title || !newEvent.time) return;
+    
+    // Create new event object
+    const eventToAdd = {
+      id: Date.now(), // Simple ID generation
+      title: newEvent.title,
+      time: newEvent.time,
+      date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+      duration: '1 hour', // Default duration
+      description: '',
+      location: '',
+      isCurrent: false,
+      status: 'Available',
+      attendees: [{ name: 'You', avatar: null }, ...newEvent.people],
+      linkedTasks: [],
+      linkedNudges: [],
+      linkedFiles: newEvent.links
+    };
+    
+    // Add to current day (simplified - in real app would need proper date handling)
+    const today = new Date().getDate().toString().padStart(2, '0');
+    const updatedScheduleData = scheduleData.map(dayData => {
+      if (dayData.day === today) {
+        return {
+          ...dayData,
+          events: [...dayData.events, eventToAdd]
+        };
+      }
+      return dayData;
+    });
+    
+    // Reset form and close
+    setNewEvent({ title: '', time: '', people: [], links: [] });
+    setIsAddingEvent(false);
+  };
+
+  // Function to cancel adding event
+  const handleCancelAddEvent = () => {
+    setNewEvent({ title: '', time: '', people: [], links: [] });
+    setIsAddingEvent(false);
+  };
+
   // Function to handle closing context modal
   const handleCloseContextModal = () => {
     setIsContextModalOpen(false);
@@ -325,16 +379,10 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         </h2>
         <div className="flex items-center gap-3">
           <button
-              onClick={() => {
-                if (onScheduleMeeting) {
-                  onScheduleMeeting();
-                } else {
-                  setIsScheduleSidebarOpen(true);
-                }
-              }}
+              onClick={() => setIsAddingEvent(true)}
               className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
             >
-            <span className="text-sm">Colaborate</span>
+            <span className="text-sm">Add Event</span>
           </button>
         </div>
       </div>
@@ -449,7 +497,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         ) : (
           /* Day View - Days in rows (original layout) */
           <div className="space-y-1">
-            {scheduleData.map((dayData) => (
+            {scheduleData.map((dayData, dayIndex) => (
               <div key={dayData.day} className="flex gap-4 py-4 border-b border-neutral-700">
                 {/* Day Column */}
                 <div className="flex flex-col items-center w-[50px]">
@@ -459,6 +507,147 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
                 {/* Events Column */}
                 <div className="flex-1 space-y-3">
+                  {/* Add Event Card - Show as first item when adding */}
+                  {isAddingEvent && dayIndex === 0 && (
+                    <div className="rounded-lg p-3 border border-neutral-600 bg-neutral-800/50 transition-all duration-200">
+                      {/* Title Input */}
+                      <div className="mb-3">
+                        <input
+                          type="text"
+                          value={newEvent.title}
+                          onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                          placeholder="Event title"
+                          className="w-full text-sm font-medium text-white bg-transparent border-none outline-none placeholder-neutral-400"
+                          autoFocus
+                        />
+                      </div>
+
+                      {/* Time Input */}
+                      <div className="mb-3">
+                        <input
+                          type="text"
+                          value={newEvent.time}
+                          onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                          placeholder="Time (e.g., 2:00pm - 3:00pm)"
+                          className="text-sm font-medium text-neutral-300 bg-transparent border-none outline-none placeholder-neutral-500 w-full"
+                        />
+                      </div>
+
+                      {/* People and Links Row */}
+                      <div className="flex items-center justify-between mb-3">
+                        {/* People Input */}
+                        <div className="flex items-center gap-2 flex-1">
+                          <Users className="w-3 h-3 text-neutral-400" />
+                          <input
+                            type="text"
+                            placeholder="Add people"
+                            className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 flex-1"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && e.target.value.trim()) {
+                                setNewEvent({
+                                  ...newEvent,
+                                  people: [...newEvent.people, { name: e.target.value.trim(), avatar: null }]
+                                });
+                                e.target.value = '';
+                              }
+                            }}
+                          />
+                        </div>
+
+                        {/* Links Input */}
+                        <div className="flex items-center gap-2 flex-1 ml-4">
+                          <Link className="w-3 h-3 text-neutral-400" />
+                          <input
+                            type="url"
+                            placeholder="Add links"
+                            className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 flex-1"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter' && e.target.value.trim()) {
+                                setNewEvent({
+                                  ...newEvent,
+                                  links: [...newEvent.links, { url: e.target.value.trim(), title: 'Link' }]
+                                });
+                                e.target.value = '';
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Added People Tags */}
+                      {newEvent.people.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {newEvent.people.map((person, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-neutral-700 text-neutral-300 text-xs rounded-full flex items-center gap-1"
+                            >
+                              {person.name}
+                              <button
+                                onClick={() => {
+                                  setNewEvent({
+                                    ...newEvent,
+                                    people: newEvent.people.filter((_, i) => i !== index)
+                                  });
+                                }}
+                                className="hover:text-white"
+                              >
+                                <X className="w-2 h-2" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Added Links */}
+                      {newEvent.links.length > 0 && (
+                        <div className="space-y-1 mb-2">
+                          {newEvent.links.map((link, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between px-2 py-1 bg-neutral-700 rounded text-xs"
+                            >
+                              <span className="text-neutral-300 truncate">{link.url}</span>
+                              <button
+                                onClick={() => {
+                                  setNewEvent({
+                                    ...newEvent,
+                                    links: newEvent.links.filter((_, i) => i !== index)
+                                  });
+                                }}
+                                className="text-neutral-400 hover:text-white ml-2"
+                              >
+                                <X className="w-2 h-2" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={handleCancelAddEvent}
+                          className="px-3 py-1 text-xs text-neutral-400 hover:text-white transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveEvent}
+                          disabled={!newEvent.title || !newEvent.time}
+                          className={`px-3 py-1 text-xs rounded transition-colors flex items-center gap-1 ${
+                            newEvent.title && newEvent.time
+                              ? 'bg-white text-black hover:bg-neutral-200'
+                              : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
+                          }`}
+                        >
+                          <Save className="w-2 h-2" />
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
                   {dayData.events.map((event) => {
                     // Define colors based on status
                     const getStatusColors = (status) => {
@@ -547,11 +736,6 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         )}
       </SimpleBar>
 
-      {/* Schedule Meeting Sidebar */}
-      <ScheduleMeetingSidebar
-        isOpen={isScheduleSidebarOpen}
-        onClose={() => setIsScheduleSidebarOpen(false)}
-      />
 
       {/* Event Context Modal */}
       <EventContextModal

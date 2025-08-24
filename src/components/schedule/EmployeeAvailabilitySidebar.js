@@ -139,7 +139,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         </div>
 
         {/* Time Slots */}
-        <div className="p-6 flex-1 overflow-y-auto">
+        <div className="p-6 flex-1">
           {todayData.timeSlots.length === 0 ? (
             <div className="text-center py-8">
               <Clock className="w-12 h-12 text-neutral-400 mx-auto mb-3" />

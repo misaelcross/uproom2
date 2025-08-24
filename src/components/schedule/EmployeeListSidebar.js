@@ -77,7 +77,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
         </div>
 
         {/* Employee List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           {filteredEmployees.length === 0 ? (
             <div className="p-4 text-center text-neutral-400">
               No employees found matching your search.

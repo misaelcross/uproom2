@@ -10,6 +10,10 @@ import ActionBarSchedule from './ActionBarSchedule';
 import LiveNotifications from '../shared/LiveNotifications';
 import Schedule from './Schedule';
 import EventDetailsSidebar from './EventDetailsSidebar';
+import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
+import EmployeeListSidebar from './EmployeeListSidebar';
+import EmployeeAvailabilitySidebar from './EmployeeAvailabilitySidebar';
+import MeetingConfirmationSidebar from './MeetingConfirmationSidebar';
 import { usersData } from '../../data/usersData';
 
 // Mock data for groups
@@ -436,6 +440,61 @@ const SchedulePage = ({ onNavigate }) => {
     setSelectedEvent(null);
   };
 
+  // Meeting scheduling handlers
+  const [isScheduleMeetingOpen, setIsScheduleMeetingOpen] = useState(false);
+  const [schedulingStep, setSchedulingStep] = useState('initial');
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [selectedDateInfo, setSelectedDateInfo] = useState(null);
+  
+  const handleOpenScheduleMeeting = () => {
+    setIsScheduleMeetingOpen(true);
+    setSchedulingStep('initial');
+  };
+
+  const handleCloseScheduleMeeting = () => {
+    setIsScheduleMeetingOpen(false);
+    setSchedulingStep('initial');
+    setSelectedEmployee(null);
+    setSelectedTimeSlot(null);
+    setSelectedDateInfo(null);
+  };
+
+  const handleShowEmployeeList = () => {
+    setSchedulingStep('employees');
+  };
+
+  const handleSelectEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setSchedulingStep('availability');
+  };
+
+  const handleSelectTimeSlot = (timeSlot, dateInfo) => {
+    setSelectedTimeSlot(timeSlot);
+    setSelectedDateInfo(dateInfo);
+    setSchedulingStep('confirmation');
+  };
+
+  const handleBackToEmployees = () => {
+    setSelectedEmployee(null);
+    setSchedulingStep('employees');
+  };
+
+  const handleBackToAvailability = () => {
+    setSelectedTimeSlot(null);
+    setSelectedDateInfo(null);
+    setSchedulingStep('availability');
+  };
+
+  const handleConfirmMeeting = async (meetingData) => {
+    try {
+      console.log('Meeting confirmed:', meetingData);
+      handleCloseScheduleMeeting();
+    } catch (error) {
+      console.error('Error confirming meeting:', error);
+    }
+  };
+
   // AnimatedBottomSheet helper functions
   const toggleUserSelection = (user) => {
     setSelectedUsers(prev => {
@@ -474,7 +533,7 @@ const SchedulePage = ({ onNavigate }) => {
             <ActionBarSchedule 
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
-              onScheduleMeet={() => console.log('Schedule meet clicked')}
+              onScheduleMeet={handleOpenScheduleMeeting}
               timeFrame={timeFrame}
               onTimeFrameChange={handleTimeFrameChange}
             />
@@ -541,6 +600,48 @@ const SchedulePage = ({ onNavigate }) => {
                     }}
                   />
                 </div>
+              ) : isScheduleMeetingOpen ? (
+                /* Meeting Scheduling Sidebars - Full Height with SimpleBar */
+                <SimpleBar className="flex-1 min-h-0">
+                  {schedulingStep === 'initial' && (
+                    <ScheduleMeetingSidebar
+                      isOpen={true}
+                      onClose={handleCloseScheduleMeeting}
+                      onShowEmployeeList={handleShowEmployeeList}
+                    />
+                  )}
+                  
+                  {schedulingStep === 'employees' && (
+                    <EmployeeListSidebar
+                      isOpen={true}
+                      onClose={handleCloseScheduleMeeting}
+                      onSelectEmployee={handleSelectEmployee}
+                      onBack={handleCloseScheduleMeeting}
+                    />
+                  )}
+                  
+                  {schedulingStep === 'availability' && selectedEmployee && (
+                    <EmployeeAvailabilitySidebar
+                      isOpen={true}
+                      employee={selectedEmployee}
+                      onClose={handleCloseScheduleMeeting}
+                      onSelectTimeSlot={handleSelectTimeSlot}
+                      onBack={handleBackToEmployees}
+                    />
+                  )}
+                  
+                  {schedulingStep === 'confirmation' && selectedEmployee && selectedTimeSlot && selectedDateInfo && (
+                    <MeetingConfirmationSidebar
+                      isOpen={true}
+                      employee={selectedEmployee}
+                      timeSlot={selectedTimeSlot}
+                      dateInfo={selectedDateInfo}
+                      onClose={handleCloseScheduleMeeting}
+                      onConfirm={handleConfirmMeeting}
+                      onBack={handleBackToAvailability}
+                    />
+                  )}
+                </SimpleBar>
               ) : (
                 /* Default Layout - Calendar + Team Members */
                 <>
@@ -633,6 +734,8 @@ const SchedulePage = ({ onNavigate }) => {
         toggleUserSelection={toggleUserSelection}
         removeSelectedUser={removeSelectedUser}
       />
+
+
     </div>
   );
 };

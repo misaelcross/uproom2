@@ -4,7 +4,8 @@ import {
   Filter,
   Calendar,
   Check,
-  ChevronDown
+  ChevronDown,
+  UserPlus
 } from 'lucide-react';
 
 const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet, timeFrame = 'Day', onTimeFrameChange }) => {
@@ -96,13 +97,13 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet, timeFram
         )}
       </div>
 
-      {/* Schedule Meet Button */}
+      {/* Collaborate Button */}
       <button 
         onClick={onScheduleMeet}
         className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
       >
-        <Calendar className="h-4 w-4 text-white" />
-        <span className="text-white text-sm font-medium">Schedule meet</span>
+        <UserPlus className="h-4 w-4 text-white" />
+        <span className="text-white text-sm font-medium">Collaborate</span>
       </button>
     </div>
   );

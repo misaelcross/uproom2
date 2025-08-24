@@ -449,7 +449,7 @@ function App() {
               usersData={usersWithIcons}
               onUserClick={showUserDetails}
             />
-            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} />
+            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} onScheduleMeeting={handleOpenScheduleMeeting} />
           </div>
 
           {/* Segunda linha: Grid e coluna direita */}

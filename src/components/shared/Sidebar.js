@@ -33,6 +33,7 @@ import {
   Minimize
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
+import UserStatusCard from './UserStatusCard';
 
 const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRightPanelContent, onSetReminder }, ref) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -260,10 +261,10 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
     setShowStatusError(false);
   };
 
-  const setNewStatus = () => {
+  const setNewStatus = (messageToValidate = statusMessage) => {
     if (!selectedStatusOption) return;
     
-    if (statusMessage.trim().length < 3) {
+    if (messageToValidate.trim().length < 3) {
       setShowStatusError(true);
       return;
     }
@@ -282,7 +283,8 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
     
     setStatusDropdownOpen(false);
     setSelectedStatusOption(null);
-    setStatusMessage('');
+    // Manter a mensagem que foi validada
+    setStatusMessage(messageToValidate);
     setShowStatusError(false);
   };
 
@@ -293,32 +295,9 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
     setStatusDropdownOpen(false);
   };
 
-  const handleStatusClick = () => {
-    if (statusDropdownOpen) {
-      // Se esta fechando o dropdown, resetar a selecao
-      setSelectedStatusOption(null);
-      setStatusMessage('');
-      setShowStatusError(false);
-    } else {
-      // Se esta abrindo o dropdown, definir o status atual como selecionado
-      const currentStatusObj = statusOptions.find(s => s.name === currentStatus);
-      setSelectedStatusOption(currentStatusObj);
-    }
-    setStatusDropdownOpen(!statusDropdownOpen);
-  };
 
-  const getToggleBackgroundColor = () => {
-    switch (currentStatus) {
-      case 'Available': return 'bg-green-500';
-      case 'Focus': return 'bg-purple-500';
-      case 'In meeting': return 'bg-blue-500';
-      case 'Emergency': return 'bg-red-500';
-      case 'Break': return 'bg-yellow-500';
-      case 'Away': return 'bg-orange-500';
-      case 'Offline': return 'bg-gray-500';
-      default: return 'bg-neutral-500';
-    }
-  };
+
+
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', count: null },
@@ -335,9 +314,9 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
 
   return (
     <div className="w-[300px] h-full flex flex-col" data-current-page={currentPage}>
-      {/* Header com avatar do usuário e dropdown */}
+      {/* Header com UserStatusCard */}
       <div className="p-2 border-b border-neutral-700 relative">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <button 
             ref={avatarButtonRef}
             onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -356,6 +335,8 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             <Bell className="h-4 w-4 text-neutral-400 hover:text-white" />
           </button>
         </div>
+        
+
         
         {dropdownOpen && (
           <div className="absolute top-full left-2 mt-2 w-56 bg-neutral-800 border border-neutral-700 rounded-lg shadow-2xl z-[9999]" ref={dropdownRef}>
@@ -916,120 +897,26 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
 
       {/* Footer fixo com Status e Upgrade */}
       <div className="border-t border-neutral-700">
-        {/* Status Dropdown */}
-        <div className="px-4 pt-4 pb-2 relative">
-          <button
-            onClick={handleStatusClick}
-            className="w-full bg-neutral-900 border border-neutral-700 rounded-lg p-4 hover:bg-neutral-800 transition-colors"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <span className="text-sm text-white">{currentStatus}</span>
-              </div>
-              
-              <div
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${getToggleBackgroundColor()}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-neutral-800 transition-transform ${
-                    currentStatus !== 'Offline' ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </div>
-            </div>
-          </button>
-
-          {/* Status Dropdown Menu */}
-          {statusDropdownOpen && (
-            <div className="absolute bottom-full left-4 right-4 mb-2 bg-neutral-800 border border-neutral-700 rounded-lg shadow-2xl z-50">
-              <div className="p-4">
-                
-                {/* Status Options */}
-                <div className="pb-1">
-                  {statusOptions.map((status) => (
-                    <button
-                      key={status.name}
-                      onClick={() => selectStatus(status)}
-                      className={`w-full flex items-center justify-between p-2 hover:bg-neutral-700 transition-colors rounded-lg ${
-                        selectedStatusOption?.name === status.name ? 'bg-neutral-800' : ''
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-2 h-2 rounded-full ${status.dotColor}`}></div>
-                        <span className="text-sm text-white">{status.name}</span>
-                      </div>
-                      {selectedStatusOption?.name === status.name && (
-                        <Check className="h-4 w-4 text-green-500" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Status Message Input */}
-                <div className="py-3 border-t border-neutral-700">
-                  <textarea
-                    value={statusMessage}
-                    onChange={(e) => {
-                      setStatusMessage(e.target.value);
-                      if (showStatusError && e.target.value.trim().length >= 3) {
-                        setShowStatusError(false);
-                      }
-                    }}
-                    placeholder="Give more details..."
-                    className={`w-full bg-neutral-800 border rounded-lg p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] max-h-[120px] overflow-y-auto transition-colors ${
-                      showStatusError 
-                        ? 'border-red-500 focus:border-red-500' 
-                        : 'border-neutral-700 focus:border-neutral-600'
-                    }`}
-                    rows="1"
-                    style={{
-                      height: 'auto',
-                      minHeight: '40px'
-                    }}
-                    onInput={(e) => {
-                      e.target.style.height = 'auto';
-                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-                    }}
-                  />
-                  {showStatusError && (
-                    <p className="text-red-400 text-xs mt-1">
-                      Por favor, digite pelo menos 3 caracteres para definir o status.
-                    </p>
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="pt-3 border-t border-neutral-700 flex space-x-2">
-                  <button 
-                    onClick={cancelStatusChange}
-                    className="flex-1 border border-neutral-600 text-neutral-300 font-medium py-2 px-4 rounded-lg hover:border-neutral-500 hover:text-neutral-200 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={setNewStatus}
-                    disabled={!selectedStatusOption || statusMessage.trim().length < 3}
-                    className={`flex-1 font-medium py-2 px-4 rounded-lg transition-colors ${
-                      selectedStatusOption && statusMessage.trim().length >= 3
-                        ? 'bg-neutral-800 text-white hover:bg-neutral-700 border border-neutral-600'
-                        : 'bg-neutral-600 text-neutral-400 cursor-not-allowed'
-                    }`}
-                  >
-                    Set Status
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+        {/* User Status Card */}
+        <div className="px-4 pt-4 pb-2">
+          <UserStatusCard 
+            currentUser={currentUser}
+            currentStatus={currentStatus}
+            statusMessage={statusMessage}
+            onStatusMessageChange={setStatusMessage}
+            statusDropdownOpen={statusDropdownOpen}
+            setStatusDropdownOpen={setStatusDropdownOpen}
+            selectedStatusOption={selectedStatusOption}
+            setSelectedStatusOption={setSelectedStatusOption}
+            showStatusError={showStatusError}
+            setShowStatusError={setShowStatusError}
+            selectStatus={selectStatus}
+            setNewStatus={setNewStatus}
+            cancelStatusChange={cancelStatusChange}
+          />
         </div>
 
-        {/* Upgrade CTA */}
-        <div className="px-4 pb-4">
-          <button className="w-full bg-neutral-800 text-white font-medium py-2 px-4 rounded-lg hover:bg-neutral-700 border border-neutral-600 transition-colors flex items-center justify-center space-x-2">
-            <span>Upgrade to Pro</span>
-            <Zap className="h-4 w-4" />
-          </button>
-        </div>
+
       </div>
     </div>
   );
