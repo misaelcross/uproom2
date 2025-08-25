@@ -4,6 +4,12 @@ import { usersData } from '../../data/usersData';
 
 const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  
+  // Function to handle employee selection
+  const handleSelectEmployee = (employee) => {
+    // Call the original onSelectEmployee function
+    onSelectEmployee(employee);
+  };
 
   if (!isOpen) return null;
 
@@ -77,7 +83,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
         </div>
 
         {/* Employee List */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-y-auto">
           {filteredEmployees.length === 0 ? (
             <div className="p-4 text-center text-neutral-400">
               No employees found matching your search.
@@ -87,7 +93,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
               {filteredEmployees.map((employee) => (
                 <div
                   key={employee.id}
-                  onClick={() => onSelectEmployee(employee)}
+                  onClick={() => handleSelectEmployee(employee)}
                   className="flex items-center p-3 hover:bg-neutral-800 rounded-lg cursor-pointer transition-colors mb-1"
                 >
                   {/* Avatar with status indicator */}

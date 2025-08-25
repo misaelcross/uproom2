@@ -4,6 +4,12 @@ import { X, ArrowLeft, Calendar, Clock } from 'lucide-react';
 const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSelectTimeSlot }) => {
   const [selectedSlot, setSelectedSlot] = React.useState(null);
   
+  // Function to handle time slot confirmation
+  const handleConfirmTimeSlot = (employee, slot, dateInfo) => {
+    // Call the original onSelectTimeSlot function
+    onSelectTimeSlot(employee, slot, dateInfo);
+  };
+  
   // Generate sample availability data for the selected employee (memoized to prevent re-generation)
   const availabilityData = React.useMemo(() => {
     if (!employee) return [];
@@ -139,7 +145,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         </div>
 
         {/* Time Slots */}
-        <div className="p-6 flex-1">
+        <div className="p-6 flex-1 overflow-y-auto">
           {todayData.timeSlots.length === 0 ? (
             <div className="text-center py-8">
               <Clock className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
@@ -164,7 +170,7 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
                       
                       {/* Confirm button */}
                       <button
-                        onClick={() => onSelectTimeSlot(employee, slot, todayData)}
+                        onClick={() => handleConfirmTimeSlot(employee, slot, todayData)}
                         className="w-full p-3 rounded-lg bg-white text-black hover:bg-neutral-200 transition-colors"
                       >
                         <span className="font-medium">Confirm</span>

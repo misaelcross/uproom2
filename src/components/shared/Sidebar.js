@@ -28,9 +28,9 @@ import {
   User,
   RefreshCw,
   LogOut,
-  Activity,
   Maximize,
-  Minimize
+  Minimize,
+  File
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 import UserStatusCard from './UserStatusCard';
@@ -305,7 +305,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
     { icon: Calendar, label: 'Schedule', count: null },
     { icon: Zap, label: 'Nudge', count: null },
     { icon: Users, label: 'Team', count: null },
-    { icon: Activity, label: 'Pulse', count: null }
+    { icon: File, label: 'Files', count: null }
   ];
 
   const uncompletedReminders = reminders.filter(r => !r.completed).length;
@@ -432,7 +432,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                            (item.label === 'Schedule' && currentPage === 'schedule') ||
                            (item.label === 'To-do' && currentPage === 'todos') ||
                            (item.label === 'Team' && currentPage === 'team') ||
-                           (item.label === 'Pulse' && currentPage === 'pulse');
+                           (item.label === 'Files' && currentPage === 'files');
             
             return (
               <button
@@ -448,8 +448,8 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                     onNavigate('todos');
                   } else if (item.label === 'Team') {
                     onNavigate('team');
-                  } else if (item.label === 'Pulse') {
-                    onNavigate('pulse');
+                  } else if (item.label === 'Files') {
+                    onNavigate('files');
                   }
                 }}
                 className={`w-full flex items-center justify-between h-7 px-3 rounded-md text-sm transition-colors hover:bg-neutral-800 ${

@@ -24,7 +24,7 @@ import SecondaryBottomSheet from './components/shared/SecondaryBottomSheet';
 import NudgePage from './components/nudges/NudgePage';
 import TodosPage from './components/todos/TodosPage';
 import TeamPage from './components/team/TeamPage';
-import PulsePage from './components/pulse/PulsePage';
+import FilesPage from './components/files/FilesPage';
 import Sidebar from './components/shared/Sidebar';
 
 import TopTabs from './components/dashboard/TopTabs';
@@ -66,6 +66,9 @@ function App() {
 
   // Ref para o Sidebar
   const sidebarRef = useRef(null);
+  
+  // Ref para o SimpleBar da coluna direita (para controlar scroll)
+  const rightPanelScrollRef = useRef(null);
 
   // Função para lidar com Set Reminder
   const handleSetReminder = (userName) => {
@@ -97,6 +100,26 @@ function App() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Reset scroll quando o schedulingStep mudar
+  useEffect(() => {
+    if (rightPanelScrollRef.current && isScheduleMeetingOpen) {
+      rightPanelScrollRef.current.getScrollElement().scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [schedulingStep, isScheduleMeetingOpen]);
+
+  // Reset scroll quando selectedEvent mudar (Event Details)
+  useEffect(() => {
+    if (rightPanelScrollRef.current && selectedEvent) {
+      rightPanelScrollRef.current.getScrollElement().scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [selectedEvent]);
 
   // Função para gerar ícones aleatórios
   const generateRandomIcons = () => {
@@ -426,10 +449,12 @@ function App() {
     return <TeamPage onNavigate={setCurrentPage} />;
   }
 
-  // Se estiver na página de pulse, renderizar PulsePage
-  if (currentPage === 'pulse') {
-    return <PulsePage onNavigate={setCurrentPage} />;
+  // Se estiver na página de files, renderizar FilesPage
+  if (currentPage === 'files') {
+    return <FilesPage onNavigate={setCurrentPage} />;
   }
+
+
 
   // Renderizar Dashboard (página padrão)
   return (
@@ -490,7 +515,7 @@ function App() {
             </SimpleBar>
 
             {/* Coluna direita */}
-            <SimpleBar className="pb-12" style={{ width: '350px' }}>
+            <SimpleBar ref={rightPanelScrollRef} className="pb-12" style={{ width: '350px' }}>
               {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
               {rightPanelContent === 'schedule' && selectedEvent && (
                 <EventDetailsSidebar
