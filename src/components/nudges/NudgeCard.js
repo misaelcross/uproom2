@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff } from 'lucide-react';
+import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff, Archive } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
@@ -252,6 +252,19 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                     Mark as resolved
                   </button>
                 )}
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                    if (onArchive) {
+                      onArchive(nudge.id);
+                    }
+                  }}
+                >
+                  <Archive className="w-4 h-4" />
+                  Archive
+                </button>
               </div>
             </div>
           )}

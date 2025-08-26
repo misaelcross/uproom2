@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Users, Calendar } from 'lucide-react';
+import { Users, Calendar, Clock, Send } from 'lucide-react';
 
 const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
 
@@ -9,70 +9,62 @@ const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
     onShowEmployeeList();
   };
 
+  const quickActions = [
+    {
+      label: 'Choose team member',
+      icon: Users,
+      onClick: handleScheduleClick,
+      description: 'Select from available team members to get started'
+    }
+  ];
+
   return (
-    <div className="h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
-      <div className="h-full bg-transparent">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700">
-          <h2 className="text-lg font-semibold text-white">Schedule Meeting</h2>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-neutral-700 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5 text-neutral-400" />
-          </button>
+    <div className="h-full flex flex-col bg-neutral-900 border border-neutral-700 rounded-lg">
+      {/* Content */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        {/* Main illustration */}
+        <div className="w-24 h-24 bg-neutral-800 rounded-full flex items-center justify-center mb-6">
+          <Calendar className="w-12 h-12 text-neutral-500" />
         </div>
 
-        {/* Content */}
-        <div className="flex flex-col h-full">
-          <div className="flex-1 p-6 flex flex-col items-center justify-center text-center space-y-6">
-            {/* Icon */}
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-              <Calendar className="w-8 h-8 text-black" />
-            </div>
+        <h3 className="text-xl font-medium text-white mb-2">Schedule Meeting</h3>
+        <p className="text-neutral-400 text-center mb-8 max-w-sm">
+          Select a team member from your team to schedule a meeting with them.
+        </p>
 
-            {/* Title */}
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-white">Schedule a Meeting</h3>
-              <p className="text-neutral-400 max-w-sm">
-                Select a team member from your team to schedule a meeting with them.
-              </p>
-            </div>
+        {/* Features */}
+        <div className="w-full max-w-sm space-y-3 mb-8">
+          <div className="flex items-center gap-3 text-sm text-neutral-300">
+            <div className="w-2 h-2 bg-neutral-500 rounded-full"></div>
+            <span>View team member availability</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm text-neutral-300">
+            <div className="w-2 h-2 bg-neutral-500 rounded-full"></div>
+            <span>Choose convenient time slots</span>
+          </div>
+          <div className="flex items-center gap-3 text-sm text-neutral-300">
+            <div className="w-2 h-2 bg-neutral-500 rounded-full"></div>
+            <span>Send meeting requests instantly</span>
+          </div>
+        </div>
 
-            {/* Features */}
-            <div className="space-y-3 text-sm text-neutral-300">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <span>View team member availability</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <span>Choose convenient time slots</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-                <span>Send meeting requests instantly</span>
-              </div>
-            </div>
-
-            {/* Schedule Button */}
+        {/* Quick Actions */}
+        <div className="w-full max-w-sm space-y-3">
+          {quickActions.map((action, index) => (
             <button
-              onClick={handleScheduleClick}
-              className="flex items-center gap-3 px-8 py-3 bg-white text-black rounded-lg hover:bg-neutral-200 transition-colors font-medium"
+              key={index}
+              onClick={action.onClick}
+              className="w-full flex items-center gap-4 p-4 hover:bg-neutral-800 border border-neutral-700 hover:border-neutral-600 rounded-lg transition-all duration-200 group"
             >
-              <Users className="w-5 h-5" />
-              Choose Team Member
+              <div className="w-10 h-10 group-hover:bg-neutral-700 rounded-lg flex items-center justify-center transition-colors">
+                <action.icon className="w-5 h-5 text-neutral-300" />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="text-white font-medium">{action.label}</div>
+                <div className="text-neutral-400 text-sm">{action.description}</div>
+              </div>
             </button>
-          </div>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-neutral-700">
-            <div className="text-center">
-              <p className="text-xs text-neutral-500">
-                Select from available team members to get started
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

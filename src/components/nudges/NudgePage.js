@@ -556,6 +556,24 @@ function NudgePage({ onNavigate }) {
     );
   };
 
+  // Função auxiliar para converter timestamp em valor numérico para ordenação
+  const getTimestampValue = (timestamp) => {
+    if (!timestamp) return 0;
+    
+    const timeStr = timestamp.toLowerCase();
+    const value = parseInt(timeStr);
+    
+    if (timeStr.includes('h')) {
+      return value; // horas
+    } else if (timeStr.includes('d')) {
+      return value * 24; // dias convertidos em horas
+    } else if (timeStr.includes('m')) {
+      return value / 60; // minutos convertidos em horas
+    }
+    
+    return 0;
+  };
+
   // Função para ordenar nudges
   const getSortedNudges = () => {
     // Se "Drafts" estiver selecionado, retornar apenas os rascunhos
@@ -611,8 +629,26 @@ function NudgePage({ onNavigate }) {
       return String(b.id).localeCompare(String(a.id));
     });
     
-    // Retornar pinned primeiro, depois unpinned
-    return [...pinnedNudges, ...unpinnedNudges];
+    // Separar nudges não lidos e lidos dentro dos unpinned
+    const unreadNudges = unpinnedNudges.filter(nudge => !nudge.isRead);
+    const readNudges = unpinnedNudges.filter(nudge => nudge.isRead);
+    
+    // Ordenar não lidos por timestamp (mais recentes primeiro)
+    unreadNudges.sort((a, b) => {
+      const timestampA = getTimestampValue(a.timestamp);
+      const timestampB = getTimestampValue(b.timestamp);
+      return timestampA - timestampB; // Menor valor = mais recente
+    });
+    
+    // Ordenar lidos por timestamp (mais recentes primeiro)
+    readNudges.sort((a, b) => {
+      const timestampA = getTimestampValue(a.timestamp);
+      const timestampB = getTimestampValue(b.timestamp);
+      return timestampA - timestampB; // Menor valor = mais recente
+    });
+    
+    // Retornar: pinned primeiro, depois não lidos, depois lidos
+    return [...pinnedNudges, ...unreadNudges, ...readNudges];
   };
 
   return (

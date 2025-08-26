@@ -2,6 +2,91 @@ import React, { useState, useRef, useEffect } from 'react';
 import SimpleBar from 'simplebar-react';
 import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText } from 'lucide-react';
 import TodoStep from './TodoStep';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TextField, ThemeProvider, createTheme, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import dayjs from 'dayjs';
+
+// Material UI dark theme configuration
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+    background: {
+      default: '#171717',
+      paper: '#262626',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#a3a3a3',
+    },
+  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: '#262626',
+            '& fieldset': {
+              borderColor: '#525252',
+            },
+            '&:hover fieldset': {
+              borderColor: '#ffffff',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#ffffff',
+            },
+          },
+          '& .MuiInputLabel-root': {
+            color: '#a3a3a3',
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#525252',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#ffffff',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#ffffff',
+          },
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputLabel-root': {
+            color: '#a3a3a3',
+          },
+          '& .MuiInputLabel-root.Mui-focused': {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+  },
+});
 
 const TodoDetails = ({ 
   todo, 
@@ -245,7 +330,9 @@ const TodoDetails = ({
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <ThemeProvider theme={darkTheme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-neutral-700">
         <button
@@ -588,18 +675,24 @@ const TodoDetails = ({
           {showReminderForm && (
             <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
               <h4 className="text-white font-medium">Set Reminder</h4>
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="date"
-                  value={newReminderDate}
-                  onChange={(e) => setNewReminderDate(e.target.value)}
-                  className="px-3 py-2 bg-neutral-700 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white"
+              <div className="grid grid-cols-1 gap-3">
+                <DatePicker
+                  label="Reminder Date"
+                  value={newReminderDate ? dayjs(newReminderDate) : null}
+                  onChange={(newValue) => {
+                    setNewReminderDate(newValue ? newValue.format('YYYY-MM-DD') : '');
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ width: '100%' }}
                 />
-                <input
-                  type="time"
-                  value={newReminderTime}
-                  onChange={(e) => setNewReminderTime(e.target.value)}
-                  className="px-3 py-2 bg-neutral-700 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white"
+                <TimePicker
+                  label="Reminder Time"
+                  value={newReminderTime ? dayjs(`2000-01-01T${newReminderTime}`) : null}
+                  onChange={(newValue) => {
+                    setNewReminderTime(newValue ? newValue.format('HH:mm') : '');
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ width: '100%' }}
                 />
               </div>
               <div className="flex space-x-2">
@@ -625,19 +718,23 @@ const TodoDetails = ({
             <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
               <h4 className="text-white font-medium">Set Duration</h4>
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="time"
-                  value={durationStart}
-                  onChange={(e) => setDurationStart(e.target.value)}
-                  placeholder="Start time"
-                  className="px-3 py-2 bg-neutral-700 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white"
+                <TimePicker
+                  label="Start Time"
+                  value={durationStart ? dayjs(`2000-01-01T${durationStart}`) : null}
+                  onChange={(newValue) => {
+                    setDurationStart(newValue ? newValue.format('HH:mm') : '');
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ width: '100%' }}
                 />
-                <input
-                  type="time"
-                  value={durationEnd}
-                  onChange={(e) => setDurationEnd(e.target.value)}
-                  placeholder="End time"
-                  className="px-3 py-2 bg-neutral-700 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white"
+                <TimePicker
+                  label="End Time"
+                  value={durationEnd ? dayjs(`2000-01-01T${durationEnd}`) : null}
+                  onChange={(newValue) => {
+                    setDurationEnd(newValue ? newValue.format('HH:mm') : '');
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                  sx={{ width: '100%' }}
                 />
               </div>
               <div className="flex space-x-2">
@@ -662,18 +759,38 @@ const TodoDetails = ({
           {showRepeatForm && (
             <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
               <h4 className="text-white font-medium">Set Repeat</h4>
-              <select
-                value={repeatOption}
-                onChange={(e) => setRepeatOption(e.target.value)}
-                className="w-full px-3 py-2 bg-neutral-700 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white"
-              >
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-                <option value="weekdays">Weekdays</option>
-                <option value="weekends">Weekends</option>
-              </select>
+              <FormControl fullWidth>
+                <InputLabel id="repeat-select-label">Repeat Frequency</InputLabel>
+                <Select
+                  labelId="repeat-select-label"
+                  value={repeatOption}
+                  label="Repeat Frequency"
+                  onChange={(e) => setRepeatOption(e.target.value)}
+                  sx={{
+                     backgroundColor: '#262626',
+                     color: '#ffffff',
+                     '& .MuiSelect-icon': {
+                       color: '#ffffff',
+                     },
+                     '& .MuiOutlinedInput-notchedOutline': {
+                       borderColor: '#525252',
+                     },
+                     '&:hover .MuiOutlinedInput-notchedOutline': {
+                       borderColor: '#ffffff',
+                     },
+                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                       borderColor: '#ffffff',
+                     },
+                   }}
+                >
+                  <MenuItem value="daily">Daily</MenuItem>
+                  <MenuItem value="weekly">Weekly</MenuItem>
+                  <MenuItem value="monthly">Monthly</MenuItem>
+                  <MenuItem value="yearly">Yearly</MenuItem>
+                  <MenuItem value="weekdays">Weekdays (Mon-Fri)</MenuItem>
+                  <MenuItem value="weekends">Weekends (Sat-Sun)</MenuItem>
+                </Select>
+              </FormControl>
               <div className="flex space-x-2">
                 <button
                   onClick={handleAddRepeat}
@@ -840,7 +957,9 @@ const TodoDetails = ({
           </div>
         </div>
       )}
-    </div>
+        </div>
+      </LocalizationProvider>
+    </ThemeProvider>
   );
 };
 

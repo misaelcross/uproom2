@@ -35,7 +35,8 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   // Opções de ordenação para nudges
   const sortOptions = [
     'Sender',
-    'Type'
+    'Type',
+    'Archived'
   ];
 
   // Fechar dropdown quando clicar fora

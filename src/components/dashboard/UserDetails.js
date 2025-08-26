@@ -253,96 +253,91 @@ const UserDetails = ({ user, onBack }) => {
               {/* STATUS Content */}
               <div className="space-y-4">
                 {(() => {
-                  // Helper function to get status colors based on user availability
+
+
+                  // Helper function to get status colors for hover effects
                   const getStatusColors = (status) => {
                     switch (status) {
-                      case 'Focus':
-                        return 'bg-purple-500/10 border-purple-500/20';
-                      case 'Available':
-                        return 'bg-green-500/10 border-green-500/20';
-                      case 'In meeting':
-                        return 'bg-blue-500/10 border-blue-500/20';
-                      case 'Break':
-                        return 'bg-orange-500/10 border-orange-500/20';
-                      case 'Emergency':
-                        return 'bg-red-500/10 border-red-500/20';
-                      case 'Away':
-                        return 'bg-yellow-500/10 border-yellow-500/20';
-                      case 'Offline':
-                        return 'bg-gray-500/10 border-gray-500/20';
-                      default:
-                        return 'bg-neutral-500/10 border-neutral-500/20';
+                      case 'Focus': return { hoverBg: 'hover:bg-purple-500/10', hoverBorder: 'hover:border-purple-500/20' };
+                      case 'Available': return { hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
+                      case 'In meeting': return { hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
+                      case 'Break': return { hoverBg: 'hover:bg-orange-500/10', hoverBorder: 'hover:border-orange-500/20' };
+                      case 'Emergency': return { hoverBg: 'hover:bg-red-500/10', hoverBorder: 'hover:border-red-500/20' };
+                      case 'Away': return { hoverBg: 'hover:bg-yellow-500/10', hoverBorder: 'hover:border-yellow-500/20' };
+                      case 'Offline': return { hoverBg: 'hover:bg-gray-500/10', hoverBorder: 'hover:border-gray-500/20' };
+                      default: return { hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
                     }
                   };
 
-                  // Helper function to get icon colors based on user availability
-                  const getIconColors = (status) => {
-                    switch (status) {
-                      case 'Focus':
-                        return 'bg-purple-500/20 text-purple-400';
-                      case 'Available':
-                        return 'bg-green-500/20 text-green-400';
-                      case 'In meeting':
-                        return 'bg-blue-500/20 text-blue-400';
-                      case 'Break':
-                        return 'bg-orange-500/20 text-orange-400';
-                      case 'Emergency':
-                        return 'bg-red-500/20 text-red-400';
-                      case 'Away':
-                        return 'bg-yellow-500/20 text-yellow-400';
-                      case 'Offline':
-                        return 'bg-gray-500/20 text-gray-400';
-                      default:
-                        return 'bg-neutral-500/20 text-neutral-400';
-                    }
+                  // Helper function to get status badge styling
+                  const getStatusBadge = (status) => {
+                    const statusConfig = {
+                      'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
+                      'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
+                      'In meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
+                      'Break': { text: 'text-orange-400', bg: 'bg-orange-500/10' },
+                      'Emergency': { text: 'text-red-400', bg: 'bg-red-500/10' },
+                      'Away': { text: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+                      'Offline': { text: 'text-gray-400', bg: 'bg-gray-500/10' }
+                    };
+
+                    const config = statusConfig[status] || statusConfig['Available'];
+
+                    return (
+                      <div className={`px-2 py-1 rounded text-xs font-medium ${config.text} ${config.bg}`}>
+                        {status}
+                      </div>
+                    );
                   };
 
                   return (
                     <>
-                      <div className={`rounded-lg p-4 border ${getStatusColors(user.availability)}`}>
-                        {/* Primeira linha: Ícone, Título e Duração */}
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconColors(user.availability)}`}>
-                            <Eye className="w-5 h-5" />
-                          </div>
+                      <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors(user.availability).hoverBg} ${getStatusColors(user.availability).hoverBorder}`}>
+                        {/* Título e Duração */}
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <h4 className="text-white font-medium">Working on {user.skills && user.skills[0] ? user.skills[0] : 'current'} project</h4>
                             <p className="text-neutral-400 text-sm">2:30 PM - 5:00 PM</p>
                           </div>
                         </div>
-                        {/* Segunda linha: Descrição e Timestamp alinhados ao ícone */}
-                        <div className="ml-13">
-                          <p className="text-neutral-400 text-sm mb-2">
+                        {/* Descrição */}
+                        <div>
+                          <p className="text-neutral-400 text-sm mb-3">
                             Currently focused on {user.bio}
                           </p>
-                          <div className="flex items-center gap-4 text-xs text-neutral-400">
-                            <span>Started 30m</span>
-                            <span>•</span>
-                            <span className="text-neutral-400">In Progress</span>
+                          {/* Status Badge */}
+                          <div className="flex items-center justify-between">
+                            {getStatusBadge(user.availability)}
+                            <div className="flex items-center gap-4 text-xs text-neutral-400">
+                              <span>Started 30m</span>
+                              <span>•</span>
+                              <span className="text-neutral-400">In Progress</span>
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className={`rounded-lg p-4 border ${getStatusColors('In meeting')}`}>
-                        {/* Primeira linha: Ícone, Título e Duração */}
-                        <div className="flex items-start gap-3 mb-3">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconColors('In meeting')}`}>
-                            <Users className="w-5 h-5" />
-                          </div>
+                      <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors('In meeting').hoverBg} ${getStatusColors('In meeting').hoverBorder}`}>
+                        {/* Título e Duração */}
+                        <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
                             <h4 className="text-white font-medium">Team Meeting - {user.department}</h4>
                             <p className="text-neutral-400 text-sm">10:00 AM - 11:00 AM</p>
                           </div>
                         </div>
-                        {/* Segunda linha: Descrição e Timestamp alinhados ao ícone */}
-                        <div className="ml-13">
-                          <p className="text-neutral-400 text-sm mb-2">
+                        {/* Descrição */}
+                        <div>
+                          <p className="text-neutral-400 text-sm mb-3">
                             Weekly sync with the {user.department} team to discuss ongoing projects and priorities.
                           </p>
-                          <div className="flex items-center gap-4 text-xs text-neutral-400">
-                            <span>3h</span>
-                            <span>•</span>
-                            <span className="text-neutral-400">Completed</span>
+                          {/* Status Badge */}
+                          <div className="flex items-center justify-between">
+                            {getStatusBadge('In meeting')}
+                            <div className="flex items-center gap-4 text-xs text-neutral-400">
+                              <span>3h</span>
+                              <span>•</span>
+                              <span className="text-neutral-400">Completed</span>
+                            </div>
                           </div>
                         </div>
                       </div>

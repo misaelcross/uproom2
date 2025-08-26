@@ -231,7 +231,7 @@ const MonthlyCalendar = ({
   return (
     <>
       {/* Calendar Grid */}
-      <SimpleBar className="flex-1 p-4">
+      <SimpleBar className="flex-1 py-1">
         <div className="grid grid-cols-7 gap-1">
           {/* Week day headers */}
           {weekDays.map(day => (
