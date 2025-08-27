@@ -306,8 +306,8 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
           
           {/* Notification Badge - Fixed width to prevent text reflow */}
           {!nudge.isRead && (
-            <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center ml-2">
-              <span className="text-white text-xs font-medium">1</span>
+            <div className="flex-shrink-0 w-4 h-4 bg-red-500 rounded flex items-center justify-center ml-2">
+              <span className="text-white text-xs font-bold leading-none">1</span>
             </div>
           )}
         </div>
