@@ -435,7 +435,7 @@ const UserDetails = ({ user, onBack }) => {
                             >
                               {/* Header with title and status */}
                               <div className="flex items-center justify-between mb-3">
-                                <div className="text-xs font-medium text-white">
+                                <div className="text-sm font-medium text-white">
                                   {event.title}
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -447,7 +447,7 @@ const UserDetails = ({ user, onBack }) => {
                               <div className="flex items-center justify-between">
                                 {/* Left side - Time */}
                                 <div className="flex items-center gap-2">
-                                  <div className="text-sm font-medium text-neutral-300">
+                                  <div className="text-xs font-medium text-neutral-300">
                                     {event.time}
                                   </div>
                                 </div>

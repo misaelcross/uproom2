@@ -195,9 +195,16 @@ const TodosPage = ({ onNavigate }) => {
   };
 
   const toggleStarred = (todoId) => {
-    setTodos(todos.map(todo => 
+    const updatedTodos = todos.map(todo => 
       todo.id === todoId ? { ...todo, starred: !todo.starred } : todo
-    ));
+    );
+    setTodos(updatedTodos);
+    
+    // Sincronizar selectedTodo se for o mesmo todo
+    if (selectedTodo && selectedTodo.id === todoId) {
+      const updatedSelectedTodo = updatedTodos.find(todo => todo.id === todoId);
+      setSelectedTodo(updatedSelectedTodo);
+    }
   };
 
   const deleteTodo = (todoId) => {
@@ -305,9 +312,9 @@ const TodosPage = ({ onNavigate }) => {
     }
   };
 
-  const toggleStepComplete = (stepId) => {
+  const toggleStepComplete = (todoId, stepId) => {
     const updatedTodos = todos.map(todo => 
-      todo.id === selectedTodo.id 
+      todo.id === todoId 
         ? { 
             ...todo, 
             steps: todo.steps.map(step => 
@@ -318,7 +325,7 @@ const TodosPage = ({ onNavigate }) => {
     );
     
     setTodos(updatedTodos);
-    const updatedTodo = updatedTodos.find(todo => todo.id === selectedTodo.id);
+    const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
     setSelectedTodo(updatedTodo);
   };
 
@@ -470,6 +477,57 @@ const TodosPage = ({ onNavigate }) => {
       assignedUsers: []
     };
     setGroups([...groups, newSubFolder]);
+  };
+  
+  // Merge two folders
+  const mergeFolders = (sourceId, targetId) => {
+    const sourceFolder = groups.find(group => group.id === sourceId);
+    const targetFolder = groups.find(group => group.id === targetId);
+    
+    if (!sourceFolder || !targetFolder) {
+      console.error('Source or target folder not found');
+      return;
+    }
+    
+    // Create merged folder with combined name
+    const mergedFolder = {
+      ...targetFolder,
+      name: `${sourceFolder.name}/${targetFolder.name}`,
+      count: sourceFolder.count + targetFolder.count,
+      assignedUsers: [
+        ...(targetFolder.assignedUsers || []),
+        ...(sourceFolder.assignedUsers || []).filter(
+          user => !(targetFolder.assignedUsers || []).some(u => u.id === user.id)
+        )
+      ]
+    };
+    
+    // Update todos to point to the merged folder
+    const updatedTodos = todos.map(todo => {
+      if (todo.groupId === sourceId) {
+        return { ...todo, groupId: targetId };
+      }
+      return todo;
+    });
+    
+    // Update subfolders to point to the merged folder
+    const updatedGroups = groups.map(group => {
+      if (group.parentId === sourceId) {
+        return { ...group, parentId: targetId };
+      }
+      if (group.id === targetId) {
+        return mergedFolder;
+      }
+      return group;
+    }).filter(group => group.id !== sourceId); // Remove source folder
+    
+    setTodos(updatedTodos);
+    setGroups(updatedGroups);
+    
+    // Clear selection if merged folder was selected
+    if (selectedGroup?.id === sourceId) {
+      setSelectedGroup(null);
+    }
   };
 
   // Function to update todo description
@@ -702,6 +760,7 @@ const TodosPage = ({ onNavigate }) => {
                 onRemovePersonFromFolder={removePersonFromFolder}
                 onCreateSubFolder={createSubFolder}
                 onReorderFolders={reorderFolders}
+                onMergeFolders={mergeFolders}
               />
             ) : (
               <TodoDetails

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Users, CheckCircle, AlertTriangle, TrendingUp, Calendar, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { IconButton, InputBase, Collapse } from '@mui/material';
 import SimpleBar from 'simplebar-react';
 import Sidebar from '../shared/Sidebar';
 
@@ -57,6 +58,7 @@ const SchedulePage = ({ onNavigate }) => {
   const currentUser = usersData[0]; // Alex Thompson como usuário atual
   
   const [selectedUser, setSelectedUser] = useState(null); // null = My Schedule, user = schedule do usuário selecionado
+  const [selectedGroup, setSelectedGroup] = useState(null); // null = no group selected, group = schedule do grupo selecionado
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
@@ -65,6 +67,7 @@ const SchedulePage = ({ onNavigate }) => {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchExpanded, setSearchExpanded] = useState(false);
   const [timeFrame, setTimeFrame] = useState('Day');
   
   // AnimatedBottomSheet state
@@ -419,8 +422,157 @@ const SchedulePage = ({ onNavigate }) => {
     return scheduleTemplates;
   };
 
+  // Function to generate group schedule based on selected group
+  const generateGroupSchedule = (group) => {
+    if (!group) return [];
+
+    const scheduleTemplates = [
+      {
+        day: '30',
+        dayName: 'Sunday',
+        events: []
+      },
+      {
+        day: '01',
+        dayName: 'Monday',
+        events: [
+          {
+            id: 1,
+            title: `${group.name} Planning`,
+            time: '9:00am - 10:30am',
+            date: 'Monday, July 01, 2025',
+            duration: '1 hour 30 minutes',
+            description: `Weekly planning session for ${group.name} to align on priorities and deliverables.`,
+            location: 'Team Room',
+            avatar: group.avatar,
+            additionalPeople: `+${group.members.length - 1}`,
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: group.name, avatar: group.avatar }
+            ],
+            linkedTasks: [
+              { id: 1, title: 'Review team objectives', completed: true },
+              { id: 2, title: 'Plan sprint activities', completed: false }
+            ],
+            linkedNudges: [],
+            linkedFiles: []
+          },
+          {
+            id: 2,
+            title: `${group.name} Standup`,
+            time: '2:00pm - 2:30pm',
+            date: 'Monday, July 01, 2025',
+            duration: '30 minutes',
+            description: `Daily standup for ${group.name} to sync on progress and blockers.`,
+            location: 'Team Area',
+            avatar: group.avatar,
+            additionalPeople: `+${group.members.length - 1}`,
+            isCurrent: true,
+            status: 'Meeting',
+            attendees: [
+              { name: group.name, avatar: group.avatar }
+            ],
+            linkedTasks: [],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '02',
+        dayName: 'Tuesday',
+        events: [
+          {
+            id: 3,
+            title: `${group.name} Workshop`,
+            time: '10:00am - 12:00pm',
+            date: 'Tuesday, July 02, 2025',
+            duration: '2 hours',
+            description: `Collaborative workshop for ${group.name} to work on key initiatives.`,
+            location: 'Workshop Room',
+            avatar: group.avatar,
+            additionalPeople: `+${group.members.length - 1}`,
+            isCurrent: false,
+            status: 'Focus',
+            attendees: [
+              { name: group.name, avatar: group.avatar }
+            ],
+            linkedTasks: [
+              { id: 3, title: 'Prepare workshop materials', completed: true }
+            ],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '03',
+        dayName: 'Wednesday',
+        events: [
+          {
+            id: 4,
+            title: `${group.name} Review`,
+            time: '3:00pm - 4:00pm',
+            date: 'Wednesday, July 03, 2025',
+            duration: '1 hour',
+            description: `Weekly review session for ${group.name} to assess progress and next steps.`,
+            location: 'Conference Room',
+            avatar: group.avatar,
+            additionalPeople: `+${group.members.length - 1}`,
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: group.name, avatar: group.avatar }
+            ],
+            linkedTasks: [
+              { id: 4, title: 'Compile progress report', completed: false }
+            ],
+            linkedNudges: [],
+            linkedFiles: []
+          }
+        ]
+      },
+      {
+        day: '05',
+        dayName: 'Friday',
+        events: [
+          {
+            id: 5,
+            title: `${group.name} Retrospective`,
+            time: '4:00pm - 5:00pm',
+            date: 'Friday, July 05, 2025',
+            duration: '1 hour',
+            description: `Weekly retrospective for ${group.name} to discuss improvements and celebrate wins.`,
+            location: 'Retrospective Room',
+            avatar: group.avatar,
+            additionalPeople: `+${group.members.length - 1}`,
+            isCurrent: false,
+            status: 'Meeting',
+            attendees: [
+              { name: group.name, avatar: group.avatar }
+            ],
+            linkedTasks: [],
+            linkedNudges: [
+              { id: 1, title: 'Implement retrospective action items' }
+            ],
+            linkedFiles: []
+          }
+        ]
+      }
+    ];
+
+    return scheduleTemplates;
+  };
+
   const handleUserSelect = (user) => {
     setSelectedUser(user);
+    setSelectedGroup(null); // Clear group selection when user is selected
+  };
+
+  const handleGroupSelect = (group) => {
+    setSelectedGroup(group);
+    setSelectedUser(null); // Clear user selection when group is selected
   };
 
   const handleDateSelect = (date) => {
@@ -523,8 +675,8 @@ const SchedulePage = ({ onNavigate }) => {
           {/* Top Bar with Tabs, Live Notifications and Actions */}
           <div className="flex w-full items-start gap-2 min-w-0">
             <TopTabsSchedule 
-              activeTab={activeTopTab}
-              setActiveTab={setActiveTopTab}
+              timeFrame={timeFrame}
+              onTimeFrameChange={handleTimeFrameChange}
             />
             <LiveNotifications 
               usersData={usersData}
@@ -534,8 +686,6 @@ const SchedulePage = ({ onNavigate }) => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               onScheduleMeet={handleOpenScheduleMeeting}
-              timeFrame={timeFrame}
-              onTimeFrameChange={handleTimeFrameChange}
             />
           </div>
 
@@ -544,27 +694,29 @@ const SchedulePage = ({ onNavigate }) => {
             {/* Content Area - My Schedule or Selected User Schedule */}
             <SimpleBar className="flex-1 min-h-0">
               {selectedUser ? (
-                /* Selected User Schedule - Full Width */
+                /* User Schedule */
                 <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
-                  {/* Header do Schedule */}
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={selectedUser.avatar}
-                        alt={selectedUser.name}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <div>
-                        <h3 className="text-white font-medium">{selectedUser.name}</h3>
-                        <p className="text-neutral-400 text-sm">{selectedUser.title}</p>
+                  {/* Header do usuário selecionado */}
+                  <div className="py-4 px-6 border-b border-neutral-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src={selectedUser.avatar} 
+                          alt={selectedUser.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <div>
+                          <h3 className="text-white font-medium">{selectedUser.name}</h3>
+                          <p className="text-neutral-400 text-sm">{selectedUser.title}</p>
+                        </div>
                       </div>
+                      <button
+                        onClick={() => setSelectedUser(null)}
+                        className="text-neutral-400 hover:text-white text-sm"
+                      >
+                        ✕
+                      </button>
                     </div>
-                    <button
-                      onClick={() => setSelectedUser(null)}
-                      className="text-neutral-400 hover:text-white text-sm"
-                    >
-                      ✕
-                    </button>
                   </div>
 
                   {/* Conteúdo do Schedule */}
@@ -575,6 +727,43 @@ const SchedulePage = ({ onNavigate }) => {
                       scheduleData={generateUserSchedule(selectedUser)}
                       userName={selectedUser.name}
                       onEventSelect={handleEventSelect}
+                      noBorder={true}
+                    />
+                  </div>
+                </div>
+              ) : selectedGroup ? (
+                /* Group Schedule */
+                <div className="border border-neutral-700 rounded-lg h-full flex flex-col">
+                  {/* Header do grupo selecionado */}
+                  <div className="py-4 px-6 border-b border-neutral-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 ${selectedGroup.color} rounded-full flex items-center justify-center`}>
+                          <Users className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-white font-medium">{selectedGroup.name}</h3>
+                          <p className="text-neutral-400 text-sm">{selectedGroup.description}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setSelectedGroup(null)}
+                        className="text-neutral-400 hover:text-white text-sm"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Conteúdo do Schedule */}
+                  <div className="flex-1 overflow-hidden">
+                    <Schedule 
+                      fullWidth={true} 
+                      viewMode={timeFrame} 
+                      scheduleData={generateGroupSchedule(selectedGroup)}
+                      userName={selectedGroup.name}
+                      onEventSelect={handleEventSelect}
+                      noBorder={true}
                     />
                   </div>
                 </div>
@@ -656,64 +845,162 @@ const SchedulePage = ({ onNavigate }) => {
                   {/* Team Members List */}
                   <div className="flex-1 min-h-0 flex flex-col">
                     <div className="border border-neutral-700 rounded-lg overflow-hidden flex flex-col flex-1 min-h-0">
-                    <div className="px-6 py-4 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
-                      <h2 className="text-white text-lg font-semibold">Team Members</h2>
+                    <div className="py-4 px-3 border-b border-neutral-700 flex items-center justify-between flex-shrink-0">
+                      {/* Team Members / Groups Tabs */}
+                      <div className="flex space-x-2 bg-neutral-800 p-1 rounded-lg w-fit">
+                        <button
+                          onClick={() => setActiveTopTab('members')}
+                          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+                            activeTopTab === 'members'
+                              ? 'bg-neutral-700 text-white'
+                              : 'bg-transparent text-neutral-400 hover:text-gray-300'
+                          }`}
+                        >
+                          Members
+                        </button>
+                        <button
+                          onClick={() => setActiveTopTab('groups')}
+                          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+                            activeTopTab === 'groups'
+                              ? 'bg-neutral-700 text-white'
+                              : 'bg-transparent text-neutral-400 hover:text-gray-300'
+                          }`}
+                        >
+                          Groups
+                        </button>
+                      </div>
                       
-                      {/* Search Input */}
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-32 bg-transparent border border-neutral-600 rounded-lg px-3 py-1 pl-8 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
-                        />
-                        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-neutral-400" />
+                      {/* Compact Search Input */}
+                      <div className="flex items-center">
+                        <Collapse in={searchExpanded} orientation="horizontal">
+                          <InputBase
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onBlur={() => {
+                              if (!searchTerm) {
+                                setSearchExpanded(false);
+                              }
+                            }}
+                            autoFocus={searchExpanded}
+                            sx={{
+                              ml: 1,
+                              width: searchExpanded ? 110 : 0,
+                              '& .MuiInputBase-input': {
+                                padding: '8px 12px',
+                                color: 'white',
+                                fontSize: '14px',
+                                backgroundColor: 'transparent',
+                                border: '1px solid #525252',
+                                borderRadius: '8px',
+                                '&::placeholder': {
+                                  color: '#a3a3a3',
+                                  opacity: 1
+                                },
+                                '&:focus': {
+                                  outline: 'none',
+                                  borderColor: 'white',
+                                  boxShadow: '0 0 0 2px rgba(255, 255, 255, 0.2)'
+                                }
+                              }
+                            }}
+                          />
+                        </Collapse>
+                        <IconButton
+                          onClick={() => {
+                            if (searchExpanded && searchTerm) {
+                              setSearchTerm('');
+                            } else {
+                              setSearchExpanded(!searchExpanded);
+                            }
+                          }}
+                          sx={{
+                            color: '#a3a3a3',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                              color: 'white'
+                            }
+                          }}
+                        >
+                          <Search size={18} />
+                        </IconButton>
                       </div>
                     </div>
 
-                  {/* Team Members List */}
+                  {/* Content List - Team Members or Groups */}
                   <SimpleBar className="divide-y divide-neutral-700 flex-1 min-h-0">
-                    {getFilteredAndSortedData().map((user) => {
-                      const getStatusDotColor = (availability) => {
-                        switch (availability) {
-                          case 'Available': return 'bg-green-500';
-                          case 'In meeting': return 'bg-blue-500';
-                          case 'Break': return 'bg-yellow-500';
-                          case 'Focus': return 'bg-purple-500';
-                          case 'Emergency': return 'bg-red-500';
-                          case 'Away': return 'bg-orange-500';
-                          case 'Offline': return 'bg-gray-500';
-                          default: return 'bg-green-500';
-                        }
-                      };
+                    {activeTopTab === 'members' ? (
+                      // Team Members List
+                      getFilteredAndSortedData().map((user) => {
+                        const getStatusDotColor = (availability) => {
+                          switch (availability) {
+                            case 'Available': return 'bg-green-500';
+                            case 'In meeting': return 'bg-blue-500';
+                            case 'Break': return 'bg-yellow-500';
+                            case 'Focus': return 'bg-purple-500';
+                            case 'Emergency': return 'bg-red-500';
+                            case 'Away': return 'bg-orange-500';
+                            case 'Offline': return 'bg-gray-500';
+                            default: return 'bg-green-500';
+                          }
+                        };
 
-                      return (
-                        <div
-                          key={user.id}
-                          className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
-                            selectedUser?.id === user.id ? 'bg-neutral-800' : ''
-                          }`}
-                          onClick={() => handleUserSelect(user)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="relative">
-                              <img
-                                src={user.avatar}
-                                alt={user.name}
-                                className="w-8 h-8 rounded-full object-cover"
-                              />
-                              <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-white font-medium text-sm truncate">{user.name}</div>
-                              <div className="text-neutral-400 text-xs truncate">{user.title}</div>
+                        return (
+                          <div
+                            key={user.id}
+                            className={`px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer ${
+                              selectedUser?.id === user.id ? 'bg-neutral-800' : ''
+                            }`}
+                            onClick={() => handleUserSelect(user)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <img
+                                  src={user.avatar}
+                                  alt={user.name}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                                <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-white font-medium text-sm truncate">{user.name}</div>
+                                <div className="text-neutral-400 text-xs truncate">{user.title}</div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                      })}
-                    </SimpleBar>
+                        );
+                      })
+                    ) : (
+                      // Groups List
+                      groupsData
+                        .filter(group => 
+                          group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          group.description.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map((group) => (
+                          <div
+                            key={group.id}
+                            className="px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer"
+                            onClick={() => handleGroupSelect(group)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="relative">
+                                <div className={`w-8 h-8 ${group.color} rounded-full flex items-center justify-center`}>
+                                  <Users className="w-4 h-4 text-white" />
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-white font-medium text-sm truncate">{group.name}</div>
+                                <div className="text-neutral-400 text-xs truncate">{group.description}</div>
+                              </div>
+                              <div className="text-neutral-400 text-xs">
+                                {group.members.length} members
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </SimpleBar>
                     </div>
                   </div>
                 </>

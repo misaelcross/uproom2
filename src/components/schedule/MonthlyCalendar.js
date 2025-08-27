@@ -201,7 +201,8 @@ const MonthlyCalendar = ({
       'Focus': { bg: 'bg-purple-500', text: 'Focus' },
       'Break': { bg: 'bg-yellow-500', text: 'Break' },
       'Away': { bg: 'bg-orange-500', text: 'Away' },
-      'Emergency': { bg: 'bg-red-500', text: 'Emergency' }
+      'Emergency': { bg: 'bg-red-500', text: 'Emergency' },
+      'Completed': { bg: 'bg-green-500', text: 'Completed' }
     };
 
     const config = statusConfig[status] || { bg: 'bg-gray-500', text: status };
@@ -256,7 +257,15 @@ const MonthlyCalendar = ({
                   
                   {/* Events */}
                   <div className="space-y-1 flex-1 flex flex-col">
-                    {dayData.events.slice(0, isLargeScreen ? 2 : 1).map((event) => {
+                    {dayData.events
+                      .sort((a, b) => {
+                        // Sort completed events first
+                        if (a.status === 'Completed' && b.status !== 'Completed') return -1;
+                        if (a.status !== 'Completed' && b.status === 'Completed') return 1;
+                        return 0;
+                      })
+                      .slice(0, isLargeScreen ? 2 : 1)
+                      .map((event) => {
                       const getStatusColors = (status) => {
                         switch(status) {
                           case 'Focus':
@@ -265,6 +274,8 @@ const MonthlyCalendar = ({
                             return 'bg-green-500/20 border-green-500/30 hover:bg-green-500/30';
                           case 'Meeting':
                             return 'bg-blue-500/20 border-blue-500/30 hover:bg-blue-500/30';
+                          case 'Completed':
+                            return 'bg-neutral-800 border-neutral-700';
                           default:
                             return 'bg-neutral-700/50 border-neutral-600 hover:bg-neutral-700';
                         }
@@ -277,7 +288,9 @@ const MonthlyCalendar = ({
                           className={`p-1 rounded border cursor-pointer transition-all duration-200 flex-shrink-0 ${getStatusColors(event.status)}`}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="text-[10px] font-medium text-white truncate flex-1">
+                            <div className={`text-[10px] font-medium truncate flex-1 ${
+                              event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                            }`}>
                               {event.title}
                             </div>
                             {getLinkedItemsCount(event) > 0 && (
@@ -289,7 +302,9 @@ const MonthlyCalendar = ({
                               </div>
                             )}
                           </div>
-                          <div className="text-[8px] text-neutral-300 truncate">
+                          <div className={`text-[8px] truncate ${
+                            event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
+                          }`}>
                             {event.time}
                           </div>
                         </div>

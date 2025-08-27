@@ -6,7 +6,7 @@ import EventContextModal from './EventContextModal';
 import MonthlyCalendar from './MonthlyCalendar';
 
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null }) => {
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false }) => {
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
@@ -198,6 +198,18 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         },
         {
           id: 11,
+          title: 'Project Presentation',
+          time: '9:00am - 10:30am',
+          avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop',
+          additionalPeople: '+2',
+          isCurrent: false,
+          status: 'Completed',
+          linkedTasks: [],
+          linkedNudges: [],
+          linkedFiles: []
+        },
+        {
+          id: 12,
           title: 'Lunch break',
           time: '12:00pm - 1:00pm',
           isCurrent: false,
@@ -229,7 +241,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
           title: 'Code Review',
           time: '2:00pm - 3:30pm',
           isCurrent: false,
-          status: 'Focus',
+          status: 'Completed',
           linkedTasks: [],
           linkedNudges: [],
           linkedFiles: []
@@ -368,7 +380,8 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
     const statusConfig = {
       'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
       'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
-      'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' }
+      'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
+      'Completed': { text: 'text-green-400', bg: 'bg-green-500/10' }
     };
     
     const config = statusConfig[status] || statusConfig['Available'];
@@ -381,21 +394,23 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
   };
 
   return (
-    <div className={`border border-neutral-700 rounded-lg h-full flex flex-col ${fullWidth ? 'w-full' : 'max-w-md'}`}>
-      {/* Fixed Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
-        <h2 className="text-white text-lg font-semibold">
-          {userName ? `${userName}'s Schedule` : 'My Schedule'}
-        </h2>
-        <div className="flex items-center gap-3">
-          <button
-              onClick={() => setIsAddingEvent(true)}
-              className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
-            >
-            <span className="text-sm">Add Event</span>
-          </button>
+    <div className={`${noBorder ? '' : 'border border-neutral-700 rounded-lg'} h-full flex flex-col ${fullWidth ? 'w-full' : 'max-w-md'}`}>
+      {/* Fixed Header - Only show for own schedule */}
+      {!userName && (
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-700">
+          <h2 className="text-white text-lg font-semibold">
+            My Schedule
+          </h2>
+          <div className="flex items-center gap-3">
+            <button
+                onClick={() => setIsAddingEvent(true)}
+                className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
+              >
+              <span className="text-sm">Add Event</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Scrollable Content */}
       <SimpleBar className="flex-1 px-6 pb-6">
@@ -420,7 +435,14 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
                 {/* Events for this day */}
                 <div className="space-y-2 flex-1">
-                  {dayData.events.length > 0 ? dayData.events.map((event) => {
+                  {dayData.events.length > 0 ? dayData.events
+                    .sort((a, b) => {
+                      // Sort completed events first
+                      if (a.status === 'Completed' && b.status !== 'Completed') return -1;
+                      if (a.status !== 'Completed' && b.status === 'Completed') return 1;
+                      return 0;
+                    })
+                    .map((event) => {
                     // Define colors based on status
                     const getStatusColors = (status) => {
                       switch(status) {
@@ -430,6 +452,8 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           return 'border-neutral-700 hover:bg-green-500/10 hover:border-green-500/20';
                         case 'Meeting':
                           return 'border-neutral-700 hover:bg-blue-500/10 hover:border-blue-500/20';
+                        case 'Completed':
+                          return 'border-neutral-700';
                         default:
                           return 'border-neutral-700 hover:bg-neutral-500/10 hover:border-neutral-500/20';
                       }
@@ -439,12 +463,16 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div
                         key={event.id}
                         onClick={() => handleOpenEventDetails(event)}
-                        className={`rounded p-1.5 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200`}
+                        className={`rounded p-1.5 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200 ${
+                          event.status === 'Completed' ? 'bg-neutral-800' : ''
+                        }`}
                       >
                         {/* Header with title and status */}
                         <div className="mb-1">
                           {/* Title */}
-                          <div className="text-xs font-medium text-white truncate mb-1">
+                          <div className={`text-sm font-medium truncate mb-1 ${
+                            event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                          }`}>
                             {event.title}
                           </div>
                           {/* Status badge - responsive positioning */}
@@ -457,7 +485,9 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         </div>
 
                         {/* Time */}
-                        <div className="text-xs text-neutral-300 mb-1">
+                        <div className={`text-xs mb-1 ${
+                          event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
+                        }`}>
                           {event.time}
                         </div>
 
@@ -495,7 +525,9 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                               </div>
                             )}
                             {event.additionalPeople && (
-                              <span className="text-xs text-white">
+                              <span className={`text-xs ${
+                                event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                              }`}>
                                 {event.additionalPeople}
                               </span>
                             )}
@@ -666,7 +698,14 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                     </div>
                   )}
                   
-                  {dayData.events.map((event) => {
+                  {dayData.events
+                    .sort((a, b) => {
+                      // Sort completed events first
+                      if (a.status === 'Completed' && b.status !== 'Completed') return -1;
+                      if (a.status !== 'Completed' && b.status === 'Completed') return 1;
+                      return 0;
+                    })
+                    .map((event) => {
                     // Define colors based on status
                     const getStatusColors = (status) => {
                       switch(status) {
@@ -676,6 +715,8 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           return 'border-neutral-700 hover:bg-green-500/10 hover:border-green-500/20';
                         case 'Meeting':
                           return 'border-neutral-700 hover:bg-blue-500/10 hover:border-blue-500/20';
+                        case 'Completed':
+                          return 'border-neutral-700';
                         default:
                           return 'border-neutral-700 hover:bg-neutral-500/10 hover:border-neutral-500/20';
                       }
@@ -685,11 +726,15 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div
                         key={event.id}
                         onClick={() => handleOpenEventDetails(event)}
-                        className={`rounded-lg p-2 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200`}
+                        className={`rounded-lg p-2 border ${getStatusColors(event.status)} cursor-pointer transition-all duration-200 ${
+                          event.status === 'Completed' ? 'bg-neutral-800' : ''
+                        }`}
                       >
                         {/* Header with title and status */}
                         <div className="flex items-center justify-between mb-3">
-                          <div className="text-xs font-medium text-white">
+                          <div className={`text-sm font-medium ${
+                            event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                          }`}>
                             {event.title}
                           </div>
                           <div className="flex items-center gap-2">
@@ -701,7 +746,9 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div className="flex items-center justify-between">
                         {/* Left side - Time */}
                         <div className="flex items-center gap-2">
-                          <div className="text-sm font-medium text-neutral-300">
+                          <div className={`text-xs font-medium ${
+                            event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
+                          }`}>
                             {event.time}
                           </div>
                         </div>
@@ -740,7 +787,9 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                                 </div>
                               )}
                               {event.additionalPeople && (
-                                <span className="text-xs text-white">
+                                <span className={`text-xs ${
+                                  event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                                }`}>
                                   {event.additionalPeople}
                                 </span>
                               )}

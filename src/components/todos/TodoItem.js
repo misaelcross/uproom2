@@ -1,5 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, Star, ChevronDown, AlertTriangle, MessageCircle, Clock } from 'lucide-react';
+import { Checkbox, ThemeProvider, createTheme } from '@mui/material';
+
+// Material UI theme for checkbox
+const checkboxTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+  },
+  components: {
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#9ca3af', // gray-400
+          '&:hover': {
+            color: '#ffffff',
+            backgroundColor: 'transparent',
+          },
+          '&.Mui-checked': {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+  },
+});
 
 const TodoItem = ({ 
   todo, 
@@ -81,16 +108,21 @@ const TodoItem = ({
     >
       <div className="flex items-start gap-2 sm:gap-3 w-full">
         {/* Checkbox */}
-        <button
-          onClick={handleCheckboxClick}
-          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-            todo.completed 
-              ? 'bg-white border-white' 
-              : `border-gray-400 hover:border-white`
-          }`}
-        >
-          {todo.completed && <Check className="w-2.5 h-2.5 text-black" />}
-        </button>
+        <ThemeProvider theme={checkboxTheme}>
+          <Checkbox
+            checked={todo.completed}
+            onChange={handleCheckboxClick}
+            size="small"
+            sx={{
+              padding: 0,
+              width: 16,
+              height: 16,
+              '& .MuiSvgIcon-root': {
+                fontSize: 16,
+              },
+            }}
+          />
+        </ThemeProvider>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -137,16 +169,20 @@ const TodoItem = ({
 
 
               {/* Star Icon */}
-              <button
-                onClick={handleStarClick}
-                className={`transition-colors ${
-                  todo.starred 
-                    ? 'text-white' 
-                    : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                <Star className={`w-4 h-4 ${todo.starred ? 'fill-current' : ''}`} />
-              </button>
+              <ThemeProvider theme={checkboxTheme}>
+                <Checkbox
+                  checked={todo.starred}
+                  onChange={handleStarClick}
+                  icon={<Star className="w-4 h-4" />}
+                  checkedIcon={<Star className="w-4 h-4 fill-white" />}
+                  sx={{
+                    padding: '2px',
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1rem'
+                    }
+                  }}
+                />
+              </ThemeProvider>
             </div>
           </div>
           

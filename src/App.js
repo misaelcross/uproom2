@@ -474,6 +474,7 @@ function App() {
               usersData={usersWithIcons}
               onUserClick={showUserDetails}
             />
+
             <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} onScheduleMeeting={handleOpenScheduleMeeting} />
           </div>
 

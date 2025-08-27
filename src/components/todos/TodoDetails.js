@@ -6,7 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TextField, ThemeProvider, createTheme, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { TextField, ThemeProvider, createTheme, Select, MenuItem, FormControl, InputLabel, Checkbox } from '@mui/material';
 import dayjs from 'dayjs';
 
 // Material UI dark theme configuration
@@ -80,6 +80,20 @@ const darkTheme = createTheme({
             color: '#a3a3a3',
           },
           '& .MuiInputLabel-root.Mui-focused': {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#a3a3a3', // neutral-400
+          '&:hover': {
+            color: '#ffffff',
+            backgroundColor: 'transparent',
+          },
+          '&.Mui-checked': {
             color: '#ffffff',
           },
         },
@@ -366,18 +380,21 @@ const TodoDetails = ({
         <div className="space-y-3">
           {/* Title - Truncated to one line */}
           <div className="flex items-center space-x-3">
-            <button
-              onClick={() => onToggleComplete(todo.id)}
-              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                todo.completed
-                  ? 'bg-white border-white'
-                  : 'border-neutral-400 hover:border-white'
-              }`}
-            >
-              {todo.completed && (
-                <Check className="w-2.5 h-2.5 text-black" />
-              )}
-            </button>
+            <ThemeProvider theme={darkTheme}>
+              <Checkbox
+                checked={todo.completed}
+                onChange={() => onToggleComplete(todo.id)}
+                size="small"
+                sx={{
+                  padding: 0,
+                  width: 16,
+                  height: 16,
+                  '& .MuiSvgIcon-root': {
+                    fontSize: 16,
+                  },
+                }}
+              />
+            </ThemeProvider>
             
             <div className="flex-1 flex items-start space-x-2">
               {isEditingTitle ? (
@@ -430,14 +447,20 @@ const TodoDetails = ({
             </div>
             
             {!isEditingTitle && (
-              <button
-                onClick={() => onToggleStar(todo.id)}
-                className={`transition-colors ${
-                  todo.starred ? 'text-white' : 'text-neutral-400 hover:text-white'
-                }`}
-              >
-                <Star className={`w-5 h-5 ${todo.starred ? 'fill-white' : ''}`} />
-              </button>
+              <ThemeProvider theme={darkTheme}>
+                <Checkbox
+                  checked={todo.starred}
+                  onChange={() => onToggleStar(todo.id)}
+                  icon={<Star className="w-5 h-5" />}
+                  checkedIcon={<Star className="w-5 h-5 fill-white" />}
+                  sx={{
+                    padding: '4px',
+                    '& .MuiSvgIcon-root': {
+                      fontSize: '1.25rem'
+                    }
+                  }}
+                />
+              </ThemeProvider>
             )}
           </div>
 

@@ -197,6 +197,7 @@ function NudgePage({ onNavigate }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedArchivedGroup, setSelectedArchivedGroup] = useState(null);
   const [previousView, setPreviousView] = useState(null); // Para controlar o estado anterior
+  const [preSelectedUser, setPreSelectedUser] = useState(null); // Para usuário pré-selecionado no create nudge
 
   // Função para gerar ícones aleatórios
   const generateRandomIcons = () => {
@@ -284,6 +285,7 @@ function NudgePage({ onNavigate }) {
   // Função para cancelar criação de nudge
   const handleCancelCreateNudge = () => {
     setIsCreatingNudge(false);
+    setPreSelectedUser(null);
   };
 
   // Função para navegar para UserDetails
@@ -494,6 +496,13 @@ function NudgePage({ onNavigate }) {
     setSelectedNudge(null);
     setSelectedUser(null);
     setSelectedArchivedGroup(null);
+  };
+
+  // Função para criar nudge a partir de um card
+  const handleCreateNudgeFromCard = (userData) => {
+    setPreSelectedUser(userData);
+    setIsCreatingNudge(true);
+    setPreviousView('nudges');
   };
 
   // Função para filtrar nudges por aba
@@ -712,6 +721,7 @@ function NudgePage({ onNavigate }) {
                       onPinNudge={handlePinNudge}
                       onMarkResolved={handleMarkAsResolved}
                       onMarkPriority={handleMarkPriority}
+                      onCreateNudge={handleCreateNudgeFromCard}
                     />
                   )
                 ))}
@@ -728,7 +738,10 @@ function NudgePage({ onNavigate }) {
                   onBack={handleBackFromUserDetails}
                 />
               ) : isCreatingNudge ? (
-                <CreateNudgeView onCancel={handleCancelCreateNudge} />
+                <CreateNudgeView 
+                  onCancel={handleCancelCreateNudge} 
+                  preSelectedUser={preSelectedUser}
+                />
               ) : selectedArchivedGroup ? (
                 <ArchivedNudgeDetails
                   userGroup={selectedArchivedGroup}
@@ -753,6 +766,7 @@ function NudgePage({ onNavigate }) {
                 ) : (
                   <NudgeDetails 
                     nudge={selectedNudge}
+                    onBack={() => setSelectedNudge(null)}
                     onUserClick={handleUserClick}
                     onUpdate={(updatedNudge) => {
                       setLocalNudges(prev => prev.map(n => 

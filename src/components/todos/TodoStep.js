@@ -1,5 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Trash2, Check, X } from 'lucide-react';
+import { Checkbox, ThemeProvider, createTheme } from '@mui/material';
+
+// Material UI theme for checkbox
+const checkboxTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+  },
+  components: {
+    MuiCheckbox: {
+      styleOverrides: {
+        root: {
+          color: '#a3a3a3', // neutral-400
+          '&:hover': {
+            color: '#ffffff',
+            backgroundColor: 'transparent',
+          },
+          '&.Mui-checked': {
+            color: '#ffffff',
+          },
+        },
+      },
+    },
+  },
+});
 
 const TodoStep = ({ step, onToggleComplete, onDelete, onUpdateDescription }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -44,18 +71,21 @@ const TodoStep = ({ step, onToggleComplete, onDelete, onUpdateDescription }) => 
 
   return (
     <div className="flex items-center space-x-3 group">
-      <button
-        onClick={onToggleComplete}
-        className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-          step.completed
-            ? 'bg-white border-white'
-            : 'border-neutral-400 hover:border-white'
-        }`}
-      >
-        {step.completed && (
-          <Check className="w-2.5 h-2.5 text-black" />
-        )}
-      </button>
+      <ThemeProvider theme={checkboxTheme}>
+        <Checkbox
+          checked={step.completed}
+          onChange={onToggleComplete}
+          size="small"
+          sx={{
+            padding: 0,
+            width: 16,
+            height: 16,
+            '& .MuiSvgIcon-root': {
+              fontSize: 16,
+            },
+          }}
+        />
+      </ThemeProvider>
       
       <div className="flex-1 flex items-center space-x-2">
         {isEditing ? (

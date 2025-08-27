@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search,
   Send,
@@ -19,17 +19,17 @@ import useNudgeStore from '../../store/nudgeStore';
 
 // Usuários fake para pesquisa
 const searchableUsers = [
-  { id: 101, name: "Ana Silva", title: "Designer", avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
-  { id: 102, name: "Carlos Santos", title: "Developer", avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "away" },
-  { id: 103, name: "Maria Costa", title: "Product Manager", avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
-  { id: 104, name: "João Oliveira", title: "Backend Dev", avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "offline" },
-  { id: 105, name: "Fernanda Lima", title: "Data Scientist", avatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
-  { id: 106, name: "Pedro Alves", title: "DevOps", avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "away" },
-  { id: 107, name: "Lucia Ferreira", title: "QA Engineer", avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
-  { id: 108, name: "Rafael Souza", title: "Security", avatar: "https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" }
+  { id: 101, name: "Brent Short", title: "Product Manager", avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
+  { id: 102, name: "Lauren Potter", title: "Designer", avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "away" },
+  { id: 103, name: "Michael Johnson", title: "Developer", avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
+  { id: 104, name: "Sarah Williams", title: "Backend Dev", avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "offline" },
+  { id: 105, name: "David Miller", title: "Data Scientist", avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
+  { id: 106, name: "Jessica Brown", title: "HR Manager", avatar: "https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "away" },
+  { id: 107, name: "Robert Davis", title: "QA Engineer", avatar: "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
+  { id: 108, name: "Emily Wilson", title: "Security", avatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" }
 ];
 
-const CreateNudgeView = ({ onCancel }) => {
+const CreateNudgeView = ({ onCancel, preSelectedUser }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
@@ -41,6 +41,22 @@ const CreateNudgeView = ({ onCancel }) => {
 
   // Hook do store de nudges
   const { saveDraft } = useNudgeStore();
+
+  // Pré-selecionar usuário se fornecido
+  useEffect(() => {
+    if (preSelectedUser) {
+      // Criar um objeto de usuário compatível com o formato esperado
+      const userToAdd = {
+        id: `preselected-${Date.now()}`,
+        name: preSelectedUser.name,
+        title: "User", // Título padrão
+        avatar: preSelectedUser.avatar,
+        status: "online"
+      };
+      setSelectedUsers([userToAdd]);
+    }
+  }, [preSelectedUser]);
+
   // Filtrar usuários baseado na pesquisa
   const filteredUsers = useMemo(() => {
     if (!searchTerm.trim()) return [];

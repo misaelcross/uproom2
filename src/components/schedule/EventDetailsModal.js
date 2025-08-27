@@ -10,7 +10,8 @@ const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) =>
       'Focus': { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
       'Available': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
       'Meeting': { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
-      'Busy': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' }
+      'Busy': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
+      'Completed': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' }
     };
 
     const config = statusConfig[status] || statusConfig['Available'];

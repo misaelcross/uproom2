@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { usersData } from '../../data/usersData';
 import UserStatusCard from './UserStatusCard';
+import NotificationModal from './NotificationModal';
 
 const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRightPanelContent, onSetReminder }, ref) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -331,9 +332,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
           
-          <button className="p-2 hover:bg-neutral-700 rounded-lg transition-colors">
-            <Bell className="h-4 w-4 text-neutral-400 hover:text-white" />
-          </button>
+          <NotificationModal />
         </div>
         
 
@@ -827,12 +826,6 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                   title="Minimizar"
                 >
                   <Minimize className="w-4 h-4 text-neutral-400" />
-                </button>
-                <button
-                  onClick={() => setPomodoroCollapsed(!pomodoroCollapsed)}
-                  className="p-1 hover:bg-neutral-700 rounded transition-colors"
-                >
-                  <X className="w-4 h-4 text-neutral-400" />
                 </button>
               </div>
             </div>

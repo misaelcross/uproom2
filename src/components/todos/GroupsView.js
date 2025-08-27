@@ -39,7 +39,8 @@ import {
   UserPlus,
   FolderPlus,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  Merge
 } from 'lucide-react';
 
 const GroupsView = ({ 
@@ -67,7 +68,8 @@ const GroupsView = ({
   onAddPersonToFolder,
   onRemovePersonFromFolder,
   onCreateSubFolder,
-  onReorderFolders
+  onReorderFolders,
+  onMergeFolders
 }) => {
   const iconComponents = {
     Briefcase,
@@ -129,6 +131,11 @@ const GroupsView = ({
   const [showCreateSubFolder, setShowCreateSubFolder] = useState(null);
   const [newSubFolderName, setNewSubFolderName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // State for merge functionality
+  const [mergeMode, setMergeMode] = useState(false);
+  const [sourceFolderId, setSourceFolderId] = useState(null);
+  const [selectedForMerge, setSelectedForMerge] = useState(null);
   
   // Mock users data for adding to folders
   const availableUsers = [
@@ -216,6 +223,33 @@ const GroupsView = ({
   // Remove person from folder
   const handleRemovePersonFromFolder = (folderId, userId) => {
     onRemovePersonFromFolder(folderId, userId);
+  };
+  
+  // Merge functionality
+  const handleStartMerge = (folderId) => {
+    setMergeMode(true);
+    setSourceFolderId(folderId);
+    setSelectedForMerge(null);
+  };
+  
+  const handleSelectForMerge = (folderId) => {
+    if (folderId === sourceFolderId) return; // Can't merge with itself
+    setSelectedForMerge(folderId);
+    // Trigger merge immediately when second folder is selected
+    handleMergeFolders(sourceFolderId, folderId);
+  };
+  
+  const handleCancelMerge = () => {
+    setMergeMode(false);
+    setSourceFolderId(null);
+    setSelectedForMerge(null);
+  };
+  
+  const handleMergeFolders = (sourceId, targetId) => {
+    if (onMergeFolders) {
+      onMergeFolders(sourceId, targetId);
+    }
+    handleCancelMerge();
   };
   
   // Filter users based on search term
@@ -330,6 +364,10 @@ const GroupsView = ({
         <div 
           className={`flex items-center justify-between p-3 border rounded-lg hover:bg-neutral-800 transition-colors ${
             selectedGroup?.id === folder.id ? 'bg-neutral-800 border-neutral-600' : 'border-neutral-700'
+          } ${
+            mergeMode && folder.id === sourceFolderId ? 'border-neutral-400 bg-neutral-600' : ''
+          } ${
+            mergeMode && folder.id !== sourceFolderId ? 'border-neutral-500 hover:border-white' : ''
           }`}
         >
           {/* Drag handle */}
@@ -347,16 +385,24 @@ const GroupsView = ({
           
           {/* Clickable area for expansion */}
           <div 
-            className="flex-1 flex items-center cursor-pointer"
+            className={`flex-1 flex items-center cursor-pointer ${
+              mergeMode && folder.id !== sourceFolderId ? 'hover:bg-neutral-600' : ''
+            }`}
             onClick={() => {
-              onSelectGroup(folder);
-              // Only expand if this folder is being selected (not deselected)
-              if (!selectedGroup || selectedGroup.id !== folder.id) {
-                // Close all other folders first
-                setExpandedFolders(new Set([folder.id]));
+              if (mergeMode) {
+                if (folder.id !== sourceFolderId) {
+                  handleSelectForMerge(folder.id);
+                }
               } else {
-                // If clicking the same folder, toggle its expansion
-                toggleFolderExpansion(folder.id);
+                onSelectGroup(folder);
+                // Only expand if this folder is being selected (not deselected)
+                if (!selectedGroup || selectedGroup.id !== folder.id) {
+                  // Close all other folders first
+                  setExpandedFolders(new Set([folder.id]));
+                } else {
+                  // If clicking the same folder, toggle its expansion
+                  toggleFolderExpansion(folder.id);
+                }
               }
             }}
           >
@@ -460,6 +506,17 @@ const GroupsView = ({
                       >
                         <UserPlus className="w-4 h-4" />
                         <span>Add People</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartMerge(folder.id);
+                          setOpenDropdown(null);
+                        }}
+                        className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm"
+                      >
+                        <Merge className="w-4 h-4" />
+                        <span>Merge</span>
                       </button>
                       <button
                         onClick={(e) => {
@@ -642,13 +699,32 @@ const GroupsView = ({
               <SortableFolder key={folder.id} folder={folder} level={0} />
             ))}
             
-            <button 
-              onClick={() => setShowCreateGroup(true)}
-              className="w-full flex items-center gap-3 p-3 bg-neutral-800 rounded-lg hover:bg-neutral-600 transition-colors text-white"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="">Create new folder</span>
-            </button>
+            {/* Merge mode indicator */}
+            {mergeMode && (
+              <div className="bg-neutral-600 border border-neutral-400 rounded-lg p-3 mb-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-neutral-200 text-sm">
+                    <span className="font-medium">Merge Mode:</span> Select a folder to merge with "{folders.find(f => f.id === sourceFolderId)?.name}"
+                  </div>
+                  <button
+                    onClick={handleCancelMerge}
+                    className="text-neutral-200 hover:text-white transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {!mergeMode && (
+              <button 
+                onClick={() => setShowCreateGroup(true)}
+                className="w-full flex items-center gap-3 p-3 bg-neutral-800 rounded-lg hover:bg-neutral-600 transition-colors text-white"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="">Create new folder</span>
+              </button>
+            )}
           </div>
         </SortableContext>
         

@@ -17,13 +17,18 @@ const TopTabsTodos = ({ activeTab, setActiveTab, catchUpCount = 0 }) => {
         </button>
         <button
           onClick={() => setActiveTab('catchup')}
-          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap relative ${
             activeTab === 'catchup'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Catch-up {catchUpCount > 0 && `(${catchUpCount})`}
+          Catch-up
+          {catchUpCount > 0 && (
+            <div className="absolute -top-[1px] right-[4px] w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold leading-none">{catchUpCount}</span>
+            </div>
+          )}
         </button>
       </div>
     </div>

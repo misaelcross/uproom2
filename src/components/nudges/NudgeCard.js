@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff, Archive } from 'lucide-react';
+import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff, Archive, Plus } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
-const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive, onMarkUnread, onPinNudge, onMarkResolved, onMarkPriority, onMarkRead }) => {
+const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, onReply, onSnooze, onArchive, onMarkUnread, onPinNudge, onMarkResolved, onMarkPriority, onMarkRead, onCreateNudge }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [hoveredUser, setHoveredUser] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -264,6 +264,22 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                 >
                   <Archive className="w-4 h-4" />
                   Archive
+                </button>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDropdownOpen(false);
+                    if (onCreateNudge) {
+                      onCreateNudge({
+                        name: nudge.senderName,
+                        avatar: nudge.senderAvatar
+                      });
+                    }
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Nudge
                 </button>
               </div>
             </div>
