@@ -38,7 +38,7 @@ const UserStatusCard = ({
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg',
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg',
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/notion/notion-original.svg',
-      'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg'
+      '/github-mark-white.svg'
     ];
     const shuffled = icons.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, Math.floor(Math.random() * 2) + 2);
@@ -55,7 +55,7 @@ const UserStatusCard = ({
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/chrome/chrome-original.svg',
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg',
       'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/notion/notion-original.svg',
-      'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg'
+      '/github-mark-white.svg'
     ];
     const shuffled = icons.sort(() => 0.5 - Math.random());
     setAppIcons(shuffled.slice(0, Math.floor(Math.random() * 2) + 2));

@@ -1,6 +1,7 @@
 /* Estilos adicionais se necessário */
 body {
     font-family: 'Satoshi', sans-serif;
+    background-color: #171717; /* neutral-900 equivalent */
 }
 
 /* Garantir que as divs tenham altura mínima */
