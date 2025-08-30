@@ -27,7 +27,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
   const getStatusColor = (availability) => {
     switch (availability) {
       case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10', hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
-      case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
+      case 'Meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10', hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
       case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10', hoverBg: 'hover:bg-yellow-500/10', hoverBorder: 'hover:border-yellow-500/20' };
       case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10', hoverBg: 'hover:bg-purple-500/10', hoverBorder: 'hover:border-purple-500/20' };
       case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10', hoverBg: 'hover:bg-red-500/10', hoverBorder: 'hover:border-red-500/20' };
@@ -40,7 +40,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
   const getStatusDotColor = (availability) => {
     switch (availability) {
       case 'Available': return 'bg-green-500';
-      case 'In meeting': return 'bg-blue-500';
+      case 'Meeting': return 'bg-blue-500';
       case 'Break': return 'bg-yellow-500';
       case 'Focus': return 'bg-purple-500';
       case 'Emergency': return 'bg-red-500';

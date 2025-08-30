@@ -51,7 +51,7 @@ const UserDetails = ({ user, onBack }) => {
             time: '09:30am - 10:30am',
             avatar: user.avatar,
             additionalPeople: '+4',
-            isCurrent: user.availability === 'In meeting'
+            isCurrent: user.availability === 'Meeting'
           },
           {
             id: 2,
@@ -260,7 +260,7 @@ const UserDetails = ({ user, onBack }) => {
                     switch (status) {
                       case 'Focus': return { hoverBg: 'hover:bg-purple-500/10', hoverBorder: 'hover:border-purple-500/20' };
                       case 'Available': return { hoverBg: 'hover:bg-green-500/10', hoverBorder: 'hover:border-green-500/20' };
-                      case 'In meeting': return { hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
+                      case 'Meeting': return { hoverBg: 'hover:bg-blue-500/10', hoverBorder: 'hover:border-blue-500/20' };
                       case 'Break': return { hoverBg: 'hover:bg-orange-500/10', hoverBorder: 'hover:border-orange-500/20' };
                       case 'Emergency': return { hoverBg: 'hover:bg-red-500/10', hoverBorder: 'hover:border-red-500/20' };
                       case 'Away': return { hoverBg: 'hover:bg-yellow-500/10', hoverBorder: 'hover:border-yellow-500/20' };
@@ -274,7 +274,7 @@ const UserDetails = ({ user, onBack }) => {
                     const statusConfig = {
                       'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
                       'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
-                      'In meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
+                      'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
                       'Break': { text: 'text-orange-400', bg: 'bg-orange-500/10' },
                       'Emergency': { text: 'text-red-400', bg: 'bg-red-500/10' },
                       'Away': { text: 'text-yellow-400', bg: 'bg-yellow-500/10' },
@@ -317,7 +317,7 @@ const UserDetails = ({ user, onBack }) => {
                         </div>
                       </div>
 
-                      <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors('In meeting').hoverBg} ${getStatusColors('In meeting').hoverBorder}`}>
+                      <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors('Meeting').hoverBg} ${getStatusColors('Meeting').hoverBorder}`}>
                         {/* Título e Duração */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
@@ -332,7 +332,7 @@ const UserDetails = ({ user, onBack }) => {
                           </p>
                           {/* Status Badge */}
                           <div className="flex items-center justify-between">
-                            {getStatusBadge('In meeting')}
+                            {getStatusBadge('Meeting')}
                             <div className="flex items-center gap-4 text-xs text-neutral-400">
                               <span>3h</span>
                               <span>•</span>

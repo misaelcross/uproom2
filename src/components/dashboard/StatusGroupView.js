@@ -13,7 +13,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
 
   // Configuração dos status com cores e informações
   const statusConfig = {
-    'In meeting': {
+    'Meeting': {
       label: 'In a Meeting',
       color: 'bg-blue-500',
       textColor: 'text-blue-400',
@@ -70,7 +70,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
   };
 
   // Definir ordem específica dos status
-  const statusOrder = ['Available', 'Focus', 'In meeting', 'Emergency', 'Break', 'Away', 'Offline'];
+  const statusOrder = ['Available', 'Focus', 'Meeting', 'Emergency', 'Break', 'Away', 'Offline'];
 
   // Ordenar os grupos de acordo com a ordem definida
   const sortedGroupEntries = statusOrder
@@ -98,7 +98,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
                 </div>
               </div>
               <div className={`px-2 py-1 rounded text-xs font-medium ${config.textColor} ${config.bgColor}`}>
-                {status === 'In meeting' ? 'In meeting' : 
+                {status === 'Meeting' ? 'Meeting' : 
                  status === 'Break' ? 'Break' :
                  status === 'Focus' ? 'Focus' :
                  status === 'Emergency' ? 'Emergency' :

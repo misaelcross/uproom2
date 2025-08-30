@@ -117,7 +117,7 @@ const LiveNotifications = ({ usersData, onUserClick }) => {
   const getStatusColor = (availability) => {
     switch (availability) {
       case 'Available': return 'bg-green-500';
-      case 'In meeting': return 'bg-blue-500';
+      case 'Meeting': return 'bg-blue-500';
       case 'Break': return 'bg-yellow-500';
       case 'Focus': return 'bg-purple-500';
       case 'Emergency': return 'bg-red-500';

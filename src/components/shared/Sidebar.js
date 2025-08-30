@@ -119,7 +119,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
   const statusOptions = [
     { name: 'Available', color: 'bg-green-500', dotColor: 'bg-green-500' },
     { name: 'Focus', color: 'bg-purple-500', dotColor: 'bg-purple-500' },
-    { name: 'In meeting', color: 'bg-blue-500', dotColor: 'bg-blue-500' },
+    { name: 'Meeting', color: 'bg-blue-500', dotColor: 'bg-blue-500' },
     { name: 'Emergency', color: 'bg-red-500', dotColor: 'bg-red-500' },
     { name: 'Break', color: 'bg-yellow-500', dotColor: 'bg-yellow-500' },
     { name: 'Away', color: 'bg-orange-500', dotColor: 'bg-orange-500' },

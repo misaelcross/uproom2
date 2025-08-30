@@ -68,7 +68,7 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
         return 'bg-green-500';
       case 'away':
         return 'bg-yellow-500';
-      case 'in meeting':
+      case 'Meeting':
         return 'bg-red-500';
       case 'focus':
         return 'bg-purple-500';

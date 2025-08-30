@@ -19,8 +19,8 @@ const StatusGroupDetails = ({ group, onUserClick, onClose }) => {
 
   // Configuração dos status com cores e ícones
   const statusConfig = {
-    'In meeting': {
-      label: 'In Meeting',
+    'Meeting': {
+    label: 'Meeting',
       icon: Headphones,
       color: 'text-blue-400',
       bgColor: 'bg-blue-500/10'

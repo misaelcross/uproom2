@@ -5,7 +5,7 @@ export const getStatusColors = (availability) => {
   switch (availability) {
     case 'Available':
       return { text: 'text-green-400', bg: 'bg-green-500/10' };
-    case 'In meeting':
+    case 'Meeting':
       return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
     case 'Break':
       return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };

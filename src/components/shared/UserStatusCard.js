@@ -23,7 +23,7 @@ const UserStatusCard = ({
   const statusOptions = [
     { name: 'Available', color: 'bg-green-500', textColor: 'text-green-400', bgColor: 'bg-green-500/10' },
     { name: 'Focus', color: 'bg-purple-500', textColor: 'text-purple-400', bgColor: 'bg-purple-500/10' },
-    { name: 'In meeting', color: 'bg-blue-500', textColor: 'text-blue-400', bgColor: 'bg-blue-500/10' },
+    { name: 'Meeting', color: 'bg-blue-500', textColor: 'text-blue-400', bgColor: 'bg-blue-500/10' },
     { name: 'Emergency', color: 'bg-red-500', textColor: 'text-red-400', bgColor: 'bg-red-500/10' },
     { name: 'Break', color: 'bg-yellow-500', textColor: 'text-yellow-400', bgColor: 'bg-yellow-500/10' },
     { name: 'Away', color: 'bg-orange-500', textColor: 'text-orange-400', bgColor: 'bg-orange-500/10' },

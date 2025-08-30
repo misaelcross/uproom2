@@ -26,7 +26,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
         return 'bg-green-500';
       case 'away':
         return 'bg-yellow-500';
-      case 'in meeting':
+      case 'Meeting':
         return 'bg-red-500';
       case 'focus':
         return 'bg-purple-500';
@@ -44,7 +44,7 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
   const getStatusColor = (availability) => {
     switch (availability) {
       case 'Available': return { text: 'text-green-400', bg: 'bg-green-500/10' };
-      case 'In meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
+      case 'Meeting': return { text: 'text-blue-400', bg: 'bg-blue-500/10' };
       case 'Break': return { text: 'text-yellow-400', bg: 'bg-yellow-500/10' };
       case 'Focus': return { text: 'text-purple-400', bg: 'bg-purple-500/10' };
       case 'Emergency': return { text: 'text-red-400', bg: 'bg-red-500/10' };

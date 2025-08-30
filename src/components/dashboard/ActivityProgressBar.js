@@ -7,7 +7,7 @@ const ActivityProgressBar = ({ user, isVisible }) => {
   const generateActivityProgress = (user) => {
     const now = new Date();
     const statusConfig = {
-      'In meeting': {
+      'Meeting': {
         totalDuration: 60, // 60 minutes
         startOffset: 15, // started 15 minutes ago
         color: 'bg-blue-500',
