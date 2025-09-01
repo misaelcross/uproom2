@@ -232,12 +232,12 @@ const AnimatedBottomSheet = ({
               onMouseLeave={handleUserMentionLeave}
               onClick={() => handleUserMentionClick(user.name)}
             >
-              {formatMentionName(user.name)}
+              @{formatMentionName(user.name)}
             </span>
           );
         } else {
           // Para preview, texto formatado unificado
-          parts.push(formatMentionName(user.name));
+          parts.push(`@${formatMentionName(user.name)}`);
         }
       } else {
         if (isNudgeOpen) {
@@ -797,10 +797,10 @@ const AnimatedBottomSheet = ({
                     globalNudges.map((nudge) => (
                       <div
                         key={nudge.id}
-                        className={`p-4 rounded-lg border transition-all cursor-pointer hover:bg-neutral-700 ${
+                        className={`p-4 rounded-lg border transition-all cursor-pointer ${
                           nudge.isRead 
-                            ? 'bg-neutral-800 border-neutral-700' 
-                            : 'bg-neutral-700 border-neutral-600 shadow-sm'
+                            ? 'bg-neutral-800 border-neutral-700 hover:bg-neutral-700' 
+                            : 'bg-neutral-700 border-neutral-600 shadow-sm hover:bg-red-500/10 hover:border-red-500/20'
                         }`}
                         onClick={() => openNudgeDetail(nudge)}
                       >

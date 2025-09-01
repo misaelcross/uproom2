@@ -229,23 +229,40 @@ function NudgePage({ onNavigate }) {
 
   // Função para selecionar nudge - agora usa o store global
   const handleNudgeSelect = (nudge) => {
-    setSelectedNudge(nudge.id);
+    // Se já há um nudge selecionado, marcar como lido antes de selecionar o novo
+    if (selectedNudgeId) {
+      handleNudgeDeselect();
+    }
     
-    // Marcar como lido apenas se não estiver lido
-    if (!nudge.isRead) {
-      // Check if it's a store nudge or local nudge
-      const isStoreNudge = nudges.some(n => n.id === nudge.id);
+    setSelectedNudge(nudge.id);
+    // Não marcar como lido automaticamente - isso será feito apenas quando o usuário sair da visualização
+  };
+
+  // Função para marcar nudge como lido quando o usuário sair da visualização
+  const handleNudgeDeselect = () => {
+    if (selectedNudgeId) {
+      // Encontrar o nudge selecionado
+      const currentNudge = [...nudges, ...localNudges].find(n => n.id === selectedNudgeId);
       
-      if (isStoreNudge) {
-        markAsRead(nudge.id);
-      } else {
-        setLocalNudges(prev => prev.map(n => 
-          n.id === nudge.id 
-            ? { ...n, isRead: true }
-            : n
-        ));
+      // Marcar como lido apenas se não estiver lido
+      if (currentNudge && !currentNudge.isRead) {
+        // Check if it's a store nudge or local nudge
+        const isStoreNudge = nudges.some(n => n.id === selectedNudgeId);
+        
+        if (isStoreNudge) {
+          markAsRead(selectedNudgeId);
+        } else {
+          setLocalNudges(prev => prev.map(n => 
+            n.id === selectedNudgeId 
+              ? { ...n, isRead: true, readAt: new Date().toISOString() }
+              : n
+          ));
+        }
       }
     }
+    
+    // Limpar seleção
+    setSelectedNudge(null);
   };
 
   // Obter o nudge selecionado do store global, dados locais ou drafts
@@ -649,8 +666,17 @@ function NudgePage({ onNavigate }) {
       return timestampA - timestampB; // Menor valor = mais recente
     });
     
-    // Ordenar lidos por timestamp (mais recentes primeiro)
+    // Ordenar lidos por readAt (mais recentemente lidos primeiro), depois por timestamp
     readNudges.sort((a, b) => {
+      // Se ambos têm readAt, ordenar por readAt (mais recente primeiro)
+      if (a.readAt && b.readAt) {
+        return new Date(b.readAt) - new Date(a.readAt);
+      }
+      // Se apenas um tem readAt, ele vem primeiro
+      if (a.readAt && !b.readAt) return -1;
+      if (!a.readAt && b.readAt) return 1;
+      
+      // Se nenhum tem readAt, ordenar por timestamp
       const timestampA = getTimestampValue(a.timestamp);
       const timestampB = getTimestampValue(b.timestamp);
       return timestampA - timestampB; // Menor valor = mais recente
@@ -757,7 +783,7 @@ function NudgePage({ onNavigate }) {
                 sortBy === 'Drafts' ? (
                   <DraftDetails 
                     draft={selectedNudge}
-                    onBack={() => setSelectedNudge(null)}
+                    onBack={handleNudgeDeselect}
                     onEdit={() => {
                       // Implementar lógica de edição se necessário
                       console.log('Edit draft:', selectedNudge);
@@ -766,7 +792,7 @@ function NudgePage({ onNavigate }) {
                 ) : (
                   <NudgeDetails 
                     nudge={selectedNudge}
-                    onBack={() => setSelectedNudge(null)}
+                    onBack={handleNudgeDeselect}
                     onUserClick={handleUserClick}
                     onUpdate={(updatedNudge) => {
                       setLocalNudges(prev => prev.map(n => 

@@ -28,7 +28,7 @@ export const getStatusBackgroundColor = (availability) => {
   return colors.bg;
 };
 
-// Function to format user name for mentions (@NomeSobrenome)
+// Function to format user name for mentions (NomeSobrenome)
 export const formatMentionName = (name) => {
   if (!name) return '';
   
@@ -38,7 +38,7 @@ export const formatMentionName = (name) => {
     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
   ).join('');
   
-  return `@${formattedName}`;
+  return formattedName;
 };
 
 // Function to create standardized mention component
@@ -51,7 +51,7 @@ export const createMentionSpan = (user, mentionName, handlers = {}) => {
     onMouseEnter,
     onMouseLeave,
     onClick,
-    children: formatMentionName(mentionName)
+    children: `@${formatMentionName(mentionName)}`
   };
 };
 

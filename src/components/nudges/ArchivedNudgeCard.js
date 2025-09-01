@@ -59,7 +59,7 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
       if (user) {
         if (isPreview) {
           // Para preview, apenas texto simples formatado
-          parts.push(formatMentionName(user.name));
+          parts.push(`@${formatMentionName(user.name)}`);
         } else {
           // Para visualização completa, com cores e interações
           const colors = getStatusColors(user.availability);
@@ -70,7 +70,7 @@ const ArchivedNudgeCard = ({ userGroup, onClick, isSelected }) => {
               onMouseEnter={(e) => handleUserMentionHover(user, e)}
               onMouseLeave={handleUserMentionLeave}
             >
-              {formatMentionName(user.name)}
+              @{formatMentionName(user.name)}
             </span>
           );
         }

@@ -67,7 +67,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
       if (user) {
         if (isPreview) {
           // Para preview, apenas texto simples formatado
-          parts.push(formatMentionName(user.name));
+          parts.push(`@${formatMentionName(user.name)}`);
         } else {
           // Para visualização completa, com cores e interações
           const colors = getStatusColors(user.availability);
@@ -78,7 +78,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
               onMouseEnter={(e) => handleUserMentionHover(user, e)}
               onMouseLeave={handleUserMentionLeave}
             >
-              {formatMentionName(user.name)}
+              @{formatMentionName(user.name)}
             </span>
           );
         }
@@ -129,11 +129,11 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
     } else if (nudge.priority === 'medium') {
       return nudge.isRead 
         ? 'bg-transparent border border-neutral-800 hover:bg-orange-500/10 hover:border-orange-500/20'
-        : 'bg-neutral-800 border border-neutral-600 hover:bg-orange-500/10 hover:border-orange-500/20';
+        : 'bg-neutral-800 border border-neutral-600 hover:bg-red-500/10 hover:border-red-500/20';
     } else {
       return nudge.isRead 
         ? 'bg-transparent border border-neutral-800 hover:bg-neutral-800/50 hover:border-neutral-700'
-        : 'bg-neutral-800 border border-neutral-600 hover:bg-neutral-600 hover:border-neutral-500';
+        : 'bg-neutral-800 border border-neutral-600 hover:bg-red-500/10 hover:border-red-500/20';
     }
   };
 

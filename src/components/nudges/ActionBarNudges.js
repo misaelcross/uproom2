@@ -114,19 +114,13 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
       <div className="relative" ref={sortDropdownRef}>
         <button 
           onClick={handleSortClick}
-          className={`flex items-center space-x-2 px-4 py-2 border border-neutral-600 rounded-lg transition-colors ${
-            selectedSort !== 'Sort' 
-              ? 'bg-neutral-800 hover:bg-neutral-700' 
-              : 'bg-transparent hover:bg-neutral-700'
-          }`}
+          className="flex items-center space-x-2 px-4 py-2 border border-neutral-600 rounded-lg transition-colors bg-transparent hover:bg-neutral-700"
         >
           <Filter className="h-4 w-4 text-neutral-300" />
           <span className="text-neutral-300 text-sm font-medium">
-            {selectedSort === 'Sort' ? 'Sort' : selectedSort}
+            Sort
           </span>
-          {selectedSort !== 'Sort' && (
-            <ChevronDown className="h-4 w-4 text-neutral-300" />
-          )}
+          <ChevronDown className="h-4 w-4 text-neutral-300" />
         </button>
         
         {/* Dropdown Menu */}

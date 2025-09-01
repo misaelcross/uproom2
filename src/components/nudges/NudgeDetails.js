@@ -129,7 +129,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
             onMouseLeave={handleUserMentionLeave}
             onClick={() => handleUserMentionClick(user)}
           >
-            {formatMentionName(user.name)}
+            @{formatMentionName(user.name)}
           </span>
         );
       } else {

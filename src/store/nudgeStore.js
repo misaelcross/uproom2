@@ -306,7 +306,7 @@ const useNudgeStore = create((set, get) => ({
   
   markAsRead: (nudgeId) => set((state) => ({
     nudges: state.nudges.map(nudge => 
-      nudge.id === nudgeId ? { ...nudge, isRead: true } : nudge
+      nudge.id === nudgeId ? { ...nudge, isRead: true, readAt: new Date().toISOString() } : nudge
     )
   })),
 

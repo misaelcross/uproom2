@@ -6,6 +6,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
 import { Bold, Italic, Strikethrough, Underline, Smile, AtSign } from 'lucide-react';
 import 'simplebar-react/dist/simplebar.min.css';
+import { formatMentionName } from '../../utils/mentionUtils';
 
 // Mock users data
 const mockUsers = [
@@ -132,7 +133,7 @@ const MentionList = React.forwardRef((props, ref) => {
   const selectItem = (index) => {
     const item = props.items[index];
     if (item) {
-      props.command({ id: item.id, label: item.name });
+      props.command({ id: item.id, label: formatMentionName(item.name) });
     }
   };
 

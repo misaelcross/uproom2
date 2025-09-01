@@ -49,7 +49,7 @@ const SecondaryBottomSheet = () => {
       if (user) {
         if (isPreview) {
           // Para preview, texto formatado unificado
-          parts.push(formatMentionName(user.name));
+          parts.push(`@${formatMentionName(user.name)}`);
         } else {
           // Para visualização completa, com cores e interações
           const colors = getStatusColors(user.availability);
@@ -58,7 +58,7 @@ const SecondaryBottomSheet = () => {
               key={match.index}
               className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
             >
-              {formatMentionName(user.name)}
+              @{formatMentionName(user.name)}
             </span>
           );
         }
