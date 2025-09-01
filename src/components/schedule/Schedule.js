@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MoreVertical, Plus, Paperclip, X, Save, Users, Link } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 import EventContextModal from './EventContextModal';
 import MonthlyCalendar from './MonthlyCalendar';
+import { usersData } from '../../data/usersData';
 
 
 const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false }) => {
@@ -13,6 +15,20 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1600);
 
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    time: '',
+    people: [],
+    links: []
+  });
+
+  // People dropdown state
+  const [peopleSearchTerm, setPeopleSearchTerm] = useState('');
+  const [isPeopleDropdownOpen, setIsPeopleDropdownOpen] = useState(false);
+  const [peopleDropdownPosition, setPeopleDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const peopleInputRef = useRef(null);
+  const peopleDropdownRef = useRef(null);
+
   useEffect(() => {
     const handleResize = () => {
       setIsLargeScreen(window.innerWidth >= 1600);
@@ -21,15 +37,70 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // People dropdown functions
+  const updatePeopleDropdownPosition = () => {
+    if (peopleInputRef.current) {
+      const rect = peopleInputRef.current.getBoundingClientRect();
+      setPeopleDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  };
+
+  // Close people dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (peopleDropdownRef.current && !peopleDropdownRef.current.contains(event.target) &&
+          peopleInputRef.current && !peopleInputRef.current.contains(event.target)) {
+        setIsPeopleDropdownOpen(false);
+        setPeopleSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Update position when dropdown opens
+  useEffect(() => {
+    if (isPeopleDropdownOpen) {
+      updatePeopleDropdownPosition();
+    }
+  }, [isPeopleDropdownOpen]);
+
+  // Filter users based on search term
+  const filteredUsers = usersData.filter(user => 
+    user.name.toLowerCase().includes(peopleSearchTerm.toLowerCase()) ||
+    user.title.toLowerCase().includes(peopleSearchTerm.toLowerCase())
+  );
+
+  // Handle user selection
+  const handleUserSelect = (user) => {
+    const isAlreadySelected = newEvent.people.find(person => person.id === user.id);
+    if (!isAlreadySelected) {
+      setNewEvent({
+        ...newEvent,
+        people: [...newEvent.people, { id: user.id, name: user.name, avatar: user.avatar }]
+      });
+    }
+    setPeopleSearchTerm('');
+    setIsPeopleDropdownOpen(false);
+  };
+
+  // Remove person from selection
+  const handlePersonRemove = (personId) => {
+    setNewEvent({
+      ...newEvent,
+      people: newEvent.people.filter(person => person.id !== personId)
+    });
+  };
   
 
-  const [newEvent, setNewEvent] = useState({
-    title: '',
-    time: '',
-    people: [],
-    links: []
-  });
-  
   // Default schedule data for current user
   const defaultScheduleData = [
     {
@@ -406,7 +477,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                 onClick={() => setIsAddingEvent(true)}
                 className="flex items-center justify-center px-3 py-2 border border-neutral-700 hover:bg-white/10 text-white rounded-lg transition-colors"
               >
-              <span className="text-sm">Add Event</span>
+              <span className="text-sm">Add event</span>
             </button>
           </div>
         </div>
@@ -583,29 +654,39 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         />
                       </div>
 
-                      {/* People and Links Row */}
-                      <div className="flex items-center justify-between mb-3">
+                      {/* People and Links - Responsive Layout */}
+                      <div className={`mb-3 ${
+                        fullWidth 
+                          ? 'flex items-center justify-between' 
+                          : 'flex flex-col gap-3'
+                      }`}>
                         {/* People Input */}
-                        <div className="flex items-center gap-2 flex-1">
-                          <Users className="w-3 h-3 text-neutral-400" />
-                          <input
-                            type="text"
-                            placeholder="Add people"
-                            className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 flex-1"
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter' && e.target.value.trim()) {
-                                setNewEvent({
-                                  ...newEvent,
-                                  people: [...newEvent.people, { name: e.target.value.trim(), avatar: null }]
-                                });
-                                e.target.value = '';
-                              }
-                            }}
-                          />
+                        <div className="flex-1 relative">
+                          <div className="flex items-center gap-2">
+                            <Users className="w-3 h-3 text-neutral-400" />
+                            <div className="flex-1">
+
+                              {/* Search Input */}
+                              <input
+                                ref={peopleInputRef}
+                                type="text"
+                                value={peopleSearchTerm}
+                                onChange={(e) => setPeopleSearchTerm(e.target.value)}
+                                onFocus={() => {
+                                  setIsPeopleDropdownOpen(true);
+                                  updatePeopleDropdownPosition();
+                                }}
+                                placeholder="Add people"
+                                className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 w-full"
+                              />
+                            </div>
+                          </div>
                         </div>
 
                         {/* Links Input */}
-                        <div className="flex items-center gap-2 flex-1 ml-4">
+                        <div className={`flex items-center gap-2 flex-1 ${
+                          fullWidth ? 'ml-4' : 'ml-0'
+                        }`}>
                           <Link className="w-3 h-3 text-neutral-400" />
                           <input
                             type="url"
@@ -815,6 +896,58 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
         onUpdateEvent={handleUpdateEvent}
       />
 
+      {/* People Dropdown */}
+      {isPeopleDropdownOpen && createPortal(
+        <div
+          ref={peopleDropdownRef}
+          className="fixed z-50 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg"
+          style={{
+            top: `${peopleDropdownPosition.top}px`,
+            left: `${peopleDropdownPosition.left}px`,
+            width: `${peopleDropdownPosition.width}px`,
+            minWidth: '200px'
+          }}
+        >
+          <SimpleBar className="max-h-48">
+            <div className="py-1">
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => {
+                  const isSelected = newEvent.people.find(person => person.id === user.id);
+                  return (
+                    <div
+                      key={user.id}
+                      onClick={() => handleUserSelect(user)}
+                      className={`px-3 py-2 cursor-pointer hover:bg-neutral-700 flex items-center gap-2 ${
+                        isSelected ? 'bg-neutral-700 opacity-50' : ''
+                      }`}
+                    >
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-neutral-600 flex items-center justify-center">
+                          <span className="text-xs text-neutral-300">{user.name.charAt(0)}</span>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="text-sm text-neutral-200">{user.name}</div>
+                        <div className="text-xs text-neutral-400">{user.title}</div>
+                      </div>
+                      {isSelected && (
+                        <div className="text-xs text-neutral-400">Selected</div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="px-3 py-2 text-sm text-neutral-400">
+                  No users found
+                </div>
+              )}
+            </div>
+          </SimpleBar>
+        </div>,
+        document.body
+      )}
 
     </div>
   );

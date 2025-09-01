@@ -214,7 +214,7 @@ const SecondaryBottomSheet = () => {
                     alt={currentNudge.senderName}
                     className="w-8 h-8 rounded-full"
                   />
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
                     <span className="text-xs font-bold text-white">1</span>
                   </div>
                 </div>

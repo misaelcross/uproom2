@@ -42,7 +42,7 @@ const PulsePage = ({ onNavigate }) => {
               selectedCount={0}
               onAction={(action) => console.log('Action:', action)}
               actions={[
-                { id: 'export', label: 'Export Data', icon: Activity },
+                { id: 'export', label: 'Export data', icon: Activity },
                 { id: 'refresh', label: 'Refresh Analytics', icon: TrendingUp }
               ]}
             />

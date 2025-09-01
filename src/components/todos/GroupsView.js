@@ -284,7 +284,7 @@ const GroupsView = ({
   if (showCreateGroup) {
     return (
       <div className="p-6 flex-1">
-        <h3 className="text-white text-lg font-semibold mb-4">Create New Folder</h3>
+        <h3 className="text-white text-lg font-semibold mb-4">Create new folder</h3>
         
         <div className="space-y-2">
           <div>
@@ -493,7 +493,7 @@ const GroupsView = ({
                           className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm"
                         >
                           <FolderPlus className="w-4 h-4" />
-                          <span>Add Sub-folder</span>
+                          <span>Add sub-folder</span>
                         </button>
                       )}
                       <button
@@ -505,7 +505,7 @@ const GroupsView = ({
                         className="w-full flex items-center gap-2 p-2 text-neutral-400 hover:text-white hover:bg-neutral-700 transition-colors text-sm"
                       >
                         <UserPlus className="w-4 h-4" />
-                        <span>Add People</span>
+                        <span>Add people</span>
                       </button>
                       <button
                         onClick={(e) => {
@@ -668,7 +668,7 @@ const GroupsView = ({
                   className="flex items-center space-x-2 p-2 text-sm text-neutral-400 hover:text-white hover:bg-neutral-700 rounded-md transition-colors"
                 >
                   <FolderPlus className="w-4 h-4" />
-                  <span>Create New Subfolder</span>
+                  <span>Create new subfolder</span>
                 </button>
               </div>
             )}

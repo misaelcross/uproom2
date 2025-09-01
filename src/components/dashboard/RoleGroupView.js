@@ -31,7 +31,7 @@ const RoleGroupView = ({ users, onUserClick, onGroupClick }) => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <h3 className="text-white text-lg font-semibold">{role}</h3>
-                <div className="bg-neutral-700 text-neutral-400 text-xs px-2 py-1 rounded aspect-square flex items-center justify-center w-5 h-5">
+                <div className="bg-neutral-700 text-neutral-400 text-xs px-2 py-1 rounded-md aspect-square flex items-center justify-center w-5 h-5">
                   {userCount}
                 </div>
               </div>

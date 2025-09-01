@@ -277,7 +277,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
                   </div>
                   <div className="flex items-center gap-4 mt-3 text-xs text-neutral-500">
                     {draft.poll.isAnonymous && <span>Anonymous</span>}
-                    {draft.poll.allowMultipleChoices && <span>Multiple choices</span>}
+                    {draft.poll.allowMultipleChoices && <span>Multiple choice</span>}
                     <span className="capitalize">{draft.poll.type}</span>
                   </div>
                 </div>
@@ -472,7 +472,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
                   </div>
                   <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500">
                     {attachedPoll.isAnonymous && <span>Anonymous</span>}
-                    {attachedPoll.allowMultipleChoices && <span>Multiple choices</span>}
+                    {attachedPoll.allowMultipleChoices && <span>Multiple choice</span>}
                     <span>Send to: {attachedPoll.targetAudience}</span>
                   </div>
                 </div>
@@ -496,7 +496,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
             className="w-full h-12 flex items-center justify-center space-x-2 bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
           >
             <Save className="h-5 w-5" />
-            <span className="font-medium">Save Changes</span>
+            <span className="font-medium">Save changes</span>
           </button>
         ) : (
           <>
@@ -515,7 +515,7 @@ const DraftDetails = ({ draft, onBack, onEdit }) => {
               <span className={`font-medium ${
                 !draft.message?.trim() && !draft.poll && (!draft.recipients || draft.recipients.length === 0) ? 'text-neutral-400' : 'text-neutral-300'
               }`}>
-                Save Draft
+                Save draft
               </span>
             </button>
 

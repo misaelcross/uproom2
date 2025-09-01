@@ -64,7 +64,7 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
     e.stopPropagation();
     if (option === 'Remove from Group' && onRemoveFromGroup) {
       onRemoveFromGroup();
-    } else if (option === 'Set Reminder' && onSetReminder) {
+    } else if (option === 'Set reminder' && onSetReminder) {
       onSetReminder(user.name);
     } else {
       console.log(`${option} clicked for ${user.name}`);
@@ -75,12 +75,12 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
   const dropdownOptions = isInGroup ? [
     'Remove from Group',
     'Send Nudge',
-    'Set Reminder',
+    'Set reminder',
     'Collaborate',
     'Request to Join Meeting'
   ] : [
     'Send Nudge',
-    'Set Reminder',
+    'Set reminder',
     'Collaborate',
     'Request to Join Meeting',
     'Add to a Group'

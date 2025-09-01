@@ -42,8 +42,8 @@ const useNudgeStore = create((set, get) => ({
       senderName: 'Bobbie Barnes',
       senderTitle: 'UX Designer',
       senderAvatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-      message: 'Hey @Emily Watson! Can you review the latest design changes? I need your feedback before the client meeting tomorrow. @Alex Thompson, please check if the deployment is ready.',
-      fullMessage: 'Hey @Emily Watson! Can you review the latest design changes? I need your feedback before the client meeting tomorrow. @Alex Thompson, please check if the deployment is ready for the demo.',
+      message: 'Hey @Emily  Can you review the latest design changes? I need your feedback before the client meeting tomorrow. @Alex Thompson, please check if the deployment is ready.',
+      fullMessage: 'Hey @Emily Can you review the latest design changes? I need your feedback before the client meeting tomorrow. @Alex Thompson, please check if the deployment is ready for the demo.',
       timestamp: '1h',
       type: 'message',
       priority: 'high',
@@ -366,7 +366,7 @@ const useNudgeStore = create((set, get) => ({
     const newNudge = {
       sender: {
         name: "Alex Chen",
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+        avatar: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop",
         status: "online"
       },
       message: "Quick question about the design mockups!",

@@ -44,6 +44,9 @@ const TodosPage = ({ onNavigate }) => {
   
   // TopTabs state
   const [activeTopTab, setActiveTopTab] = useState('todos');
+  
+  // Accordion state for completed todos
+  const [completedTodosCollapsed, setCompletedTodosCollapsed] = useState(true);
 
   // Mock data for todos
   const [todos, setTodos] = useState([
@@ -715,6 +718,8 @@ const TodosPage = ({ onNavigate }) => {
                   onDelete={deleteTodo}
                   onSelect={setSelectedTodo}
                   onUpdatePriority={updateTodoPriority}
+                  completedTodosCollapsed={completedTodosCollapsed}
+                  setCompletedTodosCollapsed={setCompletedTodosCollapsed}
                 />
               </SimpleBar>
 

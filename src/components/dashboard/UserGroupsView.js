@@ -42,7 +42,7 @@ const UserGroupsView = ({ users, onUserClick, onGroupClick, createdGroups = [] }
                 <h3 className="text-white text-lg font-semibold truncate max-w-[200px]" title={groupName}>
                   {groupName}
                 </h3>
-                <div className="bg-neutral-700 text-neutral-400 text-xs px-2 py-1 rounded aspect-square flex items-center justify-center w-5 h-5">
+                <div className="bg-neutral-700 text-neutral-400 text-xs px-2 py-1 rounded-md aspect-square flex items-center justify-center w-5 h-5">
                   {userCount}
                 </div>
               </div>

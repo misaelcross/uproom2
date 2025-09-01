@@ -4,7 +4,7 @@ import { Users, UserPlus, Download, Shield, Edit } from 'lucide-react';
 const TeamEmptyState = ({ onAddUser, onImportUsers, onManageRoles, onBulkEdit }) => {
   const quickActions = [
     {
-      label: 'Add New User',
+      label: 'Add new user',
       icon: UserPlus,
       onClick: onAddUser,
       description: 'Invite a new team member'

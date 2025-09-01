@@ -4,15 +4,16 @@ import { createEditor, Editor, Transforms, Range, Node } from 'slate';
 import { Slate, Editable, withReact, useSlate, useSelected, useFocused } from 'slate-react';
 import { withHistory } from 'slate-history';
 import { Bold, Italic, Strikethrough, Underline, Smile, AtSign } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 
 // Mock users data for mentions
 const mockUsers = [
-  { id: 1, name: 'John Doe', username: 'johndoe', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face' },
-  { id: 2, name: 'Jane Smith', username: 'janesmith', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face' },
-  { id: 3, name: 'Mike Johnson', username: 'mikejohnson', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face' },
-  { id: 4, name: 'Sarah Wilson', username: 'sarahwilson', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face' },
-  { id: 5, name: 'David Brown', username: 'davidbrown', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face' }
+  { id: 1, name: 'John Doe', username: 'johndoe', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+  { id: 2, name: 'Jane Smith', username: 'janesmith', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+  { id: 3, name: 'Mike Johnson', username: 'mikejohnson', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+  { id: 4, name: 'Sarah Wilson', username: 'sarahwilson', avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+  { id: 5, name: 'David Brown', username: 'davidbrown', avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' }
 ];
 
 // Emoji list
@@ -207,7 +208,7 @@ const MentionDropdown = ({ search, onSelect, onClose, position }) => {
 
   return (
     <div 
-      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-[9999] max-h-48 overflow-auto"
+      className="absolute bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-[9999] max-h-48"
       style={{ 
         top: dropdownTop,
         left: dropdownLeft,
@@ -216,8 +217,8 @@ const MentionDropdown = ({ search, onSelect, onClose, position }) => {
         transform: 'translateY(-134%) translateX(250%)',
         pointerEvents: 'auto'
       }}
-      data-simplebar
     >
+      <SimpleBar style={{ maxHeight: '192px' }}>
       {filteredUsers.map(user => (
         <button
           key={user.id}
@@ -239,6 +240,7 @@ const MentionDropdown = ({ search, onSelect, onClose, position }) => {
           </div>
         </button>
       ))}
+      </SimpleBar>
     </div>
   );
 };

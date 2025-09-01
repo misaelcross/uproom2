@@ -1,21 +1,23 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Mention from '@tiptap/extension-mention';
 import { Bold, Italic, Strikethrough, Underline, Smile, AtSign } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { formatMentionName } from '../../utils/mentionUtils';
+import { formatMentionName, getStatusColors } from '../../utils/mentionUtils';
+import { usersData } from '../../data/usersData';
 
 // Mock users data
 const mockUsers = [
-  { id: 1, name: 'John Doe', username: 'johndoe', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face' },
-  { id: 2, name: 'Jane Smith', username: 'janesmith', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face' },
-  { id: 3, name: 'Mike Johnson', username: 'mikejohnson', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face' },
-  { id: 4, name: 'Sarah Wilson', username: 'sarahwilson', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face' },
-  { id: 5, name: 'David Brown', username: 'davidbrown', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face' }
-];
+    { id: 1, name: 'John Doe', username: 'johndoe', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+    { id: 2, name: 'Jane Smith', username: 'janesmith', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+    { id: 3, name: 'Mike Johnson', username: 'mikejohnson', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+    { id: 4, name: 'Sarah Wilson', username: 'sarahwilson', avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
+    { id: 5, name: 'David Brown', username: 'davidbrown', avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' }
+  ];
 
 // Emoji list
 const emojiList = [
@@ -173,10 +175,11 @@ const MentionList = React.forwardRef((props, ref) => {
   }));
 
   return (
-    <div className="bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 max-h-48 overflow-auto" data-simplebar>
-      {props.items.length ? (
-        props.items.map((item, index) => (
-          <button
+    <div className="bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 max-h-48" style={{ minWidth: '200px', maxWidth: '200px' }}>
+      <SimpleBar style={{ maxHeight: '192px' }}>
+        {props.items.length ? (
+          props.items.map((item, index) => (
+            <button
             key={item.id}
             type="button"
             onClick={() => selectItem(index)}
@@ -198,9 +201,10 @@ const MentionList = React.forwardRef((props, ref) => {
             </div>
           </button>
         ))
-      ) : (
-        <div className="px-3 py-2 text-neutral-400 text-sm">No users found</div>
-      )}
+        ) : (
+          <div className="px-3 py-2 text-neutral-400 text-sm">No users found</div>
+        )}
+      </SimpleBar>
     </div>
   );
 });
@@ -287,7 +291,7 @@ const suggestion = {
 };
 
 // Main TipTap Editor Component
-const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) => {
+const TipTapEditor = ({ value, onChange, placeholder = "Type something...", showToolbar = true }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef(null);
@@ -302,8 +306,20 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) =>
         includeChildren: true,
       }),
       Mention.configure({
-        HTMLAttributes: {
-          class: 'mention bg-green-500 text-white px-2 py-1 rounded text-sm font-semibold',
+        renderHTML({ options, node }) {
+          const mentionId = node.attrs.id;
+          const user = usersData.find(u => u.id === mentionId);
+          const colors = user ? getStatusColors(user.availability) : { text: 'text-gray-400', bg: 'bg-gray-500/10' };
+          
+          return [
+            'span',
+            {
+              class: `mention inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`,
+              'data-type': 'mention',
+              'data-id': mentionId,
+            },
+            `@${node.attrs.label || ''}`,
+          ];
         },
         suggestion,
       }),
@@ -376,19 +392,21 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something..." }) =>
 
   return (
     <div ref={editorRef} className="bg-neutral-800 border border-neutral-600 rounded-lg overflow-hidden relative">
-      <Toolbar 
-        editor={editor}
-        showEmojiPicker={showEmojiPicker}
-        setShowEmojiPicker={setShowEmojiPicker}
-        onMentionTrigger={handleMentionTrigger}
-      />
+      {showToolbar && (
+        <Toolbar 
+          editor={editor}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
+          onMentionTrigger={handleMentionTrigger}
+        />
+      )}
       
       <div className="relative">
         <EditorContent 
           editor={editor}
         />
         
-        {showEmojiPicker && (
+        {showToolbar && showEmojiPicker && (
           <EmojiPicker 
             onSelect={handleEmojiSelect}
             onClose={() => setShowEmojiPicker(false)}

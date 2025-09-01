@@ -301,8 +301,10 @@ const NotificationModal = () => {
               backgroundColor: '#ef4444',
               color: 'white',
               fontSize: '0.75rem',
-              minWidth: '18px',
-              height: '18px'
+              fontWeight: 700,
+              minWidth: '16px',
+              height: '16px',
+              borderRadius: '4px'
             }
           }}
         >

@@ -175,7 +175,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
               setIsDropdownOpen(!isDropdownOpen);
             }}
           >
-            <MoreVertical className="w-5 h-5 text-neutral-400" />
+            <MoreVertical className="w-4 h-4 text-neutral-400" />
           </button>
           
           {/* Dropdown Menu */}
@@ -306,7 +306,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
           
           {/* Notification Badge - Fixed width to prevent text reflow */}
           {!nudge.isRead && (
-            <div className="flex-shrink-0 w-4 h-4 bg-red-500 rounded flex items-center justify-center ml-2">
+            <div className="flex-shrink-0 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center ml-2">
               <span className="text-white text-xs font-bold leading-none">1</span>
             </div>
           )}

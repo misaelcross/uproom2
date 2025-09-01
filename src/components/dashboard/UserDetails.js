@@ -221,7 +221,7 @@ const UserDetails = ({ user, onBack }) => {
               className="bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-700 disabled:text-neutral-400 text-white border border-neutral-600 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <Send size={16} />
-              <span>Send Nudge</span>
+              <span>Send nudge</span>
             </button>
           </div>
         </div>

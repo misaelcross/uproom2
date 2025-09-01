@@ -25,7 +25,7 @@ const TopTabsTodos = ({ activeTab, setActiveTab, catchUpCount = 0 }) => {
         >
           Catch-up
           {catchUpCount > 0 && (
-            <div className="absolute -top-[1px] right-[4px] w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+            <div className="absolute -top-[1px] right-[4px] w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
               <span className="text-white text-xs font-bold leading-none">{catchUpCount}</span>
             </div>
           )}

@@ -1,13 +1,56 @@
 import React, { useState, useRef, useEffect } from 'react';
 import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText } from 'lucide-react';
 import TodoStep from './TodoStep';
+import TipTapEditor from '../shared/TipTapEditor';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import {
+  usePickerLayout,
+  PickersLayoutRoot,
+  pickersLayoutClasses,
+  PickersLayoutContentWrapper,
+} from '@mui/x-date-pickers/PickersLayout';
 import { TextField, ThemeProvider, createTheme, Select, MenuItem, FormControl, InputLabel, Checkbox } from '@mui/material';
 import dayjs from 'dayjs';
+
+// Custom TimePicker Layout with SimpleBar
+function CustomTimePickerLayout(props) {
+  const { toolbar, tabs, content, actionBar, ownerState } = usePickerLayout(props);
+
+  return (
+    <PickersLayoutRoot className={pickersLayoutClasses.root} ownerState={ownerState}>
+      {toolbar}
+      <PickersLayoutContentWrapper
+        className={pickersLayoutClasses.contentWrapper}
+        ownerState={ownerState}
+        sx={{
+          '& .MuiMultiSectionDigitalClock-root, & .MuiDigitalClock-root': {
+            minHeight: 280,
+          },
+          '& .MuiList-root': {
+            minHeight: 280,
+          },
+        }}
+      >
+        {tabs}
+        {/* Container com altura explícita para evitar colapso de layout */}
+        <div style={{ height: 320, width: '100%', display: 'flex', flexDirection: 'column' }}>
+          <SimpleBar style={{ height: '100%', width: '100%' }} autoHide={false}>
+            {/* Wrapper interno para garantir minHeight para cálculos do MUI */}
+            <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+              {content}
+            </div>
+          </SimpleBar>
+        </div>
+      </PickersLayoutContentWrapper>
+      {actionBar}
+    </PickersLayoutRoot>
+  );
+}
 
 // Material UI dark theme configuration
 const darkTheme = createTheme({
@@ -99,6 +142,218 @@ const darkTheme = createTheme({
         },
       },
     },
+    // Enhanced styling for MUI Timer components
+    MuiPickersPopper: {
+      styleOverrides: {
+        root: {
+          zIndex: 9999,
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+          },
+          // SimpleBar styling for MUI Timer components
+          '& .simplebar-scrollbar': {
+            '&:before': {
+              backgroundColor: '#525252',
+              borderRadius: '4px',
+              opacity: '0.8',
+            },
+            '&.simplebar-visible:before': {
+              opacity: '1',
+            },
+          },
+          '& .simplebar-track': {
+            backgroundColor: 'transparent',
+            '&.simplebar-vertical': {
+              width: '15px',
+              right: '2px',
+            },
+          },
+          '& .simplebar-content-wrapper': {
+            scrollBehavior: 'smooth',
+          },
+          '& .simplebar-content': {
+            '& .MuiMultiSectionDigitalClock-root': {
+              color: '#ffffff',
+              '& .MuiList-root': {
+                color: '#ffffff',
+              },
+              '& .MuiMenuItem-root': {
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#404040',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                },
+              },
+            },
+            '& .MuiDigitalClock-root': {
+              color: '#ffffff',
+              '& .MuiList-root': {
+                color: '#ffffff',
+              },
+              '& .MuiMenuItem-root': {
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#404040',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                },
+              },
+            },
+          }
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '& .MuiIconButton-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+          },
+          // SimpleBar styling for Calendar Header
+          '& .simplebar-scrollbar': {
+            '&:before': {
+              backgroundColor: '#525252',
+              borderRadius: '4px',
+              opacity: '0.8',
+            },
+            '&.simplebar-visible:before': {
+              opacity: '1',
+            },
+          },
+          '& .simplebar-track': {
+            backgroundColor: 'transparent',
+            '&.simplebar-vertical': {
+              width: '15px',
+              right: '2px',
+            },
+          },
+          '& .simplebar-content-wrapper': {
+            scrollBehavior: 'smooth',
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '&:hover': {
+            backgroundColor: '#404040',
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            '&:hover': {
+              backgroundColor: '#e5e5e5',
+            },
+          },
+          // SimpleBar styling for Calendar Days
+          '& .simplebar-scrollbar': {
+            '&:before': {
+              backgroundColor: '#525252',
+              borderRadius: '4px',
+              opacity: '0.8',
+            },
+            '&.simplebar-visible:before': {
+              opacity: '1',
+            },
+          },
+          '& .simplebar-track': {
+            backgroundColor: 'transparent',
+            '&.simplebar-vertical': {
+              width: '15px',
+              right: '2px',
+            },
+          },
+          '& .simplebar-content-wrapper': {
+            scrollBehavior: 'smooth',
+          },
+        },
+      },
+    },
+    MuiClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+          // SimpleBar styling for Clock component
+          '& .simplebar-scrollbar': {
+            '&:before': {
+              backgroundColor: '#525252',
+              borderRadius: '4px',
+              opacity: '0.8',
+            },
+            '&.simplebar-visible:before': {
+              opacity: '1',
+            },
+          },
+          '& .simplebar-track': {
+            backgroundColor: 'transparent',
+            '&.simplebar-vertical': {
+              width: '15px',
+              right: '2px',
+            },
+          },
+          '& .simplebar-content-wrapper': {
+            scrollBehavior: 'smooth',
+          },
+        },
+        clock: {
+          backgroundColor: '#171717',
+        },
+      },
+    },
+    MuiClockPointer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+        },
+        thumb: {
+          backgroundColor: '#ffffff',
+          border: '2px solid #ffffff',
+        },
+      },
+    },
+    // Specific TimePicker component styling
+    MuiTimePicker: {
+      styleOverrides: {
+        root: {
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+          },
+        },
+      },
+    },
+    // TimePicker Clock and List styling
+    MuiMultiSectionDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+      },
+    },
+    // Digital Clock component styling
+    MuiDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+        list: {
+          backgroundColor: '#262626',
+        },
+      },
+    },
   },
 });
 
@@ -137,6 +392,7 @@ const TodoDetails = ({
   const [duration, setDuration] = useState(todo?.duration || null);
   const [repeat, setRepeat] = useState(todo?.repeat || null);
   const [newComment, setNewComment] = useState('');
+  const scrollRef = useRef(null);
   const [showComments, setShowComments] = useState(true);
   const [description, setDescription] = useState(todo?.description || '');
   const [showMentionForm, setShowMentionForm] = useState(false);
@@ -292,6 +548,11 @@ const TodoDetails = ({
       setShowReminderForm(false);
       setNewReminderDate('');
       setNewReminderTime('');
+      // Smooth scroll to top after adding reminder
+      if (scrollRef.current) {
+        const scrollableElement = scrollRef.current.getScrollElement();
+        scrollableElement.scrollTop = 0;
+      }
     }
   };
 
@@ -305,6 +566,11 @@ const TodoDetails = ({
       setShowDurationForm(false);
       setDurationStart('');
       setDurationEnd('');
+      // Smooth scroll to top after adding duration
+      if (scrollRef.current) {
+        const scrollableElement = scrollRef.current.getScrollElement();
+        scrollableElement.scrollTop = 0;
+      }
     }
   };
 
@@ -316,6 +582,11 @@ const TodoDetails = ({
     if (repeatOption) {
       setRepeat(repeatOption);
       setShowRepeatForm(false);
+      // Smooth scroll to top after adding repeat
+      if (scrollRef.current) {
+        const scrollableElement = scrollRef.current.getScrollElement();
+        scrollableElement.scrollTop = 0;
+      }
     }
   };
 
@@ -327,10 +598,11 @@ const TodoDetails = ({
   const totalSteps = todo.steps?.length || 0;
 
   const handleAddComment = () => {
-    if (newComment.trim()) {
+    // Use cleanMentionText to check if there's actual content (not just HTML tags)
+    if (cleanMentionText(newComment).trim()) {
       const comment = {
         id: Date.now(),
-        text: newComment.trim(),
+        text: newComment, // Store the full HTML content with mentions
         author: {
           name: 'You',
           avatar: '/api/placeholder/32/32'
@@ -375,7 +647,23 @@ const TodoDetails = ({
       </div>
 
       {/* Content */}
-      <SimpleBar className="flex-1 p-4 space-y-6" style={{ height: 'calc(100vh - 120px)' }}>
+      <SimpleBar 
+        ref={scrollRef}
+        className="flex-1 p-4 space-y-6" 
+        style={{ height: 'calc(100vh - 120px)' }}
+        options={{
+          autoHide: false,
+          scrollbarMinSize: 20,
+          scrollbarMaxSize: 20,
+          clickOnTrack: true,
+          forceVisible: 'y'
+        }}
+        scrollableNodeProps={{
+          style: {
+            scrollBehavior: 'smooth'
+          }
+        }}
+      >
         {/* Todo Title and Description */}
         <div className="space-y-3">
           {/* Title - Truncated to one line */}
@@ -645,7 +933,7 @@ const TodoDetails = ({
 
         {/* Quick Actions */}
         <div className="space-y-3 pt-6">
-          <h3 className="text-lg font-medium text-white">Quick Actions</h3>
+          <h3 className="text-lg font-medium text-white">Quick actions</h3>
           
           <div className="grid grid-cols-3 gap-2">
             {/* Reminder */}
@@ -655,6 +943,16 @@ const TodoDetails = ({
                 if (!showReminderForm) {
                   setShowDurationForm(false);
                   setShowRepeatForm(false);
+                  // Smooth scroll to form area
+                  setTimeout(() => {
+                    if (scrollRef.current) {
+                      const scrollableElement = scrollRef.current.getScrollElement();
+                      const formElement = scrollableElement.querySelector('.reminder-form');
+                      if (formElement) {
+                        formElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                      }
+                    }
+                  }, 100);
                 }
               }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
@@ -670,6 +968,16 @@ const TodoDetails = ({
                 if (!showDurationForm) {
                   setShowReminderForm(false);
                   setShowRepeatForm(false);
+                  // Smooth scroll to form area
+                  setTimeout(() => {
+                    if (scrollRef.current) {
+                      const scrollableElement = scrollRef.current.getScrollElement();
+                      const formElement = scrollableElement.querySelector('.duration-form');
+                      if (formElement) {
+                        formElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                      }
+                    }
+                  }, 100);
                 }
               }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
@@ -685,6 +993,16 @@ const TodoDetails = ({
                 if (!showRepeatForm) {
                   setShowReminderForm(false);
                   setShowDurationForm(false);
+                  // Smooth scroll to form area
+                  setTimeout(() => {
+                    if (scrollRef.current) {
+                      const scrollableElement = scrollRef.current.getScrollElement();
+                      const formElement = scrollableElement.querySelector('.repeat-form');
+                      if (formElement) {
+                        formElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                      }
+                    }
+                  }, 100);
                 }
               }}
               className="flex flex-col items-center p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600"
@@ -696,8 +1014,8 @@ const TodoDetails = ({
 
           {/* Reminder Form */}
           {showReminderForm && (
-            <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set Reminder</h4>
+            <div className="reminder-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
+              <h4 className="text-white font-medium">Set reminder</h4>
               <div className="grid grid-cols-1 gap-3">
                 <DatePicker
                   label="Reminder Date"
@@ -714,7 +1032,10 @@ const TodoDetails = ({
                   onChange={(newValue) => {
                     setNewReminderTime(newValue ? newValue.format('HH:mm') : '');
                   }}
-                  renderInput={(params) => <TextField {...params} />}
+                  desktopModeMediaQuery="@media (min-width:0px)"
+                  views={["hours", "minutes"]}
+                  ampm
+                  timeSteps={{ minutes: 5 }}
                   sx={{ width: '100%' }}
                 />
               </div>
@@ -738,8 +1059,8 @@ const TodoDetails = ({
 
           {/* Duration Form */}
           {showDurationForm && (
-            <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set Duration</h4>
+            <div className="duration-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
+              <h4 className="text-white font-medium">Set duration</h4>
               <div className="grid grid-cols-2 gap-3">
                 <TimePicker
                   label="Start Time"
@@ -747,7 +1068,10 @@ const TodoDetails = ({
                   onChange={(newValue) => {
                     setDurationStart(newValue ? newValue.format('HH:mm') : '');
                   }}
-                  renderInput={(params) => <TextField {...params} />}
+                  desktopModeMediaQuery="@media (min-width:0px)"
+                  views={["hours", "minutes"]}
+                  ampm
+                  timeSteps={{ minutes: 5 }}
                   sx={{ width: '100%' }}
                 />
                 <TimePicker
@@ -756,7 +1080,10 @@ const TodoDetails = ({
                   onChange={(newValue) => {
                     setDurationEnd(newValue ? newValue.format('HH:mm') : '');
                   }}
-                  renderInput={(params) => <TextField {...params} />}
+                  desktopModeMediaQuery="@media (min-width:0px)"
+                  views={["hours", "minutes"]}
+                  ampm
+                  timeSteps={{ minutes: 5 }}
                   sx={{ width: '100%' }}
                 />
               </div>
@@ -766,7 +1093,7 @@ const TodoDetails = ({
                   disabled={!durationStart || !durationEnd}
                   className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Set Duration
+                  Set duration
                 </button>
                 <button
                   onClick={() => setShowDurationForm(false)}
@@ -780,8 +1107,8 @@ const TodoDetails = ({
 
           {/* Repeat Form */}
           {showRepeatForm && (
-            <div className="p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set Repeat</h4>
+            <div className="repeat-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
+              <h4 className="text-white font-medium">Set repeat</h4>
               <FormControl fullWidth>
                 <InputLabel id="repeat-select-label">Repeat Frequency</InputLabel>
                 <Select
@@ -819,7 +1146,7 @@ const TodoDetails = ({
                   onClick={handleAddRepeat}
                   className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors"
                 >
-                  Set Repeat
+                  Set repeat
                 </button>
                 <button
                   onClick={() => setShowRepeatForm(false)}
@@ -834,7 +1161,7 @@ const TodoDetails = ({
           {/* Active Reminders */}
           {reminders.length > 0 && (
             <div className="space-y-2">
-              <h4 className="text-white font-medium">Active Reminders</h4>
+              <h4 className="text-white font-medium">Active reminders</h4>
               {reminders.map((reminder) => (
                 <div key={reminder.id} className="flex items-center justify-between p-2 bg-neutral-800 rounded border border-neutral-600">
                   <span className="text-neutral-300 text-sm">
@@ -902,7 +1229,21 @@ const TodoDetails = ({
             <div className="space-y-3">
               {/* Existing Comments */}
               {todo.comments && todo.comments.length > 0 && (
-                <SimpleBar className="space-y-3 max-h-48">
+                <SimpleBar 
+                  className="space-y-3 max-h-48"
+                  options={{
+                    autoHide: false,
+                    scrollbarMinSize: 15,
+                    scrollbarMaxSize: 15,
+                    clickOnTrack: true,
+                    forceVisible: 'y'
+                  }}
+                  scrollableNodeProps={{
+                    style: {
+                      scrollBehavior: 'smooth'
+                    }
+                  }}
+                >
                   {todo.comments.map((comment) => (
                     <div key={comment.id} className="flex space-x-3">
                       <div className="relative w-8 h-8 flex-shrink-0">
@@ -918,7 +1259,10 @@ const TodoDetails = ({
                           <span className="text-white text-sm font-medium">{comment.author.name}</span>
                           <span className="text-neutral-400 text-xs">{getTimeAgo(comment.createdAt)}</span>
                         </div>
-                        <p className="text-neutral-300 text-sm">{comment.text}</p>
+                        <div 
+                          className="text-neutral-300 text-sm"
+                          dangerouslySetInnerHTML={{ __html: comment.text }}
+                        />
                       </div>
                     </div>
                   ))}
@@ -926,26 +1270,22 @@ const TodoDetails = ({
               )}
 
               {/* Add Comment */}
-              <div className="flex items-stretch space-x-2">
-                <input
-                  type="text"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleAddComment();
-                    }
-                  }}
-                  placeholder="Add a comment..."
-                  className="flex-1 px-3 py-2 bg-neutral-800 text-white rounded border border-neutral-600 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent placeholder-neutral-400 min-w-0"
-                />
-                <button
-                  onClick={handleAddComment}
-                  disabled={!newComment.trim()}
-                  className="px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Send className="w-4 h-4" />
-                </button>
+              <div className="space-y-2">
+                <div className="relative">
+                  <TipTapEditor
+                    value={newComment}
+                    onChange={setNewComment}
+                    placeholder="Add a comment..."
+                    showToolbar={false}
+                  />
+                  <button
+                     onClick={handleAddComment}
+                     disabled={!cleanMentionText(newComment).trim()}
+                     className="absolute right-2 bottom-2 px-3 py-1.5 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                   >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               
               {/* Transparent spacer div */}

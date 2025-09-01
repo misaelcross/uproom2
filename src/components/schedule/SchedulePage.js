@@ -25,7 +25,7 @@ const groupsData = [
     description: 'Frontend and Backend developers',
     members: ['1', '2', '3', '4'],
     color: 'bg-blue-600',
-    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=40&h=40&fit=crop&crop=face'
+    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ const groupsData = [
     description: 'UI/UX designers and visual artists',
     members: ['5', '6', '7'],
     color: 'bg-purple-600',
-    avatar: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=40&h=40&fit=crop&crop=face'
+    avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const groupsData = [
     description: 'Digital marketing and content creators',
     members: ['8', '9', '10'],
     color: 'bg-green-600',
-    avatar: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=40&h=40&fit=crop&crop=face'
+    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'
   },
   {
     id: 4,
@@ -49,7 +49,7 @@ const groupsData = [
     description: 'Product managers and analysts',
     members: ['11', '12'],
     color: 'bg-orange-600',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=40&h=40&fit=crop&crop=face'
+    avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop'
   }
 ];
 

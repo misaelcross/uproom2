@@ -249,7 +249,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
           <>
             <div className="fixed inset-0 z-30" onClick={() => setShowCreateNew(false)} />
             <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-40 p-4">
-              <h4 className="text-white font-medium mb-3">Create New Todo</h4>
+              <h4 className="text-white font-medium mb-3">Create new todo</h4>
               <input
                 type="text"
                 placeholder="Todo title..."

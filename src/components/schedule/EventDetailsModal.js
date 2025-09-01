@@ -202,7 +202,7 @@ const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) =>
 
           {/* Quick Actions */}
           <div>
-            <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick Actions</h3>
+            <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
             <div className="flex gap-2">
               <button 
                 onClick={() => onLinkContext && onLinkContext(event)}

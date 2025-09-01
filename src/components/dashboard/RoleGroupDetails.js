@@ -82,7 +82,7 @@ const RoleGroupDetails = ({ group, onUserClick, onClose }) => {
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-700 disabled:text-neutral-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
             >
               <Send size={16} />
-              <span>Send Nudge</span>
+              <span>Send nudge</span>
             </button>
           </div>
         </div>

@@ -95,7 +95,7 @@ const DraftCard = ({ draft, onClick }) => {
                   className="w-full text-left px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors flex items-center space-x-2"
                 >
                   <Send className="h-4 w-4" />
-                  <span>Send Now</span>
+                  <span>Send now</span>
                 </button>
                 <button
                   onClick={handleDelete}

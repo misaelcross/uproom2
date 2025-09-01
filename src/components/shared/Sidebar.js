@@ -460,7 +460,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                   <span>{item.label}</span>
                 </div>
                 {item.count && (
-                  <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                  <span className="text-xs bg-neutral-700 text-neutral-400 w-4 h-4 rounded-[4px] flex items-center justify-center">
                     {item.count}
                   </span>
                 )}
@@ -476,7 +476,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center space-x-2">
                 <h3 className="text-sm font-medium text-white">Reminders</h3>
-                <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded-md flex items-center justify-center">
                   {uncompletedReminders}
                 </span>
               </div>
@@ -632,7 +632,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
                             !completedRemindersCollapsed ? 'rotate-90' : ''
                           }`} />
                           <span className="text-xs text-neutral-400">Finished</span>
-                          <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded flex items-center justify-center">
+                          <span className="text-xs bg-neutral-700 text-neutral-400 w-5 h-5 rounded-md flex items-center justify-center">
                             {completedReminders.length}
                           </span>
                         </div>

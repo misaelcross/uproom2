@@ -201,7 +201,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
                 ) : (
                   <Eye className="w-4 h-4 text-neutral-400" />
                 )}
-                <span className="text-sm text-neutral-300">Anonymous responses</span>
+                <span className="text-sm text-neutral-300">Anonymous voting</span>
               </div>
               <button
                 type="button"
@@ -217,7 +217,7 @@ const PollSurveyModal = ({ isOpen, onClose, onCreatePoll }) => {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-300">Allow multiple choices</span>
+              <span className="text-sm text-neutral-300">Multiple selections</span>
               <button
                 type="button"
                 onClick={() => setPollData(prev => ({ ...prev, allowMultipleChoices: !prev.allowMultipleChoices }))}

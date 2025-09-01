@@ -191,7 +191,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
 
         {/* Quick Actions */}
         <div>
-          <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick Actions</h3>
+          <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
           <div className="space-y-2">
             <button 
               onClick={() => onLinkContext && onLinkContext(event)}

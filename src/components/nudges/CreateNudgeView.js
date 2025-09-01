@@ -336,7 +336,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser }) => {
               </div>
               <div className="flex items-center gap-4 mt-2 text-xs text-neutral-500">
                 {attachedPoll.isAnonymous && <span>Anonymous</span>}
-                {attachedPoll.allowMultipleChoices && <span>Multiple choices</span>}
+                {attachedPoll.allowMultipleChoices && <span>Multiple choice</span>}
                 <span>Send to: {attachedPoll.targetAudience}</span>
               </div>
             </div>

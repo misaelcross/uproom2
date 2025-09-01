@@ -14,7 +14,7 @@ const CreateGroupSidebar = ({ isOpen, onClose, onShowMemberSelection }) => {
       <div className="h-full bg-transparent">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-neutral-700">
-          <h2 className="text-lg font-semibold text-white">Create Group</h2>
+          <h2 className="text-lg font-semibold text-white">Create group</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-neutral-700 rounded-lg transition-colors"

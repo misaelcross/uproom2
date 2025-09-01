@@ -93,7 +93,7 @@ const StatusGroupView = ({ users, onUserClick, onGroupClick }) => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <h3 className="text-white text-lg font-semibold">{config.label}</h3>
-                <div className="bg-neutral-700 text-neutral-400 text-xs rounded aspect-square flex items-center justify-center w-4 h-4">
+                <div className="bg-neutral-700 text-neutral-400 text-xs rounded-[4px] aspect-square flex items-center justify-center w-4 h-4">
                   {userCount}
                 </div>
               </div>

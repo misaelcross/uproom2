@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Check } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const UserStatusCard = ({ 
@@ -164,9 +165,7 @@ const UserStatusCard = ({
                     <span className="text-sm text-white">{status.name}</span>
                   </div>
                   {selectedStatusOption?.name === status.name && (
-                    <div className="w-4 h-4 rounded-full border-2 border-white flex items-center justify-center">
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
-                    </div>
+                    <Check className={`w-4 h-4 ${status.textColor}`} />
                   )}
                 </button>
               ))}

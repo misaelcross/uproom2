@@ -128,7 +128,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
             className="flex-1 flex items-center justify-center space-x-2 px-3 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg text-white text-sm transition-colors"
           >
             <Edit className="h-4 w-4" />
-            <span>Edit User</span>
+            <span>Edit user</span>
           </button>
           <button
             onClick={() => onDelete(user)}
@@ -281,7 +281,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
               <div className="space-y-3">
                 <div className="bg-neutral-800 rounded-lg p-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white">Email Notifications</span>
+                    <span className="text-sm text-white">Email notifications</span>
                     <button
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${true
                         ? 'bg-white border-white'
@@ -307,7 +307,7 @@ const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
                 </div>
                 <div className="bg-neutral-800 rounded-lg p-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-white">API Access</span>
+                    <span className="text-sm text-white">API access</span>
                     <button
                       className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${true
                         ? 'bg-white border-white'

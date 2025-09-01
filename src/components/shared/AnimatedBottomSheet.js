@@ -389,7 +389,7 @@ const AnimatedBottomSheet = ({
                 <div className="w-8 h-8 bg-neutral-900 border border-neutral-700 rounded-full flex items-center justify-center">
                   <Zap className="h-5 w-5 text-white" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
                   <span className="text-xs font-bold text-white">{unreadCount}</span>
                 </div>
               </div>
@@ -443,7 +443,7 @@ const AnimatedBottomSheet = ({
                     <div className="w-8 h-8 bg-neutral-900 border border-neutral-700 rounded-full flex items-center justify-center">
                       <Zap className="h-5 w-5 text-white" />
                     </div>
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
                       <span className="text-xs font-bold text-white">{unreadCount}</span>
                     </div>
                   </div>
@@ -454,7 +454,7 @@ const AnimatedBottomSheet = ({
             <div className="flex items-center space-x-2">
               {activeTab === 'received' && viewMode === 'detail' && (
                 <button className="p-1 text-gray-400 hover:text-white transition-colors">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                   </svg>
                 </button>
@@ -493,7 +493,7 @@ const AnimatedBottomSheet = ({
                 >
                   <span>Received</span>
                   {unreadCount > 0 && (
-                    <div className="w-4 h-4 bg-red-500 rounded flex items-center justify-center">
+                    <div className="w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
                       <span className="text-white text-xs font-bold leading-none">{unreadCount}</span>
                     </div>
                   )}
@@ -653,7 +653,7 @@ const AnimatedBottomSheet = ({
                         }`}
                       >
                         <Send className="h-5 w-5" />
-                        <span className="font-medium">Send Alternative Time</span>
+                        <span className="font-medium">Send alternative time</span>
                       </button>
                     </div>
                   </div>
@@ -835,7 +835,7 @@ const AnimatedBottomSheet = ({
                                 {renderTextWithMentions(nudge.message, false)}
                               </p>
                               {!nudge.isRead && (
-                                <div className="ml-3 w-4 h-4 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+                                <div className="ml-3 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center flex-shrink-0">
                                   <span className="text-white text-xs font-bold leading-none">1</span>
                                 </div>
                               )}
@@ -865,4 +865,4 @@ const AnimatedBottomSheet = ({
   );
 };
 
-export default AnimatedBottomSheet;
+export default AnimatedBottomSheet;;

@@ -36,6 +36,18 @@ const TodoItem = ({
   onSelect,
   onUpdatePriority
 }) => {
+  // Function to get time ago for contextual date display
+  const getTimeAgo = (date) => {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
+    
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`;
+    return `${Math.floor(diffInSeconds / 31536000)} years ago`;
+  };
 
   // Function to clean HTML mentions and return plain text
   const cleanMentionText = (text) => {
@@ -207,9 +219,9 @@ const TodoItem = ({
                   <span className="font-bold text-white">
                     {todo.comments.length} comment{todo.comments.length !== 1 ? 's' : ''}
                   </span>
-                  {/* Last comment date */}
+                  {/* Last comment date with context */}
                   <span className="text-neutral-400">
-                    {new Date(todo.comments[todo.comments.length - 1].createdAt).toLocaleDateString()}
+                    Last reply {getTimeAgo(todo.comments[todo.comments.length - 1].createdAt)}
                   </span>
                 </div>
               )}
