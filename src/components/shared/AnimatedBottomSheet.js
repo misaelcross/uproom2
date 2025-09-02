@@ -323,7 +323,7 @@ const AnimatedBottomSheet = ({
   const calculateDynamicHeight = () => {
     if (!isOpen) return 60;
     
-    let baseHeight = 470; // altura mínima ajustada para 470px
+    let baseHeight = 500; // altura mínima ajustada para 470px
     
     // Adicionar altura para usuários selecionados
     if (selectedUsers.length > 0) {
@@ -331,7 +331,6 @@ const AnimatedBottomSheet = ({
       baseHeight += userRows * 40 + 16; // altura dos cards + espaçamento
     }
     
-    // Limitar a altura máxima a 700px
     return Math.min(baseHeight, 700);
   };
 

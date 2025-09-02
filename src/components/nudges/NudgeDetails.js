@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
+import EmojiPicker from '../shared/EmojiPicker';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 import useEscapeKey from '../../hooks/useEscapeKey';
@@ -368,14 +369,23 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           
           {/* Reply Input */}
           <div className="flex gap-2">
-            <input
-              type="text"
-              value={replyMessage}
-              onChange={(e) => setReplyMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSendReply()}
-              placeholder="Type your reply..."
-              className="flex-1 bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2.5 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-            />
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendReply()}
+                placeholder="Type your reply..."
+                className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2.5 pr-12 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+              />
+              {/* Emoji Picker positioned in bottom-right corner of input */}
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                <EmojiPicker 
+                  onEmojiSelect={(emoji) => setReplyMessage(prev => prev + emoji)}
+                  position="bottom-right"
+                />
+              </div>
+            </div>
             <button
               onClick={handleSendReply}
               disabled={!replyMessage.trim()}

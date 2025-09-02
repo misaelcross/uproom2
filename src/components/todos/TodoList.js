@@ -10,7 +10,9 @@ const TodoList = ({
   onSelect,
   onUpdatePriority,
   completedTodosCollapsed,
-  setCompletedTodosCollapsed
+  setCompletedTodosCollapsed,
+  selectedGroup,
+  groups
 }) => {
   // Separate active and completed todos
   const activeTodos = todos.filter(todo => !todo.completed);
@@ -35,6 +37,10 @@ const TodoList = ({
           onDelete={onDelete}
           onSelect={onSelect}
           onUpdatePriority={onUpdatePriority}
+          completedTodosCollapsed={completedTodosCollapsed}
+          setCompletedTodosCollapsed={setCompletedTodosCollapsed}
+          selectedGroup={selectedGroup}
+          groups={groups}
         />
       ))}
       
@@ -68,6 +74,10 @@ const TodoList = ({
                   onDelete={onDelete}
                   onSelect={onSelect}
                   onUpdatePriority={onUpdatePriority}
+                  completedTodosCollapsed={completedTodosCollapsed}
+                  setCompletedTodosCollapsed={setCompletedTodosCollapsed}
+                  selectedGroup={selectedGroup}
+                  groups={groups}
                 />
               ))}
             </div>

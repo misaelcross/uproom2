@@ -15,6 +15,7 @@ import SimpleBar from 'simplebar-react';
 import PollSurveyModal from './PollSurveyModal';
 import GroupSelector from './GroupSelector';
 import TodoSelector from './TodoSelector';
+import EmojiPicker from '../shared/EmojiPicker';
 import useNudgeStore from '../../store/nudgeStore';
 
 // Usuários fake para pesquisa
@@ -279,13 +280,22 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
         {/* Message Input */}
         <div className="space-y-3">
           <label className="text-sm font-medium text-neutral-400">Message:</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Type your message..."
-            className="w-full bg-transparent border border-neutral-700 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
-            rows={4}
-          />
+          <div className="relative">
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type your message..."
+              className="w-full bg-transparent border border-neutral-700 rounded-lg px-4 py-3 pr-12 text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent resize-none"
+              rows={4}
+            />
+            {/* Emoji Picker positioned in bottom-right corner */}
+            <div className="absolute bottom-2 right-2">
+              <EmojiPicker 
+                onEmojiSelect={(emoji) => setMessage(prev => prev + emoji)}
+                position="bottom-right"
+              />
+            </div>
+          </div>
 
           {/* Action Buttons */}
           <div className="grid grid-cols-3 gap-2">

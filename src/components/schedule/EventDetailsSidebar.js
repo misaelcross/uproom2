@@ -2,7 +2,7 @@ import React from 'react';
 import { X, Clock, Calendar, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
-const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg" }) => {
+const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg", isCurrentUser = true }) => {
   if (!event) return null;
 
   // Helper function to format event status
@@ -34,7 +34,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
   };
 
   return (
-    <div className={`w-full h-full bg-transparent overflow-hidden flex flex-col ${borderClasses}`}>
+    <div className={`w-full bg-transparent overflow-hidden flex flex-col ${borderClasses}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700 flex-shrink-0">
         <h2 className="text-white text-lg font-semibold">Event Details</h2>
@@ -47,7 +47,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
       </div>
 
       {/* Content */}
-      <SimpleBar className="flex-1" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+      <SimpleBar className="flex-shrink-0" style={{ maxHeight: 'calc(100vh - 200px)' }}>
         <div className="px-6 py-5 space-y-6">
         {/* Event Title and Status */}
         <div>
@@ -189,30 +189,34 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div>
-          <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
-          <div className="space-y-2">
-            <button 
-              onClick={() => onLinkContext && onLinkContext(event)}
-              className="w-full flex items-center gap-2 px-3 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm"
-            >
-              <Paperclip className="w-4 h-4" />
-              Link Context
-            </button>
-            <button className="w-full flex items-center gap-2 px-3 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm">
-              <Users className="w-4 h-4" />
-              Invite Others
-            </button>
-            <button className="w-full flex items-center gap-2 px-3 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm">
-              <Edit3 className="w-4 h-4" />
-              Edit Event
-            </button>
+        {/* Quick Actions - Only show for current user's events */}
+        {isCurrentUser && (
+          <div>
+            <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
+            <div className="space-y-2">
+              <button 
+                onClick={() => onLinkContext(event)}
+                className="w-full flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-neutral-700 text-white border border-neutral-700 rounded-lg transition-colors text-sm"
+              >
+                <Paperclip className="w-4 h-4" />
+                Link Context
+              </button>
+              <button className="w-full flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-neutral-700 text-white border border-neutral-700 rounded-lg transition-colors text-sm">
+                <Users className="w-4 h-4" />
+                Invite Others
+              </button>
+              <button className="w-full flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-neutral-700 text-white border border-neutral-700 rounded-lg transition-colors text-sm">
+                <Edit3 className="w-4 h-4" />
+                Edit Event
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
+      </SimpleBar>
 
-        {/* Footer */}
+      {/* Footer - Only show for current user's events */}
+      {isCurrentUser && (
         <div className="flex items-center justify-end gap-3 p-4 border-t border-neutral-700 flex-shrink-0">
           <button
             onClick={onClose}
@@ -224,7 +228,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
             Delete Event
           </button>
         </div>
-      </SimpleBar>
+      )}
     </div>
   );
 };

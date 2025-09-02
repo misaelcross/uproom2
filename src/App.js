@@ -5,6 +5,7 @@ import UserDetails from './components/dashboard/UserDetails';
 import Schedule from './components/schedule/Schedule';
 import SchedulePage from './components/schedule/SchedulePage';
 import EventDetailsSidebar from './components/schedule/EventDetailsSidebar';
+import LinkContextSidebar from './components/schedule/LinkContextSidebar';
 import ScheduleMeetingSidebar from './components/schedule/ScheduleMeetingSidebar';
 import EmployeeListSidebar from './components/schedule/EmployeeListSidebar';
 import EmployeeAvailabilitySidebar from './components/schedule/EmployeeAvailabilitySidebar';
@@ -41,6 +42,7 @@ function App() {
   const [selectedRoleGroup, setSelectedRoleGroup] = useState(null);
   const [selectedUserGroup, setSelectedUserGroup] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
+  const [isLinkingContext, setIsLinkingContext] = useState(false); // Context linking sidebar state
   const [isScheduleMeetingOpen, setIsScheduleMeetingOpen] = useState(false); // Schedule meeting sidebar state
   const [schedulingStep, setSchedulingStep] = useState('initial'); // 'initial', 'employees', 'availability', 'confirmation'
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -265,6 +267,22 @@ function App() {
 
   const handleCloseEventDetails = () => {
     setSelectedEvent(null);
+    setIsLinkingContext(false);
+  };
+
+  // Context linking handlers
+  const handleLinkContext = (event) => {
+    setSelectedEvent(event);
+    setIsLinkingContext(true);
+  };
+
+  const handleBackFromLinking = () => {
+    setIsLinkingContext(false);
+  };
+
+  const handleUpdateEvent = (updatedEvent) => {
+    console.log('Event updated:', updatedEvent);
+    setIsLinkingContext(false);
   };
 
   const handleOpenScheduleMeeting = () => {
@@ -520,18 +538,28 @@ function App() {
             </SimpleBar>
 
             {/* Coluna direita */}
-            <SimpleBar ref={rightPanelScrollRef} className="pb-12" style={{ width: '350px' }}>
-              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} />}
-              {rightPanelContent === 'schedule' && selectedEvent && (
+            <SimpleBar 
+              ref={rightPanelScrollRef} 
+              className={rightPanelContent === 'userDetails' ? '' : 'pb-12'} 
+              style={{ width: '350px' }}
+              forceVisible={rightPanelContent !== 'userDetails'}
+            >
+              {rightPanelContent === 'schedule' && !selectedEvent && !isScheduleMeetingOpen && !isCreateGroupOpen && <Schedule onEventSelect={handleEventSelect} onScheduleMeeting={handleOpenScheduleMeeting} onLinkContext={handleLinkContext} />}
+              {rightPanelContent === 'schedule' && selectedEvent && !isLinkingContext && (
                 <EventDetailsSidebar
                   event={selectedEvent}
                   onClose={handleCloseEventDetails}
                   onEdit={(event) => {
                     console.log('Edit event:', event);
                   }}
-                  onLinkContext={(event) => {
-                    console.log('Link context for event:', event);
-                  }}
+                  onLinkContext={handleLinkContext}
+                />
+              )}
+              {rightPanelContent === 'schedule' && selectedEvent && isLinkingContext && (
+                <LinkContextSidebar
+                  event={selectedEvent}
+                  onBack={handleBackFromLinking}
+                  onSave={handleUpdateEvent}
                 />
               )}
               {rightPanelContent === 'schedule' && isScheduleMeetingOpen && (

@@ -8,7 +8,7 @@ const BottomSheet = ({
   title = "Nudges", 
   children,
   maxWidth = "300px",
-  maxHeight = "60vh",
+  maxHeight = "75vh",
   badgeCount = 1
 }) => {
   return (

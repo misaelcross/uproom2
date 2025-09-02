@@ -34,7 +34,11 @@ const TodoItem = ({
   onToggleStar, 
   onDelete, 
   onSelect,
-  onUpdatePriority
+  onUpdatePriority,
+  completedTodosCollapsed,
+  setCompletedTodosCollapsed,
+  selectedGroup,
+  groups
 }) => {
   // Function to get time ago for contextual date display
   const getTimeAgo = (date) => {
@@ -146,6 +150,8 @@ const TodoItem = ({
               <span className={`text-white text-sm sm:text-base truncate ${todo.completed ? 'line-through opacity-60' : ''}`}>
                 {cleanMentionText(todo.description)}
               </span>
+              
+
             </div>
             
             <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -200,9 +206,17 @@ const TodoItem = ({
           
           {/* Removed Steps indicator with progress bar - as requested */}
           
-          {/* Additional info: Comments, Duration */}
-          {(todo.comments?.length > 0 || todo.duration) && (
+          {/* Additional info: Folder badge, Comments, Duration */}
+          {(todo.comments?.length > 0 || todo.duration || (!selectedGroup && todo.groupId && groups)) && (
             <div className="mt-2 flex flex-wrap gap-3 sm:space-y-1 sm:block">
+              {/* Folder badge - show only when no specific folder is selected */}
+              {!selectedGroup && todo.groupId && groups && (
+                <div className="flex items-center gap-2 text-xs sm:text-sm">
+                  <div className="px-2 py-1 rounded text-xs font-medium text-gray-400 bg-gray-500/10">
+                    {groups.find(group => group.id === todo.groupId)?.name || 'Unknown Folder'}
+                  </div>
+                </div>
+              )}
               {/* Comments */}
               {todo.comments && todo.comments.length > 0 && (
                 <div className="flex items-center gap-2 text-xs sm:text-sm">

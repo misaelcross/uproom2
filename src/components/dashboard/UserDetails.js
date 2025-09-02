@@ -3,12 +3,15 @@ import { Tab } from '@headlessui/react';
 import { ArrowLeft, Send, Users, Eye, MoreVertical, ChevronDown, Paperclip, Link } from 'lucide-react';
 import EventDetailsSidebar from '../schedule/EventDetailsSidebar';
 import useEscapeKey from '../../hooks/useEscapeKey';
+import { usersData } from '../../data/usersData';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const UserDetails = ({ user, onBack }) => {
+  const currentUser = usersData[0]; // Alex Thompson as current user
+  const isCurrentUser = user.id === currentUser.id;
   // Handle Escape key to close the component view
   useEscapeKey(onBack);
 
@@ -140,7 +143,7 @@ const UserDetails = ({ user, onBack }) => {
   }
 
   return (
-    <div className="flex h-full rounded-lg overflow-hidden">
+    <div className="flex rounded-lg overflow-hidden min-h-0">
       {/* Main User Details Panel */}
       <div className={`bg-transparent border border-neutral-700 overflow-hidden transition-all duration-300 ${
         selectedEvent ? 'flex-1 rounded-l-lg border-r-0' : 'w-full rounded-lg'
@@ -565,7 +568,7 @@ const UserDetails = ({ user, onBack }) => {
 
       {/* Event Details Sidebar */}
       {selectedEvent && (
-        <div className="flex flex-w-0 w-[349px]">
+        <div className="flex flex-w-0 w-[349px] self-start">
           <EventDetailsSidebar
             event={selectedEvent}
             onClose={handleCloseEventDetails}
@@ -576,6 +579,7 @@ const UserDetails = ({ user, onBack }) => {
               console.log('Link context for event:', event);
             }}
             borderClasses="border border-neutral-700 rounded-lg"
+            isCurrentUser={isCurrentUser}
           />
         </div>
       )}

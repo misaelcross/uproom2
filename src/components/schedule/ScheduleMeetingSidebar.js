@@ -1,7 +1,10 @@
 import React from 'react';
-import { Users, Calendar, Clock, Send } from 'lucide-react';
+import { Users, Calendar, Clock, Send, X } from 'lucide-react';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
+  // Handle escape key to close the sidebar
+  useEscapeKey(onClose, isOpen);
 
   if (!isOpen) return null;
 
@@ -49,7 +52,7 @@ const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
         </div>
 
         {/* Quick Actions */}
-        <div className="w-full max-w-sm space-y-3">
+        <div className="w-full max-w-sm space-y-3 mb-6">
           {quickActions.map((action, index) => (
             <button
               key={index}
@@ -65,6 +68,16 @@ const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
               </div>
             </button>
           ))}
+        </div>
+
+        {/* Cancel Button */}
+        <div className="w-full max-w-sm">
+          <button
+            onClick={onClose}
+            className="w-full flex items-center justify-center gap-2 p-3 hover:bg-neutral-800 border border-neutral-600 hover:border-neutral-500 rounded-lg transition-all duration-200 text-neutral-300 hover:text-white"
+          >
+            <span>Cancel</span>
+          </button>
         </div>
       </div>
     </div>

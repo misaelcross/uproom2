@@ -11,6 +11,7 @@ import ActionBarSchedule from './ActionBarSchedule';
 import LiveNotifications from '../shared/LiveNotifications';
 import Schedule from './Schedule';
 import EventDetailsSidebar from './EventDetailsSidebar';
+import LinkContextSidebar from './LinkContextSidebar';
 import ScheduleMeetingSidebar from './ScheduleMeetingSidebar';
 import EmployeeListSidebar from './EmployeeListSidebar';
 import EmployeeAvailabilitySidebar from './EmployeeAvailabilitySidebar';
@@ -61,6 +62,7 @@ const SchedulePage = ({ onNavigate }) => {
   const [selectedGroup, setSelectedGroup] = useState(null); // null = no group selected, group = schedule do grupo selecionado
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
+  const [isLinkingContext, setIsLinkingContext] = useState(false);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [roleFilter, setRoleFilter] = useState([]);
   const [statusFilter, setStatusFilter] = useState([]);
@@ -590,6 +592,22 @@ const SchedulePage = ({ onNavigate }) => {
 
   const handleCloseEventDetails = () => {
     setSelectedEvent(null);
+    setIsLinkingContext(false);
+  };
+
+  const handleLinkContext = (event) => {
+    setSelectedEvent(event);
+    setIsLinkingContext(true);
+  };
+
+  const handleBackFromLinking = () => {
+    setIsLinkingContext(false);
+  };
+
+  const handleUpdateEvent = (updatedEvent) => {
+    // Here you would typically update the event in your data store
+    console.log('Updated event:', updatedEvent);
+    setSelectedEvent(updatedEvent);
   };
 
   // Meeting scheduling handlers
@@ -769,25 +787,37 @@ const SchedulePage = ({ onNavigate }) => {
                 </div>
               ) : (
                 /* My Schedule - Default view */
-                <Schedule fullWidth={true} viewMode={timeFrame} onEventSelect={handleEventSelect} />
+                <Schedule 
+                  fullWidth={true} 
+                  viewMode={timeFrame} 
+                  onEventSelect={handleEventSelect}
+                  onLinkContext={handleLinkContext}
+                />
               )}
             </SimpleBar>
 
             {/* Right Column - 350px (same as dashboard) */}
             <div className="flex flex-col gap-6 min-h-0" style={{ width: '350px' }}>
               {selectedEvent ? (
-                /* Event Details - Full Height */
+                /* Event Details or Link Context - Full Height */
                 <div className="flex-1 min-h-0 flex flex-col">
-                  <EventDetailsSidebar
-                    event={selectedEvent}
-                    onClose={handleCloseEventDetails}
-                    onEdit={(event) => {
-                      console.log('Edit event:', event);
-                    }}
-                    onLinkContext={(event) => {
-                      console.log('Link context for event:', event);
-                    }}
-                  />
+                  {isLinkingContext ? (
+                    <LinkContextSidebar
+                      event={selectedEvent}
+                      onClose={handleCloseEventDetails}
+                      onBack={handleBackFromLinking}
+                      onUpdateEvent={handleUpdateEvent}
+                    />
+                  ) : (
+                    <EventDetailsSidebar
+                      event={selectedEvent}
+                      onClose={handleCloseEventDetails}
+                      onEdit={(event) => {
+                        console.log('Edit event:', event);
+                      }}
+                      onLinkContext={handleLinkContext}
+                    />
+                  )}
                 </div>
               ) : isScheduleMeetingOpen ? (
                 /* Meeting Scheduling Sidebars - Full Height with SimpleBar */

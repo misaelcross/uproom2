@@ -8,7 +8,7 @@ import MonthlyCalendar from './MonthlyCalendar';
 import { usersData } from '../../data/usersData';
 
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false }) => {
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false, onLinkContext = null }) => {
   const [isContextModalOpen, setIsContextModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
@@ -574,7 +574,11 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleOpenContextModal(event);
+                                if (onLinkContext) {
+                                  onLinkContext(event);
+                                } else {
+                                  handleOpenContextModal(event);
+                                }
                               }}
                               className="p-0.5 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
                               title="Link tasks, nudges, and files"
@@ -846,7 +850,11 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleOpenContextModal(event);
+                                  if (onLinkContext) {
+                                    onLinkContext(event);
+                                  } else {
+                                    handleOpenContextModal(event);
+                                  }
                                 }}
                                 className="p-1 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
                                 title="Link tasks, nudges, and files"

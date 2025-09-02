@@ -720,6 +720,8 @@ const TodosPage = ({ onNavigate }) => {
                   onUpdatePriority={updateTodoPriority}
                   completedTodosCollapsed={completedTodosCollapsed}
                   setCompletedTodosCollapsed={setCompletedTodosCollapsed}
+                  selectedGroup={selectedGroup}
+                  groups={groups}
                 />
               </SimpleBar>
 
