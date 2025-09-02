@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Archive, Clock, ChevronDown, ChevronUp, ArchiveRestore } from 'lucide-react';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 const ArchivedNudgeDetails = ({ userGroup, onBack, onUnarchive }) => {
+  // Handle Escape key to close the component view
+  useEscapeKey(onBack);
+
   const [expandedNudges, setExpandedNudges] = useState(new Set([userGroup.nudges[0]?.id])); // First nudge expanded by default
   
   const { user, nudges } = userGroup;

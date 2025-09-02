@@ -19,6 +19,7 @@ import RoleGroupView from './components/dashboard/RoleGroupView';
 import RoleGroupDetails from './components/dashboard/RoleGroupDetails';
 import UserGroupsView from './components/dashboard/UserGroupsView';
 import UserGroupDetails from './components/dashboard/UserGroupDetails';
+import PollCreationSidebar from './components/nudges/PollCreationSidebar';
 import AnimatedBottomSheet from './components/shared/AnimatedBottomSheet';
 import SecondaryBottomSheet from './components/shared/SecondaryBottomSheet';
 import NudgePage from './components/nudges/NudgePage';
@@ -431,7 +432,10 @@ function App() {
 
   // Se estiver na página de nudges, renderizar NudgePage
   if (currentPage === 'nudges') {
-    return <NudgePage onNavigate={setCurrentPage} />;
+    return <NudgePage 
+      onNavigate={setCurrentPage} 
+      onOpenPollCreation={() => setRightPanelContent('pollCreation')}
+    />;
   }
 
   // Se estiver na página de schedule, renderizar SchedulePage
@@ -621,6 +625,16 @@ function App() {
                   onUserClick={showUserDetails}
                   onClose={closeUserGroupDetails}
                   allUsers={usersWithIcons}
+                />
+              )}
+              {rightPanelContent === 'pollCreation' && (
+                <PollCreationSidebar
+                  onBack={() => setRightPanelContent(null)}
+                  onCreatePoll={(pollData) => {
+                    console.log('Poll created:', pollData);
+                    // Here we would integrate with the nudge store or poll creation logic
+                    setRightPanelContent(null);
+                  }}
                 />
               )}
             </SimpleBar>

@@ -19,6 +19,7 @@ import useNudgeStore from '../../store/nudgeStore';
 import PollSurveyModal from './PollSurveyModal';
 import GroupSelector from './GroupSelector';
 import TodoSelector from './TodoSelector';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 // Usuários fake para pesquisa (mesmo do CreateNudgeView)
 const searchableUsers = [
@@ -33,7 +34,10 @@ const searchableUsers = [
 ];
 
 const DraftDetails = ({ draft, onBack, onEdit }) => {
-  const { sendDraft, updateDraft } = useNudgeStore();
+  // Handle Escape key to close the component view
+  useEscapeKey(onBack);
+
+  const { sendDraft, updateDraft, deleteDraft } = useNudgeStore();
   const [isEditing, setIsEditing] = useState(false);
   
   // Estados para edição (baseados no CreateNudgeView)

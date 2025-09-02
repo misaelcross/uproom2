@@ -3,8 +3,12 @@ import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-rea
 import FloatingUserCard from '../shared/FloatingUserCard';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
+  // Handle Escape key to close the component view
+  useEscapeKey(onBack);
+
   const [replies, setReplies] = useState([
     {
       id: 1,
@@ -234,7 +238,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           {nudge.todoLink && (
             <div className="mb-4">
               <div className="flex items-center gap-3 p-3 rounded-lg border border-neutral-600 hover:border-neutral-500 hover:bg-neutral-700 transition-colors cursor-pointer">
-                <CheckSquare className="w-4 h-4 text-blue-400" />
+                <CheckSquare className="w-4 h-4 text-white" />
                 <div className="flex-1">
                   <span className="text-neutral-300 text-sm">{nudge.todoLink.title}</span>
                   <div className="text-neutral-500 text-xs mt-1">To-Do • {nudge.todoLink.status}</div>
@@ -272,7 +276,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
                         key={index}
                         className={`p-3 rounded-lg border ${
                           isSelected 
-                            ? 'border-blue-500 bg-blue-500/10' 
+                            ? 'border-white bg-neutral-500/10' 
                             : 'border-neutral-600'
                         } relative overflow-hidden`}
                       >
@@ -282,7 +286,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
                           style={{ width: `${percentage}%` }}
                         />
                         <div className="relative flex justify-between items-center">
-                          <span className={`text-sm ${isSelected ? 'text-blue-400 font-medium' : 'text-neutral-300'}`}>
+                          <span className={`text-sm ${isSelected ? 'text-white font-medium' : 'text-neutral-300'}`}>
                             {option.text}
                             {isSelected && ' ✓'}
                           </span>

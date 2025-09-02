@@ -15,8 +15,12 @@ import {
   AlertCircle,
   Check
 } from 'lucide-react';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 const UserDetails = ({ user, onClose, onEdit, onDelete }) => {
+  // Handle Escape key to close the component view
+  useEscapeKey(onClose);
+
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [

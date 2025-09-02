@@ -2,12 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Tab } from '@headlessui/react';
 import { ArrowLeft, Send, Users, Eye, MoreVertical, ChevronDown, Paperclip, Link } from 'lucide-react';
 import EventDetailsSidebar from '../schedule/EventDetailsSidebar';
+import useEscapeKey from '../../hooks/useEscapeKey';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const UserDetails = ({ user, onBack }) => {
+  // Handle Escape key to close the component view
+  useEscapeKey(onBack);
+
   const [message, setMessage] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null); // Event selected for sidebar details
   const textareaRef = useRef(null);

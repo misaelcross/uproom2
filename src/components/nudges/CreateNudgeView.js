@@ -29,7 +29,7 @@ const searchableUsers = [
   { id: 108, name: "Emily Wilson", title: "Security", avatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" }
 ];
 
-const CreateNudgeView = ({ onCancel, preSelectedUser }) => {
+const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
@@ -298,7 +298,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser }) => {
               <span className="text-neutral-400 text-sm">Links</span>
             </button>
             <button 
-              onClick={() => setIsPollModalOpen(true)}
+              onClick={() => onOpenPollCreation && onOpenPollCreation()}
               className="flex items-center justify-center space-x-2 h-9 bg-transparent border border-neutral-500 hover:bg-neutral-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
             >
               <BarChart3 className="h-4 w-4 text-neutral-400" />
@@ -394,12 +394,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser }) => {
         </button>
       </div>
 
-      {/* Poll/Survey Modal */}
-      <PollSurveyModal
-        isOpen={isPollModalOpen}
-        onClose={() => setIsPollModalOpen(false)}
-        onCreatePoll={handleCreatePoll}
-      />
+
     </div>
   );
 };

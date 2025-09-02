@@ -4,6 +4,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText } from 'lucide-react';
 import TodoStep from './TodoStep';
 import TipTapEditor from '../shared/TipTapEditor';
+import useEscapeKey from '../../hooks/useEscapeKey';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -371,6 +372,9 @@ const TodoDetails = ({
   onUpdateStepDescription,
   onAddComment 
 }) => {
+  // Handle Escape key to close the component view
+  useEscapeKey(onBack);
+
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [isEditingTodoDescription, setIsEditingTodoDescription] = useState(false);

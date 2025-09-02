@@ -16,6 +16,7 @@ import ArchivedNudgeDetails from './ArchivedNudgeDetails';
 import UserDetails from '../dashboard/UserDetails';
 import CreateNudgeView from './CreateNudgeView';
 import EmptyState from './EmptyState';
+import PollCreationSidebar from './PollCreationSidebar';
 
 // Dados fake dos nudges
 const nudgesData = [
@@ -174,7 +175,15 @@ const nudgesData = [
   }
 ];
 
-function NudgePage({ onNavigate }) {
+function NudgePage({ onNavigate, onOpenPollCreation }) {
+  // Handle poll creation within NudgePage
+  const handleOpenPollCreation = () => {
+    setShowPollCreation(true);
+    setSelectedNudge(null);
+    setSelectedUser(null);
+    setSelectedArchivedGroup(null);
+    setIsCreatingNudge(false);
+  };
   // Estado global dos nudges
   const { 
     nudges, 
@@ -198,6 +207,7 @@ function NudgePage({ onNavigate }) {
   const [selectedArchivedGroup, setSelectedArchivedGroup] = useState(null);
   const [previousView, setPreviousView] = useState(null); // Para controlar o estado anterior
   const [preSelectedUser, setPreSelectedUser] = useState(null); // Para usuário pré-selecionado no create nudge
+  const [showPollCreation, setShowPollCreation] = useState(false); // Para controlar exibição do poll creation sidebar
 
   // Função para gerar ícones aleatórios
   const generateRandomIcons = () => {
@@ -767,6 +777,7 @@ function NudgePage({ onNavigate }) {
                 <CreateNudgeView 
                   onCancel={handleCancelCreateNudge} 
                   preSelectedUser={preSelectedUser}
+                  onOpenPollCreation={handleOpenPollCreation}
                 />
               ) : selectedArchivedGroup ? (
                 <ArchivedNudgeDetails
@@ -776,6 +787,15 @@ function NudgePage({ onNavigate }) {
                     // Lógica para desarquivar nudge
                     console.log('Unarchiving nudge:', nudgeId);
                     // Aqui você implementaria a lógica real de desarquivamento
+                  }}
+                />
+              ) : showPollCreation ? (
+                <PollCreationSidebar
+                  onBack={() => setShowPollCreation(false)}
+                  onCreatePoll={(pollData) => {
+                    console.log('Poll created:', pollData);
+                    // Here we would integrate with the nudge store or poll creation logic
+                    setShowPollCreation(false);
                   }}
                 />
               ) : selectedNudge ? (
