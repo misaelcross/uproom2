@@ -12,7 +12,7 @@ const ActionBarSchedule = ({ searchTerm, setSearchTerm, onScheduleMeet }) => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search schedule..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"

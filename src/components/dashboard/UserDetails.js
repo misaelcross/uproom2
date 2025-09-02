@@ -300,10 +300,9 @@ const UserDetails = ({ user, onBack }) => {
                   return (
                     <>
                       <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors(user.availability).hoverBg} ${getStatusColors(user.availability).hoverBorder}`}>
-                        {/* Título e Duração */}
+                        {/* Duração */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h4 className="text-white font-medium">Working on {user.skills && user.skills[0] ? user.skills[0] : 'current'} project</h4>
                             <p className="text-neutral-400 text-sm">2:30 PM - 5:00 PM</p>
                           </div>
                         </div>
@@ -325,10 +324,9 @@ const UserDetails = ({ user, onBack }) => {
                       </div>
 
                       <div className={`rounded-lg p-4 border border-neutral-700 transition-colors cursor-pointer ${getStatusColors('Meeting').hoverBg} ${getStatusColors('Meeting').hoverBorder}`}>
-                        {/* Título e Duração */}
+                        {/* Duração */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <h4 className="text-white font-medium">Team Meeting - {user.department}</h4>
                             <p className="text-neutral-400 text-sm">10:00 AM - 11:00 AM</p>
                           </div>
                         </div>

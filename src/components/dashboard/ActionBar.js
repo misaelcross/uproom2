@@ -13,7 +13,7 @@ import { usersData } from '../../data/usersData';
 const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeeting }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState('Newest');
+  const [selectedSort, setSelectedSort] = useState('Alphabetical (A–Z)');
   const sortDropdownRef = useRef(null);
 
   // Filtrar usuários baseado na pesquisa
@@ -36,12 +36,8 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeetin
 
   // Opções de ordenação
   const sortOptions = [
-    'Newest',
-    'Oldest',
-    'Status',
     'Alphabetical (A–Z)',
-    'Alphabetical (Z–A)',
-    'Role'
+    'Alphabetical (Z–A)'
   ];
 
   // Fechar dropdown quando clicar fora
@@ -66,17 +62,6 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeetin
   };
 
   const handleSortSelect = (option) => {
-    // Se clicar no primeiro item (Newest) e ele já estiver selecionado, resetar para "Sort"
-    if (option === 'Newest' && selectedSort === 'Newest') {
-      setSelectedSort('Sort');
-      setSortDropdownOpen(false);
-      console.log('Sort reset to default');
-      if (onSortChange) {
-        onSortChange('Sort');
-      }
-      return;
-    }
-    
     setSelectedSort(option);
     setSortDropdownOpen(false);
     console.log('Sort selected:', option);
@@ -91,7 +76,7 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeetin
       <div className="relative">
         <input
           type="text"
-          placeholder="Search..."
+          placeholder="Search people..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-48 bg-transparent border border-neutral-600 rounded-lg px-4 py-2 pl-10 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent text-sm"
@@ -124,44 +109,6 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeetin
                 </button>
               ))}
             </SimpleBar>
-          </div>
-        )}
-      </div>
-
-      {/* Sort Button with Dropdown */}
-      <div className="relative" ref={sortDropdownRef}>
-        <button 
-          onClick={handleSortClick}
-          className="flex items-center space-x-2 px-4 py-2 border border-neutral-600 rounded-lg transition-colors bg-transparent hover:bg-neutral-700"
-        >
-          <Filter className="h-4 w-4 text-neutral-300" />
-          <span className="text-neutral-300 text-sm font-medium">
-            Sort
-          </span>
-          <ChevronDown className="h-4 w-4 text-neutral-300" />
-        </button>
-        
-        {/* Dropdown Menu */}
-        {sortDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 min-w-[200px]">
-            <div className="py-1">
-              {sortOptions.map((option, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSortSelect(option)}
-                  className={`w-full text-left px-3 py-2 text-sm transition-colors flex items-center justify-between ${
-                    selectedSort === option 
-                      ? 'bg-neutral-700 text-white' 
-                      : 'text-neutral-300 hover:bg-neutral-800 hover:text-white'
-                  }`}
-                >
-                  <span>{option}</span>
-                  {selectedSort === option && (
-                    <Check className="h-4 w-4 text-white" />
-                  )}
-                </button>
-              ))}
-            </div>
           </div>
         )}
       </div>

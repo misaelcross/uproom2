@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CheckCircle,
   XCircle,
@@ -8,7 +8,8 @@ import {
   Edit,
   Shield,
   Download,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import { usersData } from '../../data/usersData';
@@ -22,6 +23,10 @@ import TeamEmptyState from './TeamEmptyState';
 const TeamPage = ({ onNavigate }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [accountFilter, setAccountFilter] = useState('all');
+  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
 
   // Tabs para gestão de usuários - Hidden for now, can be restored in the future
   // const validStatuses = ['active', 'inactive', 'pending'];
@@ -36,13 +41,19 @@ const TeamPage = ({ onNavigate }) => {
 
   // const [activeTab, setActiveTab] = useState('all');
 
-  // Filtrar usuários - mostrar todos os usuários (tabs removidas)
+  // Filtrar usuários baseado nos filtros selecionados
   const filteredUsers = usersData.filter(user => {
     // Apenas usuários com status válidos para sistema (account status)
     const validStatuses = ['active', 'inactive', 'pending'];
     const hasValidStatus = validStatuses.includes(user.status);
     
-    return hasValidStatus;
+    // Filtro por role
+    const roleMatch = roleFilter === 'all' || user.role === roleFilter;
+    
+    // Filtro por account status
+    const accountMatch = accountFilter === 'all' || user.status === accountFilter;
+    
+    return hasValidStatus && roleMatch && accountMatch;
   });
 
   // Ordenar usuários por nome
@@ -120,6 +131,32 @@ const TeamPage = ({ onNavigate }) => {
   const clearSelection = () => {
     setSelectedUsers([]);
   };
+
+  // Filter handlers
+  const handleRoleFilter = (role) => {
+    setRoleFilter(role);
+    setShowRoleDropdown(false);
+  };
+
+  const handleAccountFilter = (status) => {
+    setAccountFilter(status);
+    setShowAccountDropdown(false);
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setShowRoleDropdown(false);
+        setShowAccountDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
@@ -227,8 +264,94 @@ const TeamPage = ({ onNavigate }) => {
                           </button>
                         </th>
                         <th className="text-left p-4 text-sm font-medium text-neutral-300">User</th>
-                        <th className="text-left p-4 text-sm font-medium text-neutral-300">Role</th>
-                        <th className="text-left p-4 text-sm font-medium text-neutral-300">Account</th>
+                        <th className="text-left p-4 text-sm font-medium text-neutral-300 relative dropdown-container">
+                          <button
+                            onClick={() => {
+                              setShowRoleDropdown(!showRoleDropdown);
+                              setShowAccountDropdown(false);
+                            }}
+                            className="flex items-center gap-1 hover:text-white transition-colors"
+                          >
+                            Role
+                            <ChevronDown className="w-3 h-3" />
+                          </button>
+                          {showRoleDropdown && (
+                            <div className="absolute top-full left-4 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 min-w-[120px]">
+                              <button
+                                onClick={() => handleRoleFilter('all')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  roleFilter === 'all' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                All Roles
+                              </button>
+                              <button
+                                onClick={() => handleRoleFilter('admin')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  roleFilter === 'admin' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                Admin
+                              </button>
+                              <button
+                                onClick={() => handleRoleFilter('user')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  roleFilter === 'user' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                User
+                              </button>
+                            </div>
+                          )}
+                        </th>
+                        <th className="text-left p-4 text-sm font-medium text-neutral-300 relative dropdown-container">
+                          <button
+                            onClick={() => {
+                              setShowAccountDropdown(!showAccountDropdown);
+                              setShowRoleDropdown(false);
+                            }}
+                            className="flex items-center gap-1 hover:text-white transition-colors"
+                          >
+                            Account
+                            <ChevronDown className="w-3 h-3" />
+                          </button>
+                          {showAccountDropdown && (
+                            <div className="absolute top-full left-4 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 min-w-[120px]">
+                              <button
+                                onClick={() => handleAccountFilter('all')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  accountFilter === 'all' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                All Status
+                              </button>
+                              <button
+                                onClick={() => handleAccountFilter('active')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  accountFilter === 'active' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                Active
+                              </button>
+                              <button
+                                onClick={() => handleAccountFilter('inactive')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  accountFilter === 'inactive' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                Inactive
+                              </button>
+                              <button
+                                onClick={() => handleAccountFilter('pending')}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-neutral-700 transition-colors ${
+                                  accountFilter === 'pending' ? 'text-white bg-neutral-700' : 'text-neutral-300'
+                                }`}
+                              >
+                                Pending
+                              </button>
+                            </div>
+                          )}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
