@@ -14,6 +14,7 @@ import {
   ThumbsUp,
   FileText
 } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 import useNudgeStore from '../../store/nudgeStore';
 import FloatingUserCard from './FloatingUserCard';
 import { usersData } from '../../data/usersData';
@@ -675,28 +676,30 @@ const AnimatedBottomSheet = ({
                     
                     {/* Search Results */}
                     {filteredUsers.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48" data-simplebar>
-                        {filteredUsers.map((user) => (
-                          <button
-                            key={user.id}
-                            onClick={() => addUserFromSearch(user)}
-                            className="w-full flex items-center space-x-3 p-3 hover:bg-neutral-700 transition-colors text-left"
-                          >
-                            <img
-                              src={user.avatar}
-                              alt={user.name}
-                              className="w-8 h-8 rounded-full"
-                            />
-                            <div className="flex-1">
-                              <div className="text-white text-sm font-medium">{user.name}</div>
-                              <div className="text-neutral-400 text-xs">{user.title}</div>
-                            </div>
-                            <div className={`w-2 h-2 rounded-full ${
-                              user.status === 'online' ? 'bg-green-500' : 
-                              user.status === 'away' ? 'bg-orange-500' : 'bg-gray-500'
-                            }`} />
-                          </button>
-                        ))}
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-neutral-800 border border-neutral-700 rounded-lg shadow-lg z-50 max-h-48 overflow-hidden">
+                        <SimpleBar style={{ maxHeight: '192px' }}>
+                          {filteredUsers.map((user) => (
+                            <button
+                              key={user.id}
+                              onClick={() => addUserFromSearch(user)}
+                              className="w-full flex items-center space-x-3 p-3 hover:bg-neutral-700 transition-colors text-left"
+                            >
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="w-8 h-8 rounded-full"
+                              />
+                              <div className="flex-1">
+                                <div className="text-white text-sm font-medium">{user.name}</div>
+                                <div className="text-neutral-400 text-xs">{user.title}</div>
+                              </div>
+                              <div className={`w-2 h-2 rounded-full ${
+                                user.status === 'online' ? 'bg-green-500' : 
+                                user.status === 'away' ? 'bg-orange-500' : 'bg-gray-500'
+                              }`} />
+                            </button>
+                          ))}
+                        </SimpleBar>
                       </div>
                     )}
                   </div>

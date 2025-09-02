@@ -9,18 +9,62 @@ import {
   Video,
   Download,
   MoreHorizontal,
-  ChevronDown
+  ChevronDown,
+  X
 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import Sidebar from '../shared/Sidebar';
 import LiveNotifications from '../shared/LiveNotifications';
+import FileCardDropdown from './FileCardDropdown';
 import { usersData } from '../../data/usersData';
+
+// Add custom CSS for animations
+const styles = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  
+  .animate-slideIn {
+    animation: slideIn 0.4s ease-out forwards;
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
 
 const FilesPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [sidebarView, setSidebarView] = useState('media'); // 'media' or 'nudges'
 
   // Sample file data with English content
   const files = [
@@ -95,6 +139,65 @@ const FilesPage = ({ onNavigate }) => {
     }
   ];
 
+  // Sample nudges containing files
+  const nudgesWithFiles = [
+    {
+      id: 'nudge-1',
+      senderName: 'Sarah Johnson',
+      senderTitle: 'Project Manager',
+      senderAvatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Hi team! I\'ve attached the updated project proposal. Please review and let me know your thoughts by tomorrow.',
+      timestamp: '2h',
+      attachments: [
+        { id: 1, name: 'Project Proposal.pdf', type: 'document' }
+      ]
+    },
+    {
+      id: 'nudge-2',
+      senderName: 'Marcus Chen',
+      senderTitle: 'Lead Developer',
+      senderAvatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Here\'s the marketing strategy document we discussed in the meeting. Looking forward to your feedback!',
+      timestamp: '5h',
+      attachments: [
+        { id: 2, name: 'Marketing Strategy.docx', type: 'document' }
+      ]
+    },
+    {
+      id: 'nudge-3',
+      senderName: 'Emily Watson',
+      senderTitle: 'UX Designer',
+      senderAvatar: 'https://images.pexels.com/photos/1576482/pexels-photo-1576482.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Team meeting recording from yesterday\'s session. Contains important decisions about the upcoming sprint.',
+      timestamp: '1d',
+      attachments: [
+        { id: 3, name: 'Team Meeting Recording.mp4', type: 'media' }
+      ]
+    },
+    {
+      id: 'nudge-4',
+      senderName: 'David Rodriguez',
+      senderTitle: 'Financial Analyst',
+      senderAvatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Budget analysis for Q4 is ready. Please check the numbers and confirm if everything looks correct.',
+      timestamp: '2d',
+      attachments: [
+        { id: 4, name: 'Budget Analysis.xlsx', type: 'document' }
+      ]
+    },
+    {
+      id: 'nudge-5',
+      senderName: 'Alex Thompson',
+      senderTitle: 'Product Designer',
+      senderAvatar: 'https://images.pexels.com/photos/1181690/pexels-photo-1181690.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Latest product mockup with the new design system applied. What do you think of the updated UI?',
+      timestamp: '3d',
+      attachments: [
+        { id: 5, name: 'Product Mockup.png', type: 'media' }
+      ]
+    }
+  ];
+
   const filteredFiles = files.filter(file => {
     const matchesSearch = file.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTab = activeTab === 'all' || 
@@ -110,6 +213,27 @@ const FilesPage = ({ onNavigate }) => {
       return new Date(a.modified) - new Date(b.modified);
     }
   });
+
+  // Function to handle "Go to original message" action
+  const handleGoToOriginalMessage = (file) => {
+    // Find nudges that contain this file as an attachment
+    const relatedNudges = nudgesWithFiles.filter(nudge => 
+      nudge.attachments.some(attachment => attachment.name === file.name)
+    );
+    
+    if (relatedNudges.length > 0) {
+      setSelectedFile(file);
+      setSidebarView('nudges');
+    }
+  };
+
+  // Get nudges related to the selected file
+  const getRelatedNudges = () => {
+    if (!selectedFile) return [];
+    return nudgesWithFiles.filter(nudge => 
+      nudge.attachments.some(attachment => attachment.name === selectedFile.name)
+    );
+  };
 
   const TopTabsFiles = () => {
     return (
@@ -254,9 +378,10 @@ const FilesPage = ({ onNavigate }) => {
                           <button className="p-2 hover:bg-neutral-700 rounded-lg transition-colors">
                             <Download className="h-4 w-4 text-neutral-400" />
                           </button>
-                          <button className="p-2 hover:bg-neutral-700 rounded-lg transition-colors">
-                            <MoreHorizontal className="h-4 w-4 text-neutral-400" />
-                          </button>
+                          <FileCardDropdown 
+                            file={file} 
+                            onGoToOriginalMessage={handleGoToOriginalMessage}
+                          />
                         </div>
                       </div>
                     );
@@ -266,21 +391,64 @@ const FilesPage = ({ onNavigate }) => {
             </div>
 
             {/* Right Sidebar - Media Thumbnails */}
-            <div className="w-[350px] flex flex-col border border-neutral-700 rounded-lg p-6">
-              <div className="mb-4">
-                <h2 className="text-white font-semibold text-lg mb-4">Recent Media</h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {mediaThumbnails.map((media) => (
-                    <div key={media.id} className="aspect-square bg-neutral-800/50 rounded-lg flex items-center justify-center hover:bg-neutral-700/50 transition-colors cursor-pointer">
-                      {media.type === 'video' ? (
-                        <Video className="h-8 w-8 text-neutral-400" />
-                      ) : (
-                        <Image className="h-8 w-8 text-neutral-400" />
-                      )}
-                    </div>
-                  ))}
+            <div className="w-[350px] flex flex-col border border-neutral-700 rounded-lg p-6 transition-all duration-300 ease-in-out">
+              {sidebarView === 'media' ? (
+                <div className="mb-4 animate-fadeIn">
+                  <h2 className="text-white font-semibold text-lg mb-4">Recent Media</h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    {mediaThumbnails.map((media) => (
+                      <div key={media.id} className="aspect-square bg-neutral-800/50 rounded-lg flex items-center justify-center hover:bg-neutral-700/50 transition-colors cursor-pointer">
+                        {media.type === 'video' ? (
+                          <Video className="h-8 w-8 text-neutral-400" />
+                        ) : (
+                          <Image className="h-8 w-8 text-neutral-400" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="mb-4 animate-fadeIn">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-white font-semibold text-lg">Messages with "{selectedFile?.name}"</h2>
+                    <button 
+                      onClick={() => setSidebarView('media')}
+                      className="text-neutral-400 hover:text-white transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="space-y-4">
+                    {getRelatedNudges().map((nudge, index) => (
+                       <div 
+                         key={nudge.id} 
+                         className="bg-neutral-800/50 rounded-lg p-4 hover:bg-neutral-700/50 transition-all duration-200 cursor-pointer transform hover:scale-[1.02] animate-slideIn"
+                         style={{ animationDelay: `${index * 100}ms` }}
+                       >
+                        <div className="flex items-start space-x-3">
+                          <img 
+                            src={nudge.senderAvatar} 
+                            alt={nudge.senderName}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <h4 className="text-sm font-medium text-white truncate">{nudge.senderName}</h4>
+                              <span className="text-xs text-neutral-400">{nudge.timestamp}</span>
+                            </div>
+                            <p className="text-xs text-neutral-400 mb-2">{nudge.senderTitle}</p>
+                            <p className="text-sm text-neutral-300 line-clamp-3">{nudge.message}</p>
+                            <div className="mt-2 flex items-center space-x-2">
+                              <FileText className="h-4 w-4 text-neutral-400" />
+                              <span className="text-xs text-neutral-400">{selectedFile?.name}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

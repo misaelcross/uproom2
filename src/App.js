@@ -286,6 +286,10 @@ function App() {
   };
 
   const handleOpenScheduleMeeting = () => {
+    // Close Create Group sidebar if it's open
+    if (isCreateGroupOpen) {
+      handleCloseCreateGroup();
+    }
     setIsScheduleMeetingOpen(true);
     setSchedulingStep('initial');
   };
@@ -387,6 +391,10 @@ function App() {
 
   // Funções para criação de grupos
   const handleOpenCreateGroup = () => {
+    // Close Schedule Meeting sidebar if it's open
+    if (isScheduleMeetingOpen) {
+      handleCloseScheduleMeeting();
+    }
     setIsCreateGroupOpen(true);
     setGroupCreationStep('initial');
   };

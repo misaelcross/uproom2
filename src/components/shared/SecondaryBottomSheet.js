@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { animated, useSpring } from 'react-spring';
 import { X, ChevronUp, Send, FileText, ThumbsUp } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 import useNudgeStore from '../../store/nudgeStore';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 import { usersData } from '../../data/usersData';
@@ -253,8 +255,9 @@ const SecondaryBottomSheet = () => {
               {/* Content Area */}
               <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Scrollable Content */}
-                <div className="flex-1 pb-4" data-simplebar>
-                  <div className="space-y-6">
+                <div className="flex-1 pb-4">
+                  <SimpleBar style={{ height: '100%' }}>
+                    <div className="space-y-6">
                     {/* Message Description with Left Border */}
                     <div className="border border-neutral-600 p-4 rounded-lg">
                       <p className="text-white text-sm leading-relaxed">{renderTextWithMentions(currentNudge.message)}</p>
@@ -301,7 +304,8 @@ const SecondaryBottomSheet = () => {
                          })}
                       </div>
                     </div>
-                  </div>
+                    </div>
+                  </SimpleBar>
                 </div>
 
                 {/* Footer - Always at Bottom */}

@@ -33,22 +33,24 @@ const EmojiPickerDropdown = ({ onSelect, onClose, position = 'bottom-right' }) =
   };
 
   return (
-    <div className={`${positionClasses[position]} bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 p-3 max-h-48 overflow-auto`} data-simplebar>
-      <div className="grid grid-cols-8 gap-1">
-        {emojiList.map((emoji, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => {
-              onSelect(emoji);
-              onClose();
-            }}
-            className="p-1 hover:bg-neutral-700 rounded text-lg transition-colors"
-          >
-            {emoji}
-          </button>
-        ))}
-      </div>
+    <div className={`${positionClasses[position]} bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 p-3 max-h-48 overflow-hidden`}>
+      <SimpleBar style={{ maxHeight: '192px' }}>
+        <div className="grid grid-cols-8 gap-1">
+          {emojiList.map((emoji, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => {
+                onSelect(emoji);
+                onClose();
+              }}
+              className="p-1 hover:bg-neutral-700 rounded text-lg transition-colors"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      </SimpleBar>
     </div>
   );
 };

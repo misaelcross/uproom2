@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Zap } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 const BottomSheet = ({ 
   isOpen, 
@@ -79,8 +81,10 @@ const BottomSheet = ({
                 </div>
 
                 {/* Content */}
-                <div className="px-4 pb-4" style={{ maxHeight: `calc(${maxHeight} - 80px)` }} data-simplebar>
-                  {children}
+                <div className="px-4 pb-4">
+                  <SimpleBar style={{ maxHeight: `calc(${maxHeight} - 80px)` }}>
+                    {children}
+                  </SimpleBar>
                 </div>
 
                 {/* Drag Handle (visual indicator) */}

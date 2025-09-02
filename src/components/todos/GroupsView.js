@@ -42,6 +42,7 @@ import {
   ChevronDown,
   Merge
 } from 'lucide-react';
+import SimpleBar from 'simplebar-react';
 
 const GroupsView = ({ 
   folders, 
@@ -606,23 +607,25 @@ const GroupsView = ({
               
               {/* Dropdown results - only show when typing */}
               {searchTerm && (
-                <div className="absolute top-full left-0 right-0 bg-neutral-700 border border-neutral-600 rounded-b-lg max-h-40 z-10" data-simplebar>
-                  {getFilteredUsers(folder.id).length > 0 ? (
-                    getFilteredUsers(folder.id).map(user => (
-                      <button
-                        key={user.id}
-                        onClick={() => handleAddPersonToFolder(folder.id, user)}
-                        className="w-full flex items-center gap-2 p-2 hover:bg-neutral-600 text-left transition-colors"
-                      >
-                        <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
-                        <span className="text-white text-sm">{user.name}</span>
-                      </button>
-                    ))
-                  ) : (
-                    <p className="text-neutral-400 text-sm py-2 px-3">
-                      No users found matching your search.
-                    </p>
-                  )}
+                <div className="absolute top-full left-0 right-0 bg-neutral-700 border border-neutral-600 rounded-b-lg max-h-40 z-10 overflow-hidden">
+                  <SimpleBar style={{ maxHeight: '160px' }}>
+                    {getFilteredUsers(folder.id).length > 0 ? (
+                      getFilteredUsers(folder.id).map(user => (
+                        <button
+                          key={user.id}
+                          onClick={() => handleAddPersonToFolder(folder.id, user)}
+                          className="w-full flex items-center gap-2 p-2 hover:bg-neutral-600 text-left transition-colors"
+                        >
+                          <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
+                          <span className="text-white text-sm">{user.name}</span>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="text-neutral-400 text-sm py-2 px-3">
+                        No users found matching your search.
+                      </p>
+                    )}
+                  </SimpleBar>
                 </div>
               )}
             </div>

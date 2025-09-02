@@ -9,8 +9,14 @@ import {
   Megaphone,
   User,
   CheckSquare,
-  Save
+  Save,
+  Calendar
 } from 'lucide-react';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TextField, ThemeProvider, createTheme } from '@mui/material';
+import dayjs from 'dayjs';
 import SimpleBar from 'simplebar-react';
 import PollSurveyModal from './PollSurveyModal';
 import GroupSelector from './GroupSelector';
@@ -19,6 +25,129 @@ import EmojiPicker from '../shared/EmojiPicker';
 import useNudgeStore from '../../store/nudgeStore';
 
 // Usuários fake para pesquisa
+// Dark theme for MUI DateTimePicker to match TodoDetails styling
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+    background: {
+      default: '#171717',
+      paper: '#262626',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#a3a3a3',
+    },
+  },
+  components: {
+    MuiPickersPopper: {
+      styleOverrides: {
+        root: {
+          zIndex: 9999,
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+          },
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '& .MuiIconButton-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '&:hover': {
+            backgroundColor: '#404040',
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            '&:hover': {
+              backgroundColor: '#e5e5e5',
+            },
+          },
+        },
+      },
+    },
+    MuiClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+        clock: {
+          backgroundColor: '#171717',
+        },
+      },
+    },
+    MuiClockPointer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+        },
+        thumb: {
+          backgroundColor: '#ffffff',
+          border: '2px solid #ffffff',
+        },
+      },
+    },
+    MuiMultiSectionDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+          '& .MuiList-root': {
+            color: '#ffffff',
+          },
+          '& .MuiMenuItem-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff',
+              color: '#000000',
+            },
+          },
+        },
+      },
+    },
+    MuiDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+        list: {
+          backgroundColor: '#262626',
+          '& .MuiMenuItem-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff',
+              color: '#000000',
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
 const searchableUsers = [
   { id: 101, name: "Brent Short", title: "Product Manager", avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "online" },
   { id: 102, name: "Lauren Potter", title: "Designer", avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop", status: "away" },
@@ -39,6 +168,8 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
   const [isAnnouncementMode, setIsAnnouncementMode] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [selectedTodos, setSelectedTodos] = useState([]);
+  const [hasDueDate, setHasDueDate] = useState(false);
+  const [dueDate, setDueDate] = useState(null);
 
   // Hook do store de nudges
   const { saveDraft } = useNudgeStore();
@@ -105,7 +236,8 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
         attachedPoll,
         type: attachedPoll ? 'poll' : isAnnouncementMode ? 'announcement' : 'message',
         isAnnouncement: isAnnouncementMode,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        dueDate: hasDueDate && dueDate ? dueDate.toISOString() : null
       };
       console.log('Sending nudge:', nudgeData);
       // Aqui você pode adicionar a lógica para enviar o nudge
@@ -117,6 +249,8 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
       setSearchTerm('');
       setAttachedPoll(null);
       setIsAnnouncementMode(false);
+      setHasDueDate(false);
+      setDueDate(null);
       if (onCancel) onCancel();
     }
   };
@@ -134,7 +268,8 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
         attachedPoll,
         type: attachedPoll ? 'poll' : isAnnouncementMode ? 'announcement' : 'message',
         isAnnouncement: isAnnouncementMode,
-        title: message.trim() ? message.substring(0, 50) + (message.length > 50 ? '...' : '') : 'Untitled Draft'
+        title: message.trim() ? message.substring(0, 50) + (message.length > 50 ? '...' : '') : 'Untitled Draft',
+        dueDate: hasDueDate && dueDate ? dueDate.toISOString() : null
       };
       
       saveDraft(draftData);
@@ -148,6 +283,8 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
       setSearchTerm('');
       setAttachedPoll(null);
       setIsAnnouncementMode(false);
+      setHasDueDate(false);
+      setDueDate(null);
       if (onCancel) onCancel();
     }
   };
@@ -358,6 +495,82 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
           selectedTodos={selectedTodos}
           onTodosChange={setSelectedTodos}
         />
+
+        {/* Due Date Toggle */}
+        <div className="py-4 border-t border-neutral-700">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-neutral-400" />
+              <span className="text-sm font-medium text-white">Set Due Date</span>
+            </div>
+            <button
+              onClick={() => {
+                setHasDueDate(!hasDueDate);
+                if (hasDueDate) {
+                  setDueDate(null);
+                }
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ring-1 ring-neutral-700 focus:outline-none focus:ring-1 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-800 ${
+                hasDueDate ? 'bg-neutral-600' : 'bg-neutral-800'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  hasDueDate ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+           </div>
+           
+           {/* Date Time Picker */}
+            {hasDueDate && (
+              <ThemeProvider theme={darkTheme}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    label="Due Date & Time"
+                    value={dueDate}
+                    onChange={(newValue) => setDueDate(newValue)}
+                    minDateTime={dayjs()}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        fullWidth
+                        size="small"
+                        sx={{
+                           '& .MuiOutlinedInput-root': {
+                             backgroundColor: '#404040',
+                             borderColor: '#525252',
+                             color: 'white',
+                             '& fieldset': {
+                               borderColor: '#525252',
+                             },
+                             '&:hover fieldset': {
+                               borderColor: '#ffffff',
+                             },
+                             '&.Mui-focused fieldset': {
+                               borderColor: '#ffffff',
+                             },
+                           },
+                           '& .MuiInputLabel-root': {
+                             color: '#a3a3a3',
+                             '&.Mui-focused': {
+                               color: '#ffffff',
+                             },
+                           },
+                           '& .MuiInputBase-input': {
+                             color: 'white',
+                           },
+                           '& .MuiSvgIcon-root': {
+                             color: '#a3a3a3',
+                           },
+                         }}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </ThemeProvider>
+            )}
+         </div>
         </div>
       </SimpleBar>
 
