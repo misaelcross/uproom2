@@ -19,6 +19,8 @@ import LiveNotifications from '../shared/LiveNotifications';
 import ActionBar from '../dashboard/ActionBar';
 import UserDetails from './UserDetails';
 import TeamEmptyState from './TeamEmptyState';
+import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
+import useNudgeStore from '../../store/nudgeStore';
 
 const TeamPage = ({ onNavigate }) => {
   const [selectedUser, setSelectedUser] = useState(null);
@@ -27,6 +29,9 @@ const TeamPage = ({ onNavigate }) => {
   const [accountFilter, setAccountFilter] = useState('all');
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  
+  // AnimatedBottomSheet state management
+  const { nudges, dismissNudge } = useNudgeStore();
 
   // Tabs para gestão de usuários - Hidden for now, can be restored in the future
   // const validStatuses = ['active', 'inactive', 'pending'];
@@ -437,6 +442,12 @@ const TeamPage = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+      
+      {/* AnimatedBottomSheet for nudges */}
+      <AnimatedBottomSheet
+        nudges={nudges}
+        onDismiss={dismissNudge}
+      />
     </div>
   );
 };

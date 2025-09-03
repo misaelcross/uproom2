@@ -794,16 +794,40 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
               {/* Conteúdo do Pomodoro */}
               {!pomodoroCollapsed && (
                 <div className="border-t border-neutral-700 p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-3">
                     {/* Left side: Title and Focus badge */}
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-white mb-3">Product Review</h4>
+                      <h4 className="text-sm font-medium text-white">Product Review</h4>
                     </div>
 
                     {/* Right side: Timer only */}
                     <div className="flex items-center">
                       <span className="text-sm text-neutral-400">{formatTime(pomodoroTime)}</span>
                     </div>
+                  </div>
+                  
+                  {/* Control buttons */}
+                  <div className="flex items-center justify-center gap-2 w-full">
+                    <button
+                      onClick={() => setPomodoroActive(!pomodoroActive)}
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 text-white border border-neutral-700 rounded-md hover:bg-neutral-800 transition-colors text-xs font-medium"
+                    >
+                      {pomodoroActive ? (
+                        <><Pause className="w-3 h-3" /> Pause</>
+                      ) : (
+                        <><Play className="w-3 h-3" /> Play</>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPomodoroTime(25 * 60);
+                        setPomodoroActive(false);
+                        setCurrentPomodoro(1);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 border border-neutral-700 text-white rounded-md hover:bg-neutral-800 transition-colors text-xs font-medium"
+                    >
+                      <RefreshCw className="w-3 h-3" /> Reset
+                    </button>
                   </div>
                 </div>
               )}

@@ -17,6 +17,8 @@ import Sidebar from '../shared/Sidebar';
 import LiveNotifications from '../shared/LiveNotifications';
 import FileCardDropdown from './FileCardDropdown';
 import { usersData } from '../../data/usersData';
+import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
+import useNudgeStore from '../../store/nudgeStore';
 
 // Add custom CSS for animations
 const styles = `
@@ -59,6 +61,8 @@ if (typeof document !== 'undefined') {
 }
 
 const FilesPage = ({ onNavigate }) => {
+  // AnimatedBottomSheet state management
+  const { nudges, dismissNudge } = useNudgeStore();
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -453,6 +457,12 @@ const FilesPage = ({ onNavigate }) => {
           </div>
         </div>
       </div>
+      
+      {/* AnimatedBottomSheet for nudges */}
+      <AnimatedBottomSheet
+        nudges={nudges}
+        onDismiss={dismissNudge}
+      />
     </div>
   );
 };
