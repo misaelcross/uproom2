@@ -22,9 +22,21 @@ const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
   ];
 
   return (
-    <div className="h-full flex flex-col bg-neutral-900 border border-neutral-700 rounded-lg">
-      {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8">
+    <div className="h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
+      <div className="h-full bg-transparent">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700">
+          <h2 className="text-lg font-semibold text-white">Schedule Meeting</h2>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-neutral-700 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-neutral-400" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
         {/* Main illustration */}
         <div className="w-24 h-24 bg-neutral-800 rounded-full flex items-center justify-center mb-6">
           <Calendar className="w-12 h-12 text-neutral-500" />
@@ -70,14 +82,6 @@ const ScheduleMeetingSidebar = ({ isOpen, onClose, onShowEmployeeList }) => {
           ))}
         </div>
 
-        {/* Cancel Button */}
-        <div className="w-full max-w-sm">
-          <button
-            onClick={onClose}
-            className="w-full flex items-center justify-center gap-2 p-3 hover:bg-neutral-800 border border-neutral-600 hover:border-neutral-500 rounded-lg transition-all duration-200 text-neutral-300 hover:text-white"
-          >
-            <span>Cancel</span>
-          </button>
         </div>
       </div>
     </div>

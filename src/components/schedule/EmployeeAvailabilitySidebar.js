@@ -1,26 +1,29 @@
 import React from 'react';
 import { X, ArrowLeft, Calendar, Clock } from 'lucide-react';
+import MonthCalendar from './MonthCalendar';
 
 const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSelectTimeSlot }) => {
   const [selectedSlot, setSelectedSlot] = React.useState(null);
+  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const [showCalendar, setShowCalendar] = React.useState(true);
   
   // Function to handle time slot confirmation
   const handleConfirmTimeSlot = (employee, slot, dateInfo) => {
-    // Call the original onSelectTimeSlot function
-    onSelectTimeSlot(employee, slot, dateInfo);
+    // Call the original onSelectTimeSlot function with correct parameter order
+    onSelectTimeSlot(slot, dateInfo);
   };
   
   // Generate sample availability data for the selected employee (memoized to prevent re-generation)
   const availabilityData = React.useMemo(() => {
-    if (!employee) return [];
+    if (!employee || !selectedDate) return [];
     
     const generateAvailability = () => {
-      const today = new Date();
+      const baseDate = new Date(selectedDate);
       const days = [];
       
       for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() + i);
+        const date = new Date(baseDate);
+        date.setDate(baseDate.getDate() + i);
         
         const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
         const monthDay = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
@@ -66,11 +69,31 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
     };
     
     return generateAvailability();
-  }, [employee]);
+  }, [employee, selectedDate]);
    
+  // Handle date selection
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setShowCalendar(false);
+    setSelectedSlot(null); // Reset selected slot when date changes
+  };
+
+  // Handle back to calendar
+  const handleBackToCalendar = () => {
+    setShowCalendar(true);
+    setSelectedSlot(null);
+  };
+
   if (!isOpen || !employee) return null;
    
-  const todayData = availabilityData[0]; // Show today's availability
+  const selectedDateData = availabilityData.find(day => {
+    const dayDate = new Date(day.date);
+    return dayDate.toDateString() === selectedDate.toDateString();
+  }) || { 
+    dayName: selectedDate.toLocaleDateString('en-US', { weekday: 'long' }), 
+    monthDay: selectedDate.getDate(), 
+    timeSlots: [] 
+  };
 
   const getAvailabilityColor = (availability) => {
     switch (availability?.toLowerCase()) {
@@ -100,12 +123,14 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
         <div className="flex items-center justify-between px-5 py-5 border-b border-neutral-700">
           <div className="flex items-center gap-3">
             <button
-              onClick={onBack}
+              onClick={showCalendar ? onBack : handleBackToCalendar}
               className="p-1 hover:bg-neutral-700 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-neutral-400" />
             </button>
-            <h2 className="text-lg font-semibold text-white">Select Time</h2>
+            <h2 className="text-lg font-semibold text-white">
+              {showCalendar ? 'Select Date' : 'Select Time'}
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -136,74 +161,99 @@ const EmployeeAvailabilitySidebar = ({ isOpen, onClose, onBack, employee, onSele
           </div>
         </div>
 
-        {/* Date Header */}
-        <div className="px-6 py-4 border-b border-neutral-700">
-          <div className="flex items-center gap-2 text-neutral-300">
-            <Calendar className="w-4 h-4" />
-            <span className="font-medium">{todayData.dayName}, {todayData.monthDay}</span>
-          </div>
-        </div>
-
-        {/* Time Slots */}
-        <div className="p-6 flex-1 overflow-y-auto">
-          {todayData.timeSlots.length === 0 ? (
-            <div className="text-center py-8">
-              <Clock className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
-              <p className="text-neutral-400 mb-2">No availability today</p>
-              <p className="text-sm text-neutral-500">
-                {employee.name} is currently {employee.availability.toLowerCase()}
+        {showCalendar ? (
+          /* Calendar Selection */
+          <div className="p-6 flex-1 overflow-y-auto">
+            <div className="mb-4">
+              <h3 className="text-white font-medium mb-2">Choose a date</h3>
+              <p className="text-sm text-neutral-400 mb-4">
+                Select a date to view {employee.name}'s availability
               </p>
             </div>
-          ) : (
-            <div className="space-y-2">
-              {todayData.timeSlots.map((slot, index) => {
-                const isSelected = selectedSlot?.time === slot.time;
-                
-                if (isSelected) {
-                  // Show selected slot with confirm button
-                  return (
-                    <div key={index} className="space-x-2 flex">
-                      {/* Selected time slot */}
-                      <div className="flex items-center justify-center w-full p-2 rounded-lg bg-neutral-800 border border-white text-white">
-                        <span className="font-medium">{slot.time}</span>
-                      </div>
-                      
-                      {/* Confirm button */}
-                      <button
-                        onClick={() => handleConfirmTimeSlot(employee, slot, todayData)}
-                        className="w-full p-3 rounded-lg bg-white text-black hover:bg-neutral-200 transition-colors"
-                      >
-                        <span className="font-medium">Confirm</span>
-                      </button>
-                    </div>
-                  );
-                }
-                
-                // Normal time slot
-                return (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedSlot(slot)}
-                    className="w-full p-3 rounded-lg border border-neutral-700 text-white bg-transparent hover:bg-neutral-800 transition-colors"
-                  >
-                    <span className="font-medium">{slot.time}</span>
-                  </button>
-                );
-              })}
+            <MonthCalendar 
+              selectedDate={selectedDate}
+              onDateSelect={handleDateSelect}
+            />
+          </div>
+        ) : (
+          /* Time Slots Selection */
+          <>
+            {/* Date Header */}
+            <div className="px-6 py-4 border-b border-neutral-700">
+              <div className="flex items-center gap-2 text-neutral-300">
+                <Calendar className="w-4 h-4" />
+                <span className="font-medium">{selectedDateData.dayName}, {selectedDateData.monthDay}</span>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Time Slots */}
+            <div className="p-6 flex-1 overflow-y-auto">
+              {selectedDateData.timeSlots.length === 0 ? (
+                <div className="text-center py-8">
+                  <Clock className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
+                  <p className="text-neutral-400 mb-2">No availability on this date</p>
+                  <p className="text-sm text-neutral-500">
+                    {employee.name} is currently {employee.availability.toLowerCase()}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {selectedDateData.timeSlots.map((slot, index) => {
+                    const isSelected = selectedSlot?.time === slot.time;
+                    
+                    if (isSelected) {
+                      // Show selected slot with confirm button
+                      return (
+                        <div key={index} className="space-x-2 flex">
+                          {/* Selected time slot */}
+                          <div className="flex items-center justify-center w-full p-2 rounded-lg bg-neutral-800 border border-white text-white">
+                            <span className="font-medium">{slot.time}</span>
+                          </div>
+                          
+                          {/* Confirm button */}
+                          <button
+                            onClick={() => handleConfirmTimeSlot(employee, slot, selectedDateData)}
+                            className="w-full p-3 rounded-lg bg-white text-black hover:bg-neutral-200 transition-colors"
+                          >
+                            <span className="font-medium">Confirm</span>
+                          </button>
+                        </div>
+                      );
+                    }
+                    
+                    // Normal time slot
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedSlot(slot)}
+                        className="w-full p-3 rounded-lg border border-neutral-700 text-white bg-transparent hover:bg-neutral-800 transition-colors"
+                      >
+                        <span className="font-medium">{slot.time}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Footer */}
         <div className="flex items-center justify-between p-4 border-t border-neutral-700">
-          <span className="text-sm text-neutral-400">
-            {todayData.timeSlots.length} slot{todayData.timeSlots.length !== 1 ? 's' : ''} available
-          </span>
+          {showCalendar ? (
+            <span className="text-sm text-neutral-400">
+              Select a date to view availability
+            </span>
+          ) : (
+            <span className="text-sm text-neutral-400">
+              {selectedDateData.timeSlots.length} slot{selectedDateData.timeSlots.length !== 1 ? 's' : ''} available
+            </span>
+          )}
           <button
-            onClick={onBack}
+            onClick={showCalendar ? onBack : handleBackToCalendar}
             className="px-4 py-2 rounded-lg border border-neutral-600 text-neutral-300  font-medium hover:bg-neutral-800 transition-colors"
           >
-            Back
+            {showCalendar ? 'Back' : 'Change Date'}
           </button>
         </div>
       </div>

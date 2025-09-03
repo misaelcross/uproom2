@@ -1007,7 +1007,25 @@ const SchedulePage = ({ onNavigate }) => {
                           group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           group.description.toLowerCase().includes(searchTerm.toLowerCase())
                         )
-                        .map((group) => (
+                        .map((group) => {
+                          // Helper function to get group color styling with transparency
+                          const getGroupColorStyling = (colorClass) => {
+                            const colorMap = {
+                              'bg-blue-600': { bg: 'bg-blue-500/10', icon: 'text-blue-400' },
+                              'bg-purple-600': { bg: 'bg-purple-500/10', icon: 'text-purple-400' },
+                              'bg-green-600': { bg: 'bg-green-500/10', icon: 'text-green-400' },
+                              'bg-orange-600': { bg: 'bg-orange-500/10', icon: 'text-orange-400' },
+                              'bg-red-600': { bg: 'bg-red-500/10', icon: 'text-red-400' },
+                              'bg-yellow-600': { bg: 'bg-yellow-500/10', icon: 'text-yellow-400' },
+                              'bg-pink-600': { bg: 'bg-pink-500/10', icon: 'text-pink-400' },
+                              'bg-indigo-600': { bg: 'bg-indigo-500/10', icon: 'text-indigo-400' }
+                            };
+                            return colorMap[colorClass] || { bg: 'bg-blue-500/10', icon: 'text-blue-400' };
+                          };
+
+                          const groupStyling = getGroupColorStyling(group.color);
+
+                          return (
                           <div
                             key={group.id}
                             className="px-4 py-3 hover:bg-neutral-800/50 transition-colors cursor-pointer"
@@ -1015,8 +1033,8 @@ const SchedulePage = ({ onNavigate }) => {
                           >
                             <div className="flex items-center gap-3">
                               <div className="relative">
-                                <div className={`w-8 h-8 ${group.color} rounded-full flex items-center justify-center`}>
-                                  <Users className="w-4 h-4 text-white" />
+                                <div className={`w-8 h-8 ${groupStyling.bg} rounded-full flex items-center justify-center`}>
+                                  <Users className={`w-4 h-4 ${groupStyling.icon}`} />
                                 </div>
                               </div>
                               <div className="flex-1 min-w-0">
@@ -1028,7 +1046,8 @@ const SchedulePage = ({ onNavigate }) => {
                               </div>
                             </div>
                           </div>
-                        ))
+                        );
+                        })
                     )}
                   </SimpleBar>
                     </div>

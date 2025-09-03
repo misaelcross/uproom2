@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Check } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const UserStatusCard = ({ 
@@ -173,7 +173,7 @@ const UserStatusCard = ({
 
             {/* Status Message Input */}
             <div className="py-2">
-              <div className={`bg-neutral-800 border rounded-lg transition-colors ${
+              <div className={`bg-neutral-800 border rounded-lg transition-colors relative ${
                 showStatusError 
                   ? 'border-red-500' 
                   : 'border-neutral-700 focus-within:border-neutral-600'
@@ -188,7 +188,7 @@ const UserStatusCard = ({
                       }
                     }}
                     placeholder="Give more details..."
-                    className="w-full bg-transparent p-3 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] border-none"
+                    className="w-full bg-transparent p-3 pr-10 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] border-none"
                     rows="1"
                     style={{
                       height: 'auto',
@@ -200,6 +200,10 @@ const UserStatusCard = ({
                     }}
                   />
                 </SimpleBar>
+                {/* Gradient Sparkles Icon */}
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <Sparkles className="w-4 h-4 text-white group-hover:text-neutral-300"/>
+                </div>
               </div>
               {showStatusError && (
                 <p className="text-red-400 text-xs mt-1">

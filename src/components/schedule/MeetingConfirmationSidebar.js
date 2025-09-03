@@ -7,25 +7,12 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
   const [selectedDate, setSelectedDate] = useState(dateInfo);
   const [selectedTime, setSelectedTime] = useState(timeSlot);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
   // Available duration options (30 min intervals, max 3 hours)
   const durationOptions = [30, 60, 90, 120, 150, 180];
   
-  // Generate available dates (next 7 days)
-  const availableDates = React.useMemo(() => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-      const monthDay = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-      dates.push({ date, dayName, monthDay });
-    }
-    return dates;
-  }, []);
+
   
   // Generate available time slots (30 min intervals)
   const availableTimeSlots = React.useMemo(() => {
@@ -38,7 +25,9 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
   
   // Update selected values when props change
   React.useEffect(() => {
-    if (dateInfo) setSelectedDate(dateInfo);
+    if (dateInfo) {
+      setSelectedDate(dateInfo);
+    }
     if (timeSlot) setSelectedTime(timeSlot);
   }, [dateInfo, timeSlot]);
 
@@ -138,39 +127,16 @@ const MeetingConfirmationSidebar = ({ isOpen, onClose, onBack, employee, timeSlo
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-white">Date</label>
               </div>
-              <button
-                onClick={() => setShowDatePicker(!showDatePicker)}
-                className="w-full flex items-center gap-3 p-3 bg-neutral-800 rounded-lg border border-neutral-600 hover:bg-neutral-700 transition-colors"
-              >
+              <div className="w-full flex items-center gap-3 p-3 bg-neutral-900 rounded-lg border border-neutral-600">
                 <Calendar className="w-5 h-5 text-neutral-400" />
                 <div className="text-left">
                   <p className="text-white font-medium">{selectedDate?.dayName}</p>
                   <p className="text-sm text-neutral-400">{selectedDate?.monthDay}</p>
                 </div>
-              </button>
-              
-              {/* Date Picker */}
-              {showDatePicker && (
-                <div className="space-y-2 p-3 bg-neutral-900 border border-neutral-600 rounded-lg">
-                  {availableDates.map((date, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setSelectedDate(date);
-                        setShowDatePicker(false);
-                      }}
-                      className={`w-full p-2 rounded-lg text-left transition-colors ${
-                        selectedDate?.dayName === date.dayName && selectedDate?.monthDay === date.monthDay
-                          ? 'bg-white text-black'
-                          : 'bg-neutral-800 text-white hover:bg-neutral-700'
-                      }`}
-                    >
-                      <p className="font-medium">{date.dayName}</p>
-                      <p className="text-sm opacity-70">{date.monthDay}</p>
-                    </button>
-                  ))}
+                <div className="ml-auto">
+                  <span className="text-xs text-neutral-500">Selected from calendar</span>
                 </div>
-              )}
+              </div>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">

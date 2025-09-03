@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SimpleBar from 'simplebar-react';
+import { Snackbar, Alert } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserCard from './components/dashboard/UserCard';
 import UserDetails from './components/dashboard/UserDetails';
 import Schedule from './components/schedule/Schedule';
@@ -63,6 +65,44 @@ function App() {
   const [activeTab, setActiveTab] = useState('send');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [message, setMessage] = useState('');
+
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' // 'success', 'error', 'warning', 'info'
+  });
+
+  // Create dark theme for Material-UI components
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      background: {
+        paper: '#262626', // neutral-800
+      },
+      success: {
+        main: '#10b981', // green-500
+      },
+      error: {
+        main: '#ef4444', // red-500
+      },
+      text: {
+        primary: '#ffffff',
+      },
+    },
+    components: {
+      MuiSnackbar: {
+        styleOverrides: {
+          root: {
+            '& .MuiPaper-root': {
+              backgroundColor: '#262626',
+              border: '1px solid #404040',
+            },
+          },
+        },
+      },
+    },
+  });
 
   // Hook do store de nudges
   const { simulateNewNudge } = useNudgeStore();
@@ -330,6 +370,23 @@ function App() {
 
   const addNudge = useNudgeStore(state => state.addNewNudge);
 
+  // Handle snackbar close
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  // Show snackbar notification
+  const showSnackbar = (message, severity = 'success') => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+
   const handleConfirmMeeting = async (meetingData) => {
     try {
       const { employee, timeSlot, dateInfo, message } = meetingData;
@@ -366,11 +423,11 @@ function App() {
       addNudge(meetingNudge);
       
       console.log('Meeting request sent:', meetingNudge);
-      alert(`Meeting request sent to ${employee.name}!`);
+      showSnackbar(`Meeting request sent to ${employee.name}!`, 'success');
       handleCloseScheduleMeeting();
     } catch (error) {
       console.error('Error confirming meeting:', error);
-      alert('Failed to send meeting request. Please try again.');
+      showSnackbar('Failed to send meeting request. Please try again.', 'error');
     }
   };
 
@@ -488,7 +545,8 @@ function App() {
 
   // Renderizar Dashboard (página padrão)
   return (
-    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
+    <ThemeProvider theme={darkTheme}>
+      <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
         {/* Primeira coluna: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -692,7 +750,34 @@ function App() {
 
       {/* Secondary Bottom Sheet - Secundário (Esquerda) */}
       <SecondaryBottomSheet />
-    </div>
+      
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{
+            backgroundColor: snackbar.severity === 'success' ? '#10b981' : '#ef4444',
+            color: '#ffffff',
+            '& .MuiAlert-icon': {
+              color: '#ffffff',
+            },
+            '& .MuiAlert-action': {
+              color: '#ffffff',
+            },
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+      </div>
+    </ThemeProvider>
   );
 }
 
