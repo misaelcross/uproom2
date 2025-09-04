@@ -10,7 +10,8 @@ import {
   Download,
   MoreHorizontal,
   ChevronDown,
-  X
+  X,
+  ArrowUpRight
 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import Sidebar from '../shared/Sidebar';
@@ -338,7 +339,7 @@ const FilesPage = ({ onNavigate }) => {
   };
 
   return (
-    <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
+    <div className="h-screen bg-neutral-900 pr-6 overflow-visible">
       <div className="flex gap-4 h-screen">
         {/* First column: 300px - Sidebar */}
         <div className="h-full" style={{ width: '300px' }}>
@@ -358,10 +359,10 @@ const FilesPage = ({ onNavigate }) => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex gap-2 flex-1 min-h-0 pb-2">
+          <div className="flex gap-2 flex-1 min-h-0 pb-2 overflow-visible">
             {/* Main Content */}
-            <div className="flex-1 flex flex-col h-full">
-              <SimpleBar className="flex-1">
+            <div className="flex-1 flex flex-col h-full" style={{overflow: 'visible'}}>
+              <SimpleBar className="flex-1" style={{overflow: 'visible'}}>
                 <div className="space-y-4 pr-4">
                   {sortedFiles.map((file) => {
                     const IconComponent = file.icon;
@@ -379,7 +380,16 @@ const FilesPage = ({ onNavigate }) => {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-2 hover:bg-neutral-700 rounded-lg transition-colors">
+                          <button 
+                            className="p-2 hover:bg-neutral-700 rounded-lg transition-colors"
+                            title="Go to original source"
+                          >
+                            <ArrowUpRight className="h-4 w-4 text-neutral-400" />
+                          </button>
+                          <button 
+                            className="p-2 hover:bg-neutral-700 rounded-lg transition-colors"
+                            title="Download"
+                          >
                             <Download className="h-4 w-4 text-neutral-400" />
                           </button>
                           <FileCardDropdown 

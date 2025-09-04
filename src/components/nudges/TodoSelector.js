@@ -161,7 +161,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
       case 'pending':
         return <Clock className="w-3 h-3 text-neutral-400" />;
       case 'in-progress':
-        return <AlertCircle className="w-3 h-3 text-blue-400" />;
+        return <AlertCircle className="w-3 h-3 text-neutral-400" />;
       case 'completed':
         return <CheckSquare className="w-3 h-3 text-green-400" />;
       default:
@@ -177,7 +177,7 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search todos or create new..."
+            placeholder="Search and add To-dos..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setIsDropdownOpen(true)}
@@ -317,10 +317,10 @@ const TodoSelector = ({ selectedTodos, onTodosChange, className = '' }) => {
           </div>
 
           {/* Todo Link Preview */}
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+          <div className="bg-neutral-500/10 border border-neutral-500/20 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
-              <CheckSquare className="w-4 h-4 text-blue-400" />
-              <span className="text-blue-400 text-sm font-medium">Todo Integration</span>
+              <CheckSquare className="w-4 h-4 text-neutral-400" />
+              <span className="text-neutral-400 text-sm font-medium">Todo Integration</span>
             </div>
             <p className="text-neutral-300 text-sm">
               This nudge will be linked to{' '}

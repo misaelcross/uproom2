@@ -46,10 +46,10 @@ const TodoItem = ({
     const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
     
     if (diffInSeconds < 60) return 'just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} months ago`;
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h`;
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d`;
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}m`;
     return `${Math.floor(diffInSeconds / 31536000)} years ago`;
   };
 
@@ -208,7 +208,7 @@ const TodoItem = ({
           
           {/* Additional info: Folder badge, Comments, Duration */}
           {(todo.comments?.length > 0 || todo.duration || (!selectedGroup && todo.groupId && groups)) && (
-            <div className="mt-2 flex flex-wrap gap-3 sm:space-y-1 sm:block">
+            <div className="mt-2 flex flex-wrap gap-3 items-center">
               {/* Folder badge - show only when no specific folder is selected */}
               {!selectedGroup && todo.groupId && groups && (
                 <div className="flex items-center gap-2 text-xs sm:text-sm">

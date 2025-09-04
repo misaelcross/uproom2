@@ -500,8 +500,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
         <div className="py-4 border-t border-neutral-700">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-neutral-400" />
-              <span className="text-sm font-medium text-white">Set Due Date</span>
+              <span className="text-sm font-medium text-neutral-400">Set Due Date</span>
             </div>
             <button
               onClick={() => {
@@ -511,7 +510,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
                 }
               }}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ring-1 ring-neutral-700 focus:outline-none focus:ring-1 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-800 ${
-                hasDueDate ? 'bg-neutral-600' : 'bg-neutral-800'
+                hasDueDate ? 'bg-green-500' : 'bg-neutral-800'
               }`}
             >
               <span
@@ -531,41 +530,43 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
                     value={dueDate}
                     onChange={(newValue) => setDueDate(newValue)}
                     minDateTime={dayjs()}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        fullWidth
-                        size="small"
-                        sx={{
-                           '& .MuiOutlinedInput-root': {
-                             backgroundColor: '#404040',
-                             borderColor: '#525252',
-                             color: 'white',
-                             '& fieldset': {
-                               borderColor: '#525252',
-                             },
-                             '&:hover fieldset': {
-                               borderColor: '#ffffff',
-                             },
-                             '&.Mui-focused fieldset': {
-                               borderColor: '#ffffff',
-                             },
-                           },
-                           '& .MuiInputLabel-root': {
-                             color: '#a3a3a3',
-                             '&.Mui-focused': {
-                               color: '#ffffff',
-                             },
-                           },
-                           '& .MuiInputBase-input': {
-                             color: 'white',
-                           },
-                           '& .MuiSvgIcon-root': {
-                             color: '#a3a3a3',
-                           },
-                         }}
-                      />
-                    )}
+                    className="w-full"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        size: "small",
+                        sx: {
+                          width: '100%',
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: '#404040',
+                            borderColor: '#525252',
+                            color: 'white',
+                            width: '100%',
+                            '& fieldset': {
+                              borderColor: '#525252',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#ffffff',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#ffffff',
+                            },
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#a3a3a3',
+                            '&.Mui-focused': {
+                              color: '#ffffff',
+                            },
+                          },
+                          '& .MuiInputBase-input': {
+                            color: 'white',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            color: '#a3a3a3',
+                          },
+                        }
+                      }
+                    }}
                   />
                 </LocalizationProvider>
               </ThemeProvider>

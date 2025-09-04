@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreHorizontal, MessageSquare, Download, Share, Trash2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { MoreHorizontal, ArrowUpRight, Download, Share, Trash2 } from 'lucide-react';
 
 const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -24,6 +27,15 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
 
   const handleEllipsesClick = (e) => {
     e.stopPropagation(); // Prevent card click event
+    
+    if (!dropdownOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY + 4,
+        left: rect.right + window.scrollX - 200 // 200px is the dropdown width
+      });
+    }
+    
     setDropdownOpen(!dropdownOpen);
   };
 
@@ -31,7 +43,7 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
     e.stopPropagation();
     
     switch (option) {
-      case 'Go to original message':
+      case 'Go to original source':
         if (onGoToOriginalMessage) {
           onGoToOriginalMessage(file);
         }
@@ -53,7 +65,7 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
   };
 
   const dropdownOptions = [
-    { label: 'Go to original message', icon: MessageSquare },
+    { label: 'Go to original source', icon: ArrowUpRight },
     { label: 'Download', icon: Download },
     { label: 'Share', icon: Share },
     { label: 'Delete', icon: Trash2 }
@@ -62,15 +74,23 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        ref={buttonRef}
         onClick={handleEllipsesClick}
         className="p-2 hover:bg-neutral-700 rounded-lg transition-colors"
+        title="More options"
       >
         <MoreHorizontal className="h-4 w-4 text-neutral-400" />
       </button>
       
       {/* Dropdown Menu */}
-      {dropdownOpen && (
-        <div className="absolute top-full right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 min-w-[180px]">
+      {dropdownOpen && createPortal(
+        <div 
+          className="fixed bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-[9999] min-w-[200px]"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`
+          }}
+        >
           <div className="py-1">
             {dropdownOptions.map((option, index) => {
               const IconComponent = option.icon;
@@ -86,7 +106,8 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
               );
             })}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

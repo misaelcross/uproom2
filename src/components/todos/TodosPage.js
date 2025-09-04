@@ -580,6 +580,78 @@ const TodosPage = ({ onNavigate }) => {
     const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
     setSelectedTodo(updatedTodo);
   };
+
+  // Function to update comment
+  const updateComment = (todoId, commentId, newText) => {
+    const updatedTodos = todos.map(todo => 
+      todo.id === todoId 
+        ? {
+            ...todo,
+            comments: (todo.comments || []).map(comment =>
+              comment.id === commentId
+                ? { ...comment, text: newText }
+                : comment
+            )
+          }
+        : todo
+    );
+    
+    setTodos(updatedTodos);
+    const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
+    if (selectedTodo && selectedTodo.id === todoId) {
+      setSelectedTodo(updatedTodo);
+    }
+  };
+
+  // Function to delete comment
+  const deleteComment = (todoId, commentId) => {
+    const updatedTodos = todos.map(todo => 
+      todo.id === todoId 
+        ? {
+            ...todo,
+            comments: (todo.comments || []).filter(comment => comment.id !== commentId)
+          }
+        : todo
+    );
+    
+    setTodos(updatedTodos);
+    const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
+    if (selectedTodo && selectedTodo.id === todoId) {
+      setSelectedTodo(updatedTodo);
+    }
+  };
+
+  // Function to add emoji reaction to comment
+  const addEmojiReaction = (todoId, commentId, emoji) => {
+    const updatedTodos = todos.map(todo => 
+      todo.id === todoId 
+        ? {
+            ...todo,
+            comments: (todo.comments || []).map(comment => {
+              if (comment.id === commentId) {
+                const reactions = comment.reactions || [];
+                const existingReaction = reactions.find(r => r.emoji === emoji);
+                
+                if (existingReaction) {
+                  existingReaction.count += 1;
+                } else {
+                  reactions.push({ emoji, count: 1 });
+                }
+                
+                return { ...comment, reactions };
+              }
+              return comment;
+            })
+          }
+        : todo
+    );
+    
+    setTodos(updatedTodos);
+    const updatedTodo = updatedTodos.find(todo => todo.id === todoId);
+    if (selectedTodo && selectedTodo.id === todoId) {
+      setSelectedTodo(updatedTodo);
+    }
+  };
   
 
 
@@ -793,6 +865,9 @@ const TodosPage = ({ onNavigate }) => {
                   updateStepDescription(selectedTodo.id, stepId, newDescription)
                 }
                 onAddComment={addComment}
+                onUpdateComment={updateComment}
+                onDeleteComment={deleteComment}
+                onAddEmojiReaction={addEmojiReaction}
               />
             )}
           </div>

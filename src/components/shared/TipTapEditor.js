@@ -293,7 +293,7 @@ const suggestion = {
 };
 
 // Main TipTap Editor Component
-const TipTapEditor = ({ value, onChange, placeholder = "Type something...", showToolbar = true }) => {
+const TipTapEditor = ({ value, onChange, placeholder = "Type something...", showToolbar = true, onEnter }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef(null);
@@ -343,6 +343,14 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something...", show
     editorProps: {
       attributes: {
         class: 'px-4 py-3 text-white placeholder-neutral-400 focus:outline-none min-h-[44px] prose prose-invert max-w-none',
+      },
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Enter' && !event.shiftKey && onEnter) {
+          event.preventDefault();
+          onEnter();
+          return true;
+        }
+        return false;
       },
     },
   });

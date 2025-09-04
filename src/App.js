@@ -58,7 +58,7 @@ function App() {
   const [groupCreationStep, setGroupCreationStep] = useState('initial'); // 'initial', 'members', 'confirmation'
   const [selectedGroupMembers, setSelectedGroupMembers] = useState([]);
   const [createdGroups, setCreatedGroups] = useState([]);
-  const [sortBy, setSortBy] = useState('Recent Activity');
+  const [sortBy, setSortBy] = useState('Newest');
   const [topTabActive, setTopTabActive] = useState('overview');
   
   // Estados para o Bottom Sheet
@@ -250,6 +250,15 @@ function App() {
       case 'Alphabetical (Z–A)':
         sortedUsers.sort((a, b) => b.name.localeCompare(a.name));
         break;
+      case 'Role':
+        sortedUsers.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'Status':
+        sortedUsers.sort((a, b) => a.availability.localeCompare(b.availability));
+        break;
+      case 'Department':
+        sortedUsers.sort((a, b) => a.department.localeCompare(b.department));
+        break;
       case 'Newest':
         sortedUsers.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate));
         break;
@@ -298,6 +307,26 @@ function App() {
   const closeUserGroupDetails = () => {
     setSelectedUserGroup(null);
     setRightPanelContent('schedule');
+  };
+
+  // Handle collaborate button click
+  const handleCollaborate = () => {
+    // Close any open sidebars first
+    if (isCreateGroupOpen) {
+      handleCloseCreateGroup();
+    }
+    
+    // Open the schedule meeting flow
+    setRightPanelContent('schedule');
+    setSelectedEvent(null);
+    setSelectedUser(null);
+    setSelectedGroup(null);
+    setSelectedRoleGroup(null);
+    setSelectedUserGroup(null);
+    setIsLinkingContext(false);
+    
+    // Trigger the schedule meeting sidebar
+    handleOpenScheduleMeeting();
   };
 
   // Event details sidebar handlers
@@ -563,7 +592,7 @@ function App() {
               onUserClick={showUserDetails}
             />
 
-            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onCreateGroup={handleOpenCreateGroup} onScheduleMeeting={handleOpenScheduleMeeting} />
+            <ActionBar onUserSelect={handleUserSelect} onSortChange={handleSortChange} onInvite={handleOpenCreateGroup} onCollaborate={handleCollaborate} sortBy={sortBy} />
           </div>
 
           {/* Segunda linha: Grid e coluna direita */}

@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText, MoreHorizontal, Smile, Edit3 } from 'lucide-react';
 import TodoStep from './TodoStep';
 import TipTapEditor from '../shared/TipTapEditor';
 import useEscapeKey from '../../hooks/useEscapeKey';
@@ -370,7 +371,10 @@ const TodoDetails = ({
   onDeleteTodo,
   onUpdateTodoDescription,
   onUpdateStepDescription,
-  onAddComment 
+  onAddComment,
+  onUpdateComment,
+  onDeleteComment,
+  onAddEmojiReaction
 }) => {
   // Handle Escape key to close the component view
   useEscapeKey(onBack);
@@ -407,17 +411,35 @@ const TodoDetails = ({
   const descriptionRef = useRef(null);
   const titleRef = useRef(null);
   const descriptionEditRef = useRef(null);
+  
+  // Comment interaction states
+  const [hoveredComment, setHoveredComment] = useState(null);
+  const [editingComment, setEditingComment] = useState(null);
+  const [editedCommentText, setEditedCommentText] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [showCommentMenu, setShowCommentMenu] = useState(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [emojiPosition, setEmojiPosition] = useState({ top: 0, left: 0 });
+  
+  // Local todo state for proper re-rendering
+  const [localTodo, setLocalTodo] = useState(todo);
+
+  // Sync local todo state when prop changes
+  useEffect(() => {
+    setLocalTodo(todo);
+  }, [todo]);
 
   // Save description when it changes (debounced)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (description !== todo?.description && description.trim() !== '') {
-        onUpdateTodoDescription(todo.id, description);
+      if (description !== localTodo?.description && description.trim() !== '') {
+        onUpdateTodoDescription(localTodo.id, description);
       }
     }, 1000); // Save after 1 second of no changes
 
     return () => clearTimeout(timeoutId);
-  }, [description, todo?.description, todo.id, onUpdateTodoDescription]);
+  }, [description, localTodo?.description, localTodo.id, onUpdateTodoDescription]);
 
   const mockUsers = [
     { id: 1, name: 'John Doe', title: 'Frontend Developer', avatar: '/api/placeholder/32/32' },
@@ -435,9 +457,9 @@ const TodoDetails = ({
 
   useEffect(() => {
     if (isEditingTitle) {
-      setEditedTitle(todo.description || '');
+      setEditedTitle(localTodo.description || '');
     }
-  }, [isEditingTitle, todo.description]);
+  }, [isEditingTitle, localTodo.description]);
 
   useEffect(() => {
     if (isEditingDescription) {
@@ -454,22 +476,56 @@ const TodoDetails = ({
     setDescription(todo?.description || '');
   }, [todo]);
 
+  // Handle click outside to close comment menus
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if click is outside comment menu
+      if (showCommentMenu) {
+        const isClickOnMenuButton = event.target.closest('button[data-comment-menu]');
+        const isClickOnMenuDropdown = event.target.closest('div[style*="position: fixed"][style*="z-index: 9999"]') && 
+                                     event.target.closest('div').textContent.includes('Edit');
+        
+        if (!isClickOnMenuButton && !isClickOnMenuDropdown) {
+          setShowCommentMenu(null);
+          setMenuPosition(null);
+        }
+      }
+      
+      // Check if click is outside emoji picker
+      if (showEmojiPicker) {
+        const isClickOnEmojiButton = event.target.closest('button[data-emoji-picker]');
+        const isClickOnEmojiDropdown = event.target.closest('div[style*="position: fixed"][style*="z-index: 9999"]') && 
+                                      event.target.closest('div').textContent.match(/[👍❤️😂😮😢😡👏🎉]/);
+        
+        if (!isClickOnEmojiButton && !isClickOnEmojiDropdown) {
+          setShowEmojiPicker(null);
+          setEmojiPosition(null);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCommentMenu, showEmojiPicker]);
+
   const handleSaveTitle = () => {
-    if (editedTitle.trim() && editedTitle !== todo.description) {
-      onUpdateTodoDescription(todo.id, editedTitle.trim());
+    if (editedTitle.trim() && editedTitle !== localTodo.description) {
+      onUpdateTodoDescription(localTodo.id, editedTitle.trim());
     }
     setIsEditingTitle(false);
   };
 
   const handleCancelEditTitle = () => {
-    setEditedTitle(todo.description || '');
+    setEditedTitle(localTodo.description || '');
     setIsEditingTitle(false);
   };
 
   const handleSaveDescription = () => {
     if (editedDescription.trim() !== description) {
       setDescription(editedDescription.trim());
-      onUpdateTodoDescription(todo.id, editedDescription.trim());
+      onUpdateTodoDescription(localTodo.id, editedDescription.trim());
     }
     setIsEditingDescription(false);
   };
@@ -488,7 +544,7 @@ const TodoDetails = ({
     if (editedTodoDescription.trim() !== todoDescription) {
       setTodoDescription(editedTodoDescription.trim());
       if (onUpdateNotes) {
-        onUpdateNotes(todo.id, editedTodoDescription.trim());
+        onUpdateNotes(localTodo.id, editedTodoDescription.trim());
       }
     }
     setIsEditingTodoDescription(false);
@@ -500,7 +556,7 @@ const TodoDetails = ({
   };
 
   const handleStartEditingTitle = () => {
-    setEditedTitle(todo.description || '');
+    setEditedTitle(localTodo.description || '');
     setIsEditingTitle(true);
   };
 
@@ -514,7 +570,7 @@ const TodoDetails = ({
   };
 
   const handleConfirmDelete = () => {
-    onDeleteTodo(todo.id);
+    onDeleteTodo(localTodo.id);
     setShowDeleteModal(false);
     onBack();
   };
@@ -535,7 +591,7 @@ const TodoDetails = ({
 
   const handleAddStep = () => {
     if (newStepText.trim()) {
-      onAddStep(todo.id, newStepText.trim());
+      onAddStep(localTodo.id, newStepText.trim());
       setNewStepText('');
     }
   };
@@ -598,8 +654,8 @@ const TodoDetails = ({
     setRepeat(null);
   };
 
-  const completedSteps = todo.steps?.filter(step => step.completed).length || 0;
-  const totalSteps = todo.steps?.length || 0;
+  const completedSteps = localTodo.steps?.filter(step => step.completed).length || 0;
+  const totalSteps = localTodo.steps?.length || 0;
 
   const handleAddComment = () => {
     // Use cleanMentionText to check if there's actual content (not just HTML tags)
@@ -614,12 +670,110 @@ const TodoDetails = ({
         createdAt: new Date()
       };
       
-      onAddComment(todo.id, comment);
+      onAddComment(localTodo.id, comment);
       setNewComment('');
     }
   };
 
+  const handleEditComment = (commentId) => {
+    const comment = localTodo.comments?.find(c => c.id === commentId);
+    if (comment) {
+      setEditingComment(commentId);
+      setEditedCommentText(comment.text);
+      setShowCommentMenu(null);
+    }
+  };
+
+  const handleSaveComment = (commentId) => {
+    if (editedCommentText.trim()) {
+      const updatedText = editedCommentText.trim();
+      
+      setLocalTodo(prevTodo => {
+        const updatedTodo = { ...prevTodo };
+        const updatedComments = updatedTodo.comments.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, text: updatedText };
+          }
+          return comment;
+        });
+        
+        return { ...updatedTodo, comments: updatedComments };
+      });
+      
+      // Call parent callback to persist changes
+      if (onUpdateComment) {
+        onUpdateComment(localTodo.id, commentId, updatedText);
+      }
+      
+      setEditingComment(null);
+      setEditedCommentText('');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingComment(null);
+    setEditedCommentText('');
+  };
+
+  const handleDeleteComment = (commentId) => {
+    setShowDeleteConfirm(commentId);
+    setShowCommentMenu(null);
+  };
+
+  const confirmDeleteComment = (commentId) => {
+    setLocalTodo(prevTodo => {
+      const updatedTodo = { ...prevTodo };
+      const updatedComments = updatedTodo.comments.filter(comment => comment.id !== commentId);
+      
+      return { ...updatedTodo, comments: updatedComments };
+    });
+    
+    // Call parent callback to persist changes
+    if (onDeleteComment) {
+      onDeleteComment(localTodo.id, commentId);
+    }
+    
+    setShowDeleteConfirm(null);
+  };
+
+  const handleEmojiReaction = (commentId, emoji) => {
+    let updatedReactions;
+    
+    setLocalTodo(prevTodo => {
+      const updatedTodo = { ...prevTodo };
+      const updatedComments = updatedTodo.comments.map(comment => {
+        if (comment.id === commentId) {
+          const reactions = comment.reactions || [];
+          const existingReaction = reactions.find(r => r.emoji === emoji);
+          
+          if (existingReaction) {
+            // Increment count if reaction already exists
+            existingReaction.count += 1;
+          } else {
+            // Add new reaction
+            reactions.push({ emoji, count: 1 });
+          }
+          
+          updatedReactions = reactions;
+          return { ...comment, reactions };
+        }
+        return comment;
+      });
+      
+      return { ...updatedTodo, comments: updatedComments };
+    });
+    
+    // Call parent callback to persist changes
+    if (onAddEmojiReaction) {
+      onAddEmojiReaction(localTodo.id, commentId, emoji);
+    }
+    
+    setShowEmojiPicker(null);
+    setEmojiPosition(null);
+  };
+
   return (
+    <>
     <ThemeProvider theme={darkTheme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <div className="h-full flex flex-col">
@@ -635,10 +789,10 @@ const TodoDetails = ({
         
         <div className="flex items-center space-x-2">
           <div className="text-sm text-neutral-400">
-            {todo.editedAt ? (
-              <span>Edited {getTimeAgo(todo.editedAt)}</span>
+            {localTodo.editedAt ? (
+              <span>Edited {getTimeAgo(localTodo.editedAt)}</span>
             ) : (
-              <span>Created {getTimeAgo(todo.createdAt || new Date())}</span>
+              <span>Created {getTimeAgo(localTodo.createdAt || new Date())}</span>
             )}
           </div>
           <button
@@ -674,8 +828,8 @@ const TodoDetails = ({
           <div className="flex items-center space-x-3">
             <ThemeProvider theme={darkTheme}>
               <Checkbox
-                checked={todo.completed}
-                onChange={() => onToggleComplete(todo.id)}
+                checked={localTodo.completed}
+                onChange={() => onToggleComplete(localTodo.id)}
                 size="small"
                 sx={{
                   padding: 0,
@@ -730,10 +884,10 @@ const TodoDetails = ({
                 <h1
                   onClick={handleStartEditingTitle}
                   className={`flex-1 text-lg font-medium cursor-pointer hover:text-neutral-300 transition-colors whitespace-pre-wrap break-words ${
-                    todo.completed ? 'line-through text-neutral-500' : 'text-white'
+                    localTodo.completed ? 'line-through text-neutral-500' : 'text-white'
                   }`}
                 >
-                  {cleanMentionText(todo.description) || 'Untitled Todo'}
+                  {cleanMentionText(localTodo.description) || 'Untitled Todo'}
                 </h1>
               )}
             </div>
@@ -741,8 +895,8 @@ const TodoDetails = ({
             {!isEditingTitle && (
               <ThemeProvider theme={darkTheme}>
                 <Checkbox
-                  checked={todo.starred}
-                  onChange={() => onToggleStar(todo.id)}
+                  checked={localTodo.starred}
+                  onChange={() => onToggleStar(localTodo.id)}
                   icon={<Star className="w-5 h-5" />}
                   checkedIcon={<Star className="w-5 h-5 fill-white" />}
                   sx={{
@@ -816,34 +970,34 @@ const TodoDetails = ({
         </div>
 
         {/* Context from Nudge */}
-        {todo.sourceNudge && (
+        {localTodo.sourceNudge && (
           <div className="space-y-4 p-4 bg-neutral-800 border border-neutral-700 rounded-lg">
             <h3 className="text-lg font-medium text-white">Context from Nudge</h3>
             
             {/* Sender Information */}
             <div className="flex items-center space-x-3">
               <img 
-                src={todo.sourceNudge.sender.avatar} 
-                alt={todo.sourceNudge.sender.name}
+                src={localTodo.sourceNudge.sender.avatar} 
+                alt={localTodo.sourceNudge.sender.name}
                 className="w-10 h-10 rounded-full"
               />
               <div>
-                <p className="text-white font-medium">{todo.sourceNudge.sender.name}</p>
-                <p className="text-neutral-400 text-sm">{todo.sourceNudge.sender.title}</p>
+                <p className="text-white font-medium">{localTodo.sourceNudge.sender.name}</p>
+                <p className="text-neutral-400 text-sm">{localTodo.sourceNudge.sender.title}</p>
               </div>
             </div>
 
             {/* Original Message */}
             <div className="p-3 bg-neutral-700 rounded-lg">
-              <p className="text-neutral-300">{todo.sourceNudge.message}</p>
+              <p className="text-neutral-300">{localTodo.sourceNudge.message}</p>
             </div>
 
             {/* Attachments */}
-            {todo.sourceNudge.attachments && todo.sourceNudge.attachments.length > 0 && (
+            {localTodo.sourceNudge.attachments && localTodo.sourceNudge.attachments.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium text-neutral-400 mb-2">Attachments</h4>
                 <div className="space-y-2">
-                  {todo.sourceNudge.attachments.map((attachment, index) => (
+                  {localTodo.sourceNudge.attachments.map((attachment, index) => (
                     <div key={index} className="p-2 bg-neutral-700 rounded flex items-center space-x-2">
                       <div className="w-8 h-8 bg-neutral-600 rounded flex items-center justify-center">
                         <span className="text-xs text-neutral-400">{attachment.type.toUpperCase()}</span>
@@ -856,11 +1010,11 @@ const TodoDetails = ({
             )}
 
             {/* Links */}
-            {todo.sourceNudge.links && todo.sourceNudge.links.length > 0 && (
+            {localTodo.sourceNudge.links && localTodo.sourceNudge.links.length > 0 && (
               <div>
                 <h4 className="text-sm font-medium text-neutral-400 mb-2">Links</h4>
                 <div className="space-y-2">
-                  {todo.sourceNudge.links.map((link, index) => (
+                  {localTodo.sourceNudge.links.map((link, index) => (
                     <div key={index} className="p-2 bg-neutral-700 rounded">
                       <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-neutral-400 hover:text-neutral-300 text-sm">
                         {link.title || link.url}
@@ -896,14 +1050,14 @@ const TodoDetails = ({
 
           {/* Steps List */}
           <div className="space-y-2">
-            {todo.steps && todo.steps.length > 0 ? (
-              todo.steps.map((step) => (
+            {localTodo.steps && localTodo.steps.length > 0 ? (
+              localTodo.steps.map((step) => (
                 <TodoStep
                   key={step.id}
                   step={step}
-                  onToggleComplete={() => onToggleStepComplete(todo.id, step.id)}
-                  onDelete={() => onDeleteStep(todo.id, step.id)}
-                  onUpdateDescription={(newDescription) => onUpdateStepDescription(todo.id, step.id, newDescription)}
+                  onToggleComplete={() => onToggleStepComplete(localTodo.id, step.id)}
+                  onDelete={() => onDeleteStep(localTodo.id, step.id)}
+                  onUpdateDescription={(newDescription) => onUpdateStepDescription(localTodo.id, step.id, newDescription)}
                 />
               ))
             ) : (
@@ -1225,14 +1379,14 @@ const TodoDetails = ({
             <MessageCircle className="w-5 h-5 text-white" />
             <span className="text-lg font-medium text-white">Comments</span>
             <span className="text-sm text-neutral-400">
-              {todo.comments?.length || 0}
+              {localTodo.comments?.length || 0}
             </span>
           </div>
 
           <div className="space-y-3">
             <div className="space-y-3">
               {/* Existing Comments */}
-              {todo.comments && todo.comments.length > 0 && (
+              {localTodo.comments && localTodo.comments.length > 0 && (
                 <SimpleBar 
                   className="space-y-3 max-h-48"
                   options={{
@@ -1248,28 +1402,159 @@ const TodoDetails = ({
                     }
                   }}
                 >
-                  {todo.comments.map((comment) => (
-                    <div key={comment.id} className="flex space-x-3">
-                      <div className="relative w-8 h-8 flex-shrink-0">
-                        <img 
-                          src={comment.author.avatar} 
-                          alt={comment.author.name}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="text-white text-sm font-medium">{comment.author.name}</span>
-                          <span className="text-neutral-400 text-xs">{getTimeAgo(comment.createdAt)}</span>
+                  {localTodo.comments.map((comment) => {
+                    const isOwnComment = comment.author.name === 'You';
+                    const isHovered = hoveredComment === comment.id;
+                    const isEditing = editingComment === comment.id;
+                    
+                    return (
+                      <div 
+                        key={comment.id} 
+                        className="flex space-x-3 relative group"
+                        onMouseEnter={() => setHoveredComment(comment.id)}
+                        onMouseLeave={() => setHoveredComment(null)}
+                      >
+                        <div className="relative w-8 h-8 flex-shrink-0">
+                          <img 
+                            src={comment.author.avatar} 
+                            alt={comment.author.name}
+                            className="w-8 h-8 rounded-full"
+                          />
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
                         </div>
-                        <div 
-                          className="text-neutral-300 text-sm"
-                          dangerouslySetInnerHTML={{ __html: comment.text }}
-                        />
+                        <div className="flex-1 relative">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="text-white text-sm font-medium">{comment.author.name}</span>
+                            <span className="text-neutral-400 text-xs">{getTimeAgo(comment.createdAt)}</span>
+                          </div>
+                          
+                          {isEditing ? (
+                            <div className="space-y-2">
+                              <TipTapEditor
+                                value={editedCommentText}
+                                onChange={setEditedCommentText}
+                                placeholder="Edit comment..."
+                                showToolbar={false}
+                              />
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => handleSaveComment(comment.id)}
+                                  className="px-3 py-1 bg-white text-black rounded text-xs hover:bg-neutral-200 transition-colors"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={handleCancelEdit}
+                                  className="px-3 py-1 border border-neutral-600 text-white rounded text-xs hover:bg-neutral-700 transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div 
+                              className="text-neutral-300 text-sm"
+                              dangerouslySetInnerHTML={{ __html: comment.text }}
+                            />
+                          )}
+                          
+                          {/* Hover Actions */}
+                          {isHovered && !isEditing && (
+                            <div className="absolute top-0 right-0">
+                              {isOwnComment ? (
+                                <div className="relative">
+                                  <button
+                                    data-comment-menu
+                                    onClick={(e) => {
+                                      if (showCommentMenu === comment.id) {
+                                        setShowCommentMenu(null);
+                                      } else {
+                                        const rect = e.currentTarget.getBoundingClientRect();
+                                        setMenuPosition({
+                                          top: rect.bottom + window.scrollY + 4,
+                                          left: rect.right + window.scrollX - 128 // 128px is min-w-32
+                                        });
+                                        setShowCommentMenu(comment.id);
+                                      }
+                                    }}
+                                    className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded transition-colors"
+                                  >
+                                    <MoreHorizontal className="w-4 h-4" />
+                                  </button>
+                                  
+
+                                </div>
+                              ) : (
+                                <div className="relative">
+                                  <button
+                                    data-emoji-picker
+                                    onClick={(e) => {
+                                      if (showEmojiPicker === comment.id) {
+                                        setShowEmojiPicker(null);
+                                      } else {
+                                        const rect = e.currentTarget.getBoundingClientRect();
+                                        setEmojiPosition({
+                                          top: rect.bottom + window.scrollY + 4,
+                                          left: rect.right + window.scrollX - 150 // Approximate emoji picker width
+                                        });
+                                        setShowEmojiPicker(comment.id);
+                                      }
+                                    }}
+                                    className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-700 rounded transition-colors"
+                                  >
+                                    <Smile className="w-4 h-4" />
+                                  </button>
+                                  
+
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          
+                          {/* Emoji Reactions Display */}
+                          {comment.reactions && comment.reactions.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {comment.reactions.map((reaction, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center space-x-1 px-2 py-1 bg-neutral-800 rounded-full text-xs"
+                                >
+                                  <span>{reaction.emoji}</span>
+                                  <span className="text-neutral-400">{reaction.count}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Delete Confirmation Modal */}
+                        {showDeleteConfirm === comment.id && (
+                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="bg-neutral-800 border border-neutral-600 rounded-lg p-6 max-w-sm mx-4">
+                              <h3 className="text-white text-lg font-medium mb-4">Delete Comment</h3>
+                              <p className="text-neutral-300 text-sm mb-6">
+                                Are you sure you want to delete this comment? This action cannot be undone.
+                              </p>
+                              <div className="flex space-x-3">
+                                <button
+                                  onClick={() => confirmDeleteComment(comment.id)}
+                                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                                >
+                                  Delete
+                                </button>
+                                <button
+                                  onClick={() => setShowDeleteConfirm(null)}
+                                  className="flex-1 px-4 py-2 border border-neutral-600 text-white rounded hover:bg-neutral-700 transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </SimpleBar>
               )}
 
@@ -1281,6 +1566,7 @@ const TodoDetails = ({
                     onChange={setNewComment}
                     placeholder="Add a comment..."
                     showToolbar={false}
+                    onEnter={handleAddComment}
                   />
                   <button
                      onClick={handleAddComment}
@@ -1305,7 +1591,7 @@ const TodoDetails = ({
           <div className="bg-neutral-800 border border-neutral-600 rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-medium text-white mb-4">Delete To-do</h3>
             <p className="text-neutral-400 mb-6">
-              Are you sure you want to delete "{cleanMentionText(todo.description)}"? This action cannot be undone.
+              Are you sure you want to delete "{cleanMentionText(localTodo.description)}"? This action cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button
@@ -1327,6 +1613,72 @@ const TodoDetails = ({
         </div>
       </LocalizationProvider>
     </ThemeProvider>
+    
+    {/* Comment Menu Portal */}
+    {showCommentMenu && menuPosition && createPortal(
+      <div 
+        className="fixed bg-neutral-800 border border-neutral-600 rounded-md shadow-lg p-2 min-w-[120px]"
+        style={{
+          top: `${menuPosition.top}px`,
+          left: `${menuPosition.left}px`,
+          zIndex: 9999
+        }}
+      >
+        <button
+          onClick={() => {
+            handleEditComment(showCommentMenu);
+            setShowCommentMenu(null);
+            setMenuPosition(null);
+          }}
+          className="w-full text-left px-3 py-2 text-sm text-white hover:bg-neutral-700 rounded flex items-center gap-2 transition-colors"
+        >
+          <Edit3 className="w-4 h-4" />
+          Edit
+        </button>
+        <button
+          onClick={() => {
+            handleDeleteComment(showCommentMenu);
+            setShowCommentMenu(null);
+            setMenuPosition(null);
+          }}
+          className="w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-neutral-700 rounded flex items-center gap-2 transition-colors"
+        >
+          <Trash2 className="w-4 h-4" />
+          Delete
+        </button>
+      </div>,
+      document.body
+    )}
+    
+    {/* Emoji Picker Portal */}
+    {showEmojiPicker && emojiPosition && createPortal(
+      <div 
+        className="fixed bg-neutral-800 border border-neutral-600 rounded-md shadow-lg p-2"
+        style={{
+          top: `${emojiPosition.top}px`,
+          left: `${emojiPosition.left}px`,
+          zIndex: 9999
+        }}
+      >
+        <div className="grid grid-cols-4 gap-1">
+          {['👍', '❤️', '😂', '😮', '😢', '😡', '👏', '🎉'].map((emoji) => (
+            <button
+              key={emoji}
+              onClick={() => {
+                handleEmojiReaction(showEmojiPicker, emoji);
+                setShowEmojiPicker(null);
+                setEmojiPosition(null);
+              }}
+              className="p-2 hover:bg-neutral-700 rounded text-lg transition-colors"
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 };
 
