@@ -125,6 +125,18 @@ const darkTheme = createTheme({
         },
       },
     },
+    // Specific TimePicker component styling
+    MuiTimePicker: {
+      styleOverrides: {
+        root: {
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+          },
+        },
+      },
+    },
+    // Digital Clock component styling
     MuiDigitalClock: {
       styleOverrides: {
         root: {

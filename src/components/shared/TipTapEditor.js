@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import { createPortal } from 'react-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -55,8 +56,23 @@ const ToolbarButton = ({ onClick, isActive, children, title }) => (
 );
 
 // Toolbar Component
-const Toolbar = ({ editor, showEmojiPicker, setShowEmojiPicker, onMentionTrigger }) => {
+const Toolbar = ({ editor, showEmojiPicker, setShowEmojiPicker, setEmojiPickerPosition, onMentionTrigger }) => {
   if (!editor) return null;
+
+  const handleEmojiClick = (e) => {
+    if (showEmojiPicker) {
+      setShowEmojiPicker(false);
+      setEmojiPickerPosition(null);
+    } else {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pickerHeight = 200; // Estimated height of emoji picker
+      setEmojiPickerPosition({
+        top: rect.top + window.scrollY - pickerHeight - 8,
+        left: rect.left + window.scrollX
+      });
+      setShowEmojiPicker(true);
+    }
+  };
 
   return (
     <div className="flex items-center space-x-1 px-4 py-2 border-b border-neutral-600">
@@ -87,7 +103,7 @@ const Toolbar = ({ editor, showEmojiPicker, setShowEmojiPicker, onMentionTrigger
       <div className="w-px h-6 bg-neutral-600 mx-2" />
       
       <ToolbarButton
-        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+        onClick={handleEmojiClick}
         isActive={showEmojiPicker}
         title="Add Emoji"
       >
@@ -106,9 +122,19 @@ const Toolbar = ({ editor, showEmojiPicker, setShowEmojiPicker, onMentionTrigger
 };
 
 // Emoji Picker Component
-const EmojiPicker = ({ onSelect, onClose }) => {
-  return (
-    <div className="absolute top-full left-0 mt-1 bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 p-3 max-h-48 overflow-hidden">
+const EmojiPicker = ({ onSelect, onClose, position }) => {
+  if (!position) return null;
+  
+  return createPortal(
+    <div 
+      className="fixed bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-[9999] p-3 max-h-48 overflow-hidden"
+      style={{ 
+        top: `${position.top}px`, 
+        left: `${position.left}px`,
+        minWidth: '280px', 
+        width: '280px' 
+      }}
+    >
       <SimpleBar style={{ maxHeight: '192px' }}>
         <div className="grid grid-cols-8 gap-1">
           {emojiList.map((emoji, index) => (
@@ -119,14 +145,16 @@ const EmojiPicker = ({ onSelect, onClose }) => {
                 onSelect(emoji);
                 onClose();
               }}
-              className="p-1 hover:bg-neutral-700 rounded text-lg transition-colors"
+              className="p-2 hover:bg-neutral-700 rounded text-lg transition-colors flex items-center justify-center"
+              style={{ minWidth: '32px', minHeight: '32px' }}
             >
               {emoji}
             </button>
           ))}
         </div>
       </SimpleBar>
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -295,6 +323,7 @@ const suggestion = {
 // Main TipTap Editor Component
 const TipTapEditor = ({ value, onChange, placeholder = "Type something...", showToolbar = true, onEnter }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [emojiPickerPosition, setEmojiPickerPosition] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const editorRef = useRef(null);
 
@@ -400,6 +429,19 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something...", show
     }
   }, [value]);
 
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showEmojiPicker && editorRef.current && !editorRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+        setEmojiPickerPosition(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showEmojiPicker]);
+
   return (
     <div ref={editorRef} className="bg-neutral-800 border border-neutral-600 rounded-lg overflow-hidden relative">
       {showToolbar && (
@@ -407,6 +449,7 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something...", show
           editor={editor}
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
+          setEmojiPickerPosition={setEmojiPickerPosition}
           onMentionTrigger={handleMentionTrigger}
         />
       )}
@@ -415,14 +458,18 @@ const TipTapEditor = ({ value, onChange, placeholder = "Type something...", show
         <EditorContent 
           editor={editor}
         />
-        
-        {showToolbar && showEmojiPicker && (
-          <EmojiPicker 
-            onSelect={handleEmojiSelect}
-            onClose={() => setShowEmojiPicker(false)}
-          />
-        )}
       </div>
+      
+      {showToolbar && showEmojiPicker && (
+        <EmojiPicker 
+          onSelect={handleEmojiSelect}
+          onClose={() => {
+            setShowEmojiPicker(false);
+            setEmojiPickerPosition(null);
+          }}
+          position={emojiPickerPosition}
+        />
+      )}
     </div>
   );
 };

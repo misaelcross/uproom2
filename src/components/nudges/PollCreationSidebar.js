@@ -1,6 +1,144 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Trash2, BarChart3, Users, Eye, EyeOff, Copy, GripVertical } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import dayjs from 'dayjs';
+
+// Dark theme for MUI DateTimePicker to match TodoDetails styling
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+    background: {
+      default: '#171717',
+      paper: '#262626',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#a3a3a3',
+    },
+  },
+  components: {
+    MuiPickersPopper: {
+      styleOverrides: {
+        root: {
+          zIndex: 9999,
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+          },
+        },
+      },
+    },
+    MuiPickersCalendarHeader: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '& .MuiIconButton-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+          },
+        },
+      },
+    },
+    MuiPickersDay: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '&:hover': {
+            backgroundColor: '#404040',
+          },
+          '&.Mui-selected': {
+            backgroundColor: '#ffffff',
+            color: '#000000',
+            '&:hover': {
+              backgroundColor: '#e5e5e5',
+            },
+          },
+        },
+      },
+    },
+    MuiClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+        clock: {
+          backgroundColor: '#171717',
+        },
+      },
+    },
+    MuiClockPointer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+        },
+        thumb: {
+          backgroundColor: '#ffffff',
+          border: '2px solid #ffffff',
+        },
+      },
+    },
+    MuiMultiSectionDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+          '& .MuiList-root': {
+            color: '#ffffff',
+          },
+          '& .MuiMenuItem-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff',
+              color: '#000000',
+            },
+          },
+        },
+      },
+    },
+    MuiTimePicker: {
+      styleOverrides: {
+        root: {
+          '& .MuiPaper-root': {
+            backgroundColor: '#262626',
+            border: '1px solid #525252',
+          },
+        },
+      },
+    },
+    MuiDigitalClock: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#262626',
+        },
+        list: {
+          backgroundColor: '#262626',
+          '& .MuiMenuItem-root': {
+            color: '#ffffff',
+            '&:hover': {
+              backgroundColor: '#404040',
+            },
+            '&.Mui-selected': {
+              backgroundColor: '#ffffff',
+              color: '#000000',
+            },
+          },
+        },
+      },
+    },
+  },
+});
 
 const PollCreationSidebar = ({ onBack, onCreatePoll }) => {
   const [pollData, setPollData] = useState({
@@ -562,12 +700,49 @@ const PollCreationSidebar = ({ onBack, onCreatePoll }) => {
             {/* Deadline */}
             <div className="space-y-3">
               <label className="text-sm font-medium text-neutral-400">Deadline (optional)</label>
-              <input
-                type="datetime-local"
-                value={pollData.deadline}
-                onChange={(e) => setPollData(prev => ({ ...prev, deadline: e.target.value }))}
-                className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
-              />
+              <ThemeProvider theme={darkTheme}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    label="Select deadline"
+                    value={pollData.deadline ? dayjs(pollData.deadline) : null}
+                    onChange={(newValue) => {
+                      setPollData(prev => ({ 
+                        ...prev, 
+                        deadline: newValue ? newValue.format('YYYY-MM-DDTHH:mm') : '' 
+                      }));
+                    }}
+                    slotProps={{
+                      textField: {
+                        sx: {
+                          width: '100%',
+                          '& .MuiInputBase-root': {
+                            backgroundColor: '#262626',
+                            borderColor: '#525252',
+                            color: '#ffffff',
+                          },
+                          '& .MuiInputLabel-root': {
+                            color: '#a3a3a3',
+                          },
+                          '& .MuiInputLabel-root.Mui-focused': {
+                            color: '#ffffff',
+                          },
+                          '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                              borderColor: '#525252',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: '#ffffff',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: '#ffffff',
+                            },
+                          },
+                        },
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+              </ThemeProvider>
             </div>
 
           </form>
