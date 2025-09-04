@@ -137,6 +137,13 @@ const TeamPage = ({ onNavigate }) => {
     setSelectedUsers([]);
   };
 
+  // Invite handler
+  const handleInvite = () => {
+    console.log('Invite people to organization');
+    // Implement invite logic - could open a modal or navigate to invite page
+    // For now, just log the action
+  };
+
   // Filter handlers
   const handleRoleFilter = (role) => {
     setRoleFilter(role);
@@ -188,6 +195,7 @@ const TeamPage = ({ onNavigate }) => {
             <ActionBar
               selectedCount={selectedUsers.length}
               onAction={(action) => console.log('Action:', action)}
+              onInvite={handleInvite}
               actions={[
                 { id: 'activate', label: 'Activate Users', icon: CheckCircle },
                 { id: 'deactivate', label: 'Deactivate Users', icon: XCircle },

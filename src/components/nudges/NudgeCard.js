@@ -288,11 +288,11 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
       </div>
 
       {/* Mensagem com notificação - truncada em 2 linhas */}
-      <div className="mb-3 flex items-start gap-3">
-        {/* Message */}
-        <div className="flex items-start justify-between gap-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        {/* Message - takes available width */}
+        <div className="flex-1 min-w-0">
           <p 
-            className="text-neutral-300 text-sm leading-relaxed line-clamp-2 flex-1 min-w-0"
+            className="text-neutral-300 text-sm leading-relaxed line-clamp-2"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -303,14 +303,14 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
           >
             {renderTextWithMentions(truncateMessage(nudge.message || nudge.fullMessage), true)}
           </p>
-          
-          {/* Notification Badge - Fixed width to prevent text reflow */}
-          {!nudge.isRead && (
-            <div className="flex-shrink-0 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center ml-2">
-              <span className="text-white text-xs font-bold leading-none">1</span>
-            </div>
-          )}
         </div>
+        
+        {/* Notification Badge - Always on the right */}
+        {!nudge.isRead && (
+          <div className="flex-shrink-0 w-4 h-4 bg-red-500 rounded-[4px] flex items-center justify-center">
+            <span className="text-white text-xs font-bold leading-none">1</span>
+          </div>
+        )}
       </div>
 
       {/* High priority badge */}

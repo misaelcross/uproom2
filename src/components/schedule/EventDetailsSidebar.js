@@ -1,22 +1,31 @@
 import React from 'react';
-import { X, Clock, Calendar, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
+import { X, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg", isCurrentUser = true }) => {
   if (!event) return null;
 
-  // Helper function to format event status
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Available': return 'text-green-400';
-      case 'Meeting': return 'text-blue-400';
-      case 'Focus': return 'text-purple-400';
-      case 'Break': return 'text-yellow-400';
-      case 'Emergency': return 'text-red-400';
-      case 'Away': return 'text-orange-400';
-      case 'Offline': return 'text-gray-400';
-      default: return 'text-green-400';
-    }
+  // Helper function to get status badge with same styling as event cards
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
+      'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
+      'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
+      'Break': { text: 'text-orange-400', bg: 'bg-orange-500/10' },
+      'Emergency': { text: 'text-red-400', bg: 'bg-red-500/10' },
+      'Away': { text: 'text-yellow-400', bg: 'bg-yellow-500/10' },
+      'Offline': { text: 'text-gray-400', bg: 'bg-gray-500/10' },
+      'Busy': { text: 'text-red-400', bg: 'bg-red-500/10' },
+      'Completed': { text: 'text-green-400', bg: 'bg-green-500/10' }
+    };
+    
+    const config = statusConfig[status] || statusConfig['Available'];
+    
+    return (
+      <div className={`px-2 py-1 rounded text-xs font-medium ${config.text} ${config.bg}`}>
+        {status}
+      </div>
+    );
   };
 
   // Helper function to format duration
@@ -52,33 +61,37 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
         {/* Event Title and Status */}
         <div>
           <h1 className="text-white text-xl font-bold mb-2">{event.title}</h1>
-          <div className={`text-sm font-medium ${getStatusColor(event.status)}`}>
-            {event.status || 'Available'}
+          <div className="inline-block">
+            {getStatusBadge(event.status || 'Available')}
           </div>
         </div>
 
-        {/* Time and Duration */}
-        <div className="space-y-3">
-          <div>
-            <h3 className="text-sm font-medium text-neutral-300 mb-2">Time</h3>
-            <div className="flex items-center gap-2 text-neutral-400 text-sm">
-              <Clock className="w-4 h-4" />
-              <span>{event.time || 'Time not specified'}</span>
+        {/* Event Details Table */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-medium text-neutral-300">
+              <span>Time</span>
+            </div>
+            <div className="text-neutral-400 text-sm">
+              {event.time || 'Time not specified'}
             </div>
           </div>
           
-          <div>
-            <h3 className="text-sm font-medium text-neutral-300 mb-2">Duration</h3>
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-medium text-neutral-300">
+              Duration
+            </div>
             <div className="text-neutral-400 text-sm">
               {formatDuration(event.duration)}
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-neutral-300 mb-2">Date</h3>
-            <div className="flex items-center gap-2 text-neutral-400 text-sm">
-              <Calendar className="w-4 h-4" />
-              <span>{event.date || 'Date not specified'}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-medium text-neutral-300">
+              <span>Date</span>
+            </div>
+            <div className="text-neutral-400 text-sm">
+              {event.date || 'Date not specified'}
             </div>
           </div>
         </div>
@@ -92,23 +105,46 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
         </div>
 
         {/* Attendees */}
-        {(event.avatar || event.additionalPeople) && (
+        {(event.avatar || event.additionalPeople || event.attendees) && (
           <div>
             <h3 className="text-sm font-medium text-neutral-300 mb-3">Attendees</h3>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                {event.avatar && (
+            <div className="flex flex-wrap gap-2">
+              {/* Current user */}
+              {event.avatar && (
+                <div className="flex items-center gap-2 bg-neutral-700/50 rounded-lg px-2 py-1">
                   <img 
                     src={event.avatar} 
-                    alt="Attendee" 
-                    className="w-8 h-8 rounded-full object-cover border border-neutral-600"
+                    alt="You" 
+                    className="w-6 h-6 rounded-full object-cover border border-neutral-600"
                   />
-                )}
-                <div className="text-white text-sm">You</div>
-              </div>
-              {event.additionalPeople && (
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-neutral-600 flex items-center justify-center text-neutral-300 text-xs font-medium">
+                  <div className="text-white text-sm">You</div>
+                </div>
+              )}
+              
+              {/* Other attendees from attendees array */}
+              {event.attendees && event.attendees.map((attendee, index) => (
+                attendee.name !== 'You' && (
+                  <div key={index} className="flex items-center gap-2 bg-neutral-700/50 rounded-lg px-2 py-1">
+                    {attendee.avatar ? (
+                      <img 
+                        src={attendee.avatar} 
+                        alt={attendee.name} 
+                        className="w-6 h-6 rounded-full object-cover border border-neutral-600"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-neutral-600 flex items-center justify-center text-neutral-300 text-xs font-medium">
+                        {attendee.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="text-neutral-400 text-sm">{attendee.name}</div>
+                  </div>
+                )
+              ))}
+              
+              {/* Additional people count (fallback for legacy data) */}
+              {event.additionalPeople && !event.attendees && (
+                <div className="flex items-center gap-2 bg-neutral-700/50 rounded-lg px-2 py-1">
+                  <div className="w-6 h-6 rounded-full bg-neutral-600 flex items-center justify-center text-neutral-300 text-xs font-medium">
                     {event.additionalPeople}
                   </div>
                   <div className="text-neutral-400 text-sm">Others</div>

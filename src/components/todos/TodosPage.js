@@ -30,6 +30,7 @@ const TodosPage = ({ onNavigate }) => {
   const [editGroupName, setEditGroupName] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [groupToDelete, setGroupToDelete] = useState(null);
+  const [resetExpandedFolders, setResetExpandedFolders] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
   
   // Catch-up mode state
@@ -703,7 +704,13 @@ const TodosPage = ({ onNavigate }) => {
               {selectedGroup ? (
                 <DynamicTodoHeader 
                   selectedGroup={selectedGroup} 
-                  onBack={() => setSelectedGroup(null)}
+                  onBack={() => {
+                setSelectedGroup(null);
+                setSelectedTodo(null);
+                setResetExpandedFolders(true);
+                // Reset the flag after a brief delay
+                setTimeout(() => setResetExpandedFolders(false), 100);
+              }}
                 />
               ) : (
                 <TodoHeader onNavigateDate={handleDateNavigation} />
@@ -768,6 +775,7 @@ const TodosPage = ({ onNavigate }) => {
                 onCreateSubFolder={createSubFolder}
                 onReorderFolders={reorderFolders}
                 onMergeFolders={mergeFolders}
+                resetExpandedFolders={resetExpandedFolders}
               />
             ) : (
               <TodoDetails
@@ -794,12 +802,12 @@ const TodosPage = ({ onNavigate }) => {
       {/* Delete Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-6 max-w-sm w-full mx-4">
+          <div className="bg-neutral-800 rounded-lg p-6 max-w-sm w-full mx-4">
             <h3 className="text-lg font-semibold text-white mb-4">
-              Delete {groupToDelete ? 'Group' : 'Todo'}
+              Delete {groupToDelete ? 'Folder' : 'Todo'}
             </h3>
-            <p className="text-gray-300 mb-6">
-              Are you sure you want to delete this {groupToDelete ? 'group' : 'todo'}? This action cannot be undone.
+            <p className="text-neutral-300 mb-6">
+              Are you sure you want to delete this {groupToDelete ? 'folder' : 'todo'}? This action cannot be undone.
             </p>
             <div className="flex space-x-3">
               <button
@@ -808,7 +816,7 @@ const TodosPage = ({ onNavigate }) => {
                   setGroupToDelete(null);
                   setTodoToDelete(null);
                 }}
-                className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="flex-1 px-4 py-2 border border-neutral-700 text-white rounded-lg hover:bg-neutral-700/30 transition-colors"
               >
                 Cancel
               </button>
@@ -823,7 +831,7 @@ const TodosPage = ({ onNavigate }) => {
                   setGroupToDelete(null);
                   setTodoToDelete(null);
                 }}
-                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 px-4 py-2 bg-white text-neutral-900 rounded-lg hover:bg-neutral-300 transition-colors"
               >
                 Delete
               </button>

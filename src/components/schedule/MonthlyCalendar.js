@@ -249,7 +249,7 @@ const MonthlyCalendar = ({
                   {/* Day number */}
                   <div className={`text-sm font-medium mb-1 flex-shrink-0 ${
                     dayData.isToday 
-                      ? 'text-blue-400 bg-blue-500/20 rounded-full w-6 h-6 flex items-center justify-center' 
+                      ? 'bg-neutral-800 text-white border border-neutral-600 rounded w-6 h-6 flex items-center justify-center' 
                       : 'text-white'
                   }`}>
                     {dayData.day}

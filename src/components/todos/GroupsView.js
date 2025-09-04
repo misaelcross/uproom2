@@ -70,7 +70,8 @@ const GroupsView = ({
   onRemovePersonFromFolder,
   onCreateSubFolder,
   onReorderFolders,
-  onMergeFolders
+  onMergeFolders,
+  resetExpandedFolders
 }) => {
   const iconComponents = {
     Briefcase,
@@ -118,6 +119,13 @@ const GroupsView = ({
   
   // State for expanded folders
   const [expandedFolders, setExpandedFolders] = useState(new Set());
+  
+  // Reset expanded folders when prop changes
+  useEffect(() => {
+    if (resetExpandedFolders) {
+      setExpandedFolders(new Set());
+    }
+  }, [resetExpandedFolders]);
   
   // Sensors for dnd-kit
   const sensors = useSensors(
@@ -724,7 +732,7 @@ const GroupsView = ({
                 onClick={() => setShowCreateGroup(true)}
                 className="w-full flex items-center gap-3 p-3 bg-neutral-800 rounded-lg hover:bg-neutral-600 transition-colors text-white"
               >
-                <Plus className="w-4 h-4" />
+                <FolderPlus className="w-4 h-4" />
                 <span className="">Create new folder</span>
               </button>
             )}

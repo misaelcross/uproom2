@@ -10,7 +10,7 @@ import {
 import SimpleBar from 'simplebar-react';
 import { usersData } from '../../data/usersData';
 
-const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeeting }) => {
+const ActionBar = ({ onUserSelect, onSortChange, onInvite }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState('Alphabetical (A–Z)');
@@ -113,22 +113,13 @@ const ActionBar = ({ onUserSelect, onSortChange, onCreateGroup, onScheduleMeetin
         )}
       </div>
 
-      {/* Create Group Button */}
+      {/* Invite Button */}
       <button 
-        onClick={onCreateGroup}
-        className="flex items-center space-x-2 px-4 py-2 bg-transparent hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
-      >
-        <Users className="h-4 w-4 text-neutral-300" />
-        <span className="text-neutral-300 text-sm font-medium">Create group</span>
-      </button>
-
-      {/* Collaborate Button */}
-      <button 
-        onClick={onScheduleMeeting}
+        onClick={onInvite}
         className="flex items-center space-x-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-600 rounded-lg transition-colors"
       >
         <UserPlus className="h-4 w-4 text-white" />
-        <span className="text-white text-sm font-medium">Collaborate</span>
+        <span className="text-white text-sm font-medium">Invite</span>
       </button>
     </div>
   );

@@ -538,76 +538,80 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           event.status === 'Completed' ? 'bg-neutral-800' : ''
                         }`}
                       >
-                        {/* Header with title and status */}
-                        <div className="mb-1">
-                          {/* Title */}
-                          <div className={`text-sm font-medium truncate mb-1 ${
+                        {/* First line: Title, attachment icon, and people */}
+                        <div className="flex items-center justify-between mb-1">
+                          <div className={`text-xs font-medium truncate flex-1 ${
                             event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
                           }`}>
                             {event.title}
                           </div>
-                          {/* Status badge - responsive positioning */}
-                          <div className={`flex items-center ${isLargeScreen ? 'hidden' : 'flex'}`}>
-                            {event.status && getStatusBadge(event.status, 'xs')}
-                          </div>
-                          <div className={`items-center justify-end -mt-4 ${isLargeScreen ? 'flex' : 'hidden'}`}>
-                            {event.status && getStatusBadge(event.status, 'xs')}
-                          </div>
-                        </div>
-
-                        {/* Time */}
-                        <div className={`text-xs mb-1 ${
-                          event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
-                        }`}>
-                          {event.time}
-                        </div>
-
-                        {/* Bottom section with actions and avatar */}
-                        <div className="flex items-center justify-between">
-                          {/* Paperclip icon with counter */}
-                          <div className="flex items-center gap-1">
+                          {/* Right side: Attachment icon and people grouped together */}
+                          <div className="flex items-center gap-1 ml-2">
+                            {/* Attachment icon */}
                             {getLinkedItemsCount(event) > 0 && (
-                              <span className="text-[10px] text-neutral-400">
-                                {getLinkedItemsCount(event)}
-                              </span>
-                            )}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (onLinkContext) {
-                                  onLinkContext(event);
-                                } else {
-                                  handleOpenContextModal(event);
-                                }
-                              }}
-                              className="p-0.5 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
-                              title="Link tasks, nudges, and files"
-                            >
-                              <Paperclip className="w-2.5 h-2.5" />
-                            </button>
-                          </div>
-
-                          {/* Avatar and additional people count */}
-                          <div className="flex items-center gap-1">
-                            {event.avatar && (
-                              <div className="relative">
-                                <img 
-                                  src={event.avatar} 
-                                  alt="Avatar" 
-                                  className="w-4 h-4 rounded-full object-cover border border-gray-200"
-                                />
-                                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                              <div className="flex items-center gap-1">
+                                {getLinkedItemsCount(event) > 0 && (
+                                  <span className="text-[10px] text-neutral-400">
+                                    {getLinkedItemsCount(event)}
+                                  </span>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onLinkContext) {
+                                      onLinkContext(event);
+                                    } else {
+                                      handleOpenContextModal(event);
+                                    }
+                                  }}
+                                  className="p-0.5 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
+                                  title="Link tasks, nudges, and files"
+                                >
+                                  <Paperclip className="w-2.5 h-2.5" />
+                                </button>
                               </div>
                             )}
-                            {event.additionalPeople && (
-                              <span className={`text-xs ${
-                                event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
-                              }`}>
-                                {event.additionalPeople}
-                              </span>
+                            {/* People avatars immediately after attachment icon */}
+                            {(event.avatar || event.additionalPeople) && (
+                              <div className="flex items-center gap-1">
+                                {event.avatar && (
+                                  <div className="relative">
+                                    <img 
+                                      src={event.avatar} 
+                                      alt="Avatar" 
+                                      className="w-4 h-4 rounded-full object-cover border border-gray-200"
+                                    />
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                                  </div>
+                                )}
+                                {event.additionalPeople && (
+                                  <span className={`text-xs ${
+                                    event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                                  }`}>
+                                    {event.additionalPeople}
+                                  </span>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
+
+                        {/* Second line: Badge and timestamp in column */}
+                        <div className="flex flex-col gap-1">
+                          {/* Status badge */}
+                          <div className="flex items-center">
+                            {event.status && getStatusBadge(event.status, 'xs')}
+                          </div>
+                          
+                          {/* Time */}
+                          <div className={`text-xs ${
+                            event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
+                          }`}>
+                            {event.time}
+                          </div>
+                        </div>
+
+
                       </div>
                     );
                   }) : (
@@ -815,22 +819,72 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           event.status === 'Completed' ? 'bg-neutral-800' : ''
                         }`}
                       >
-                        {/* Header with title and status */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className={`text-sm font-medium ${
+                        {/* First line: Title, attachment icon, and people */}
+                        <div className="flex items-center justify-between mb-2">
+                          <div className={`text-sm font-medium flex-1 truncate ${
                             event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
                           }`}>
                             {event.title}
                           </div>
-                          <div className="flex items-center gap-2">
-                            {event.status && getStatusBadge(event.status)}
+                          {/* Right side: Attachment icon and people grouped together */}
+                          <div className="flex items-center gap-1 ml-2">
+                            {/* Attachment icon */}
+                            {getLinkedItemsCount(event) > 0 && (
+                              <div className="flex items-center gap-1">
+                                {getLinkedItemsCount(event) > 0 && (
+                                  <span className="text-[10px] text-neutral-400">
+                                    {getLinkedItemsCount(event)}
+                                  </span>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onLinkContext) {
+                                      onLinkContext(event);
+                                    } else {
+                                      handleOpenContextModal(event);
+                                    }
+                                  }}
+                                  className="p-1 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
+                                  title="Link tasks, nudges, and files"
+                                >
+                                  <Paperclip className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )}
+                            {/* People avatars immediately after attachment icon */}
+                            {(event.avatar || event.additionalPeople) && (
+                              <div className="flex items-center gap-1">
+                                {event.avatar && (
+                                  <div className="relative">
+                                    <img 
+                                      src={event.avatar} 
+                                      alt="Avatar" 
+                                      className="w-6 h-6 rounded-full object-cover border border-gray-200"
+                                    />
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
+                                  </div>
+                                )}
+                                {event.additionalPeople && (
+                                  <span className={`text-xs ${
+                                    event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
+                                  }`}>
+                                    {event.additionalPeople}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
 
-                      {/* Bottom section with time, actions, and avatar */}
-                      <div className="flex items-center justify-between">
-                        {/* Left side - Time */}
-                        <div className="flex items-center gap-2">
+                        {/* Second line: Badge and timestamp */}
+                        <div className="flex items-center justify-between">
+                          {/* Status badge on the left */}
+                          <div className="flex items-center">
+                            {event.status && getStatusBadge(event.status)}
+                          </div>
+                          
+                          {/* Time on the right */}
                           <div className={`text-xs font-medium ${
                             event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'
                           }`}>
@@ -838,53 +892,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           </div>
                         </div>
 
-                          {/* Right side - Actions and avatar */}
-                          <div className="flex items-center gap-1">
-                            {/* Paperclip icon with counter */}
-                            <div className="flex items-center gap-1">
-                              {getLinkedItemsCount(event) > 0 && (
-                                <span className="text-[10px] text-neutral-400">
-                                  {getLinkedItemsCount(event)}
-                                </span>
-                              )}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (onLinkContext) {
-                                    onLinkContext(event);
-                                  } else {
-                                    handleOpenContextModal(event);
-                                  }
-                                }}
-                                className="p-1 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
-                                title="Link tasks, nudges, and files"
-                              >
-                                <Paperclip className="w-4 h-4" />
-                              </button>
-                            </div>
 
-                            {/* Avatar and additional people count */}
-                            <div className="flex items-center gap-1">
-                              {event.avatar && (
-                                <div className="relative">
-                                  <img 
-                                    src={event.avatar} 
-                                    alt="Avatar" 
-                                    className="w-6 h-6 rounded-full object-cover border border-gray-200"
-                                  />
-                                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-neutral-900"></div>
-                                </div>
-                              )}
-                              {event.additionalPeople && (
-                                <span className={`text-xs ${
-                                  event.status === 'Completed' ? 'text-neutral-400' : 'text-white'
-                                }`}>
-                                  {event.additionalPeople}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     );
                   })}
