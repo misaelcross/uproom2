@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Paperclip, Send, Plus, Link2, CheckSquare } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
+import AvatarStack from '../shared/AvatarStack';
+import RecipientList from './RecipientList';
 import EmojiPicker from '../shared/EmojiPicker';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 import useEscapeKey from '../../hooks/useEscapeKey';
 
-const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
+const NudgeDetails = ({ nudge, onBack, onUserClick, onRecipientListClick }) => {
   // Handle Escape key to close the component view
   useEscapeKey(onBack);
 
@@ -16,21 +18,39 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
       message: "Sure, I can help with those frontend fixes! When do you need them completed?",
       timestamp: "2:30 PM",
       date: "Today",
-      isFromMe: true
+      isFromMe: true,
+      user: {
+        id: 'current-user',
+        name: 'You',
+        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+        status: 'online'
+      }
     },
     {
       id: 2,
       message: "Perfect! I'd like to get them done by end of week if possible. I'll send you the detailed specs in a few minutes.",
       timestamp: "2:35 PM", 
       date: "Today",
-      isFromMe: false
+      isFromMe: false,
+      user: {
+        id: 'user-5',
+        name: 'Brent Short',
+        avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+        status: 'online'
+      }
     },
     {
       id: 3,
       message: "Sounds good! I'll review the specs and give you an estimate on timeline.",
       timestamp: "2:40 PM",
       date: "Today", 
-      isFromMe: true
+      isFromMe: true,
+      user: {
+        id: 'current-user',
+        name: 'You',
+        avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+        status: 'online'
+      }
     }
   ]);
   const [replyMessage, setReplyMessage] = useState('');
@@ -39,6 +59,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
   const [showPollResults, setShowPollResults] = useState(false);
   const [hoveredUser, setHoveredUser] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showRecipientList, setShowRecipientList] = useState(false);
 
   const getStatusDotColor = (status) => {
     switch (status) {
@@ -60,7 +81,13 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
           hour12: true 
         }),
         date: "Today",
-        isFromMe: true
+        isFromMe: true,
+        user: {
+          id: 'current-user',
+          name: 'You',
+          avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+          status: 'online'
+        }
       };
       setReplies(prev => [...prev, newReply]);
       setReplyMessage('');
@@ -80,6 +107,19 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         avatar: nudge.senderAvatar
       });
     }
+  };
+
+  const handleRecipientStackClick = () => {
+    setShowRecipientList(true);
+  };
+
+  const handleBackFromRecipients = () => {
+    setShowRecipientList(false);
+  };
+
+  const handleRecipientUserClick = (user) => {
+    // Handle individual recipient click - could open user profile or start conversation
+    console.log('Recipient clicked:', user);
   };
 
   const handlePollOptionClick = (optionIndex) => {
@@ -164,6 +204,18 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
     );
   }
 
+  // Show recipient list if requested
+  if (showRecipientList && nudge.isAnnouncement && nudge.recipients) {
+    return (
+      <RecipientList
+        recipients={nudge.recipients}
+        onBack={handleBackFromRecipients}
+        onUserClick={handleRecipientUserClick}
+        title={`Recipients (${nudge.recipients.length})`}
+      />
+    );
+  }
+
   return (
     <div className="h-full flex flex-col border border-neutral-700 rounded-lg">
       {/* Header */}
@@ -196,6 +248,24 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
             <p className="text-neutral-400 text-sm">{nudge.senderTitle}</p>
           </div>
         </div>
+
+        {/* Recipients Info for Announcement Nudges */}
+        {nudge.isAnnouncement && nudge.recipients && nudge.recipients.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-neutral-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <AvatarStack 
+                  users={nudge.recipients}
+                  maxVisible={6}
+                  size="sm"
+                  showStatus={true}
+                  onClick={handleRecipientStackClick}
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content - Scrollable */}
@@ -331,8 +401,30 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
                   </div>
                 )}
                 
-                {/* Reply bubble */}
-                <div className={`flex ${reply.isFromMe ? 'justify-end' : 'justify-start'}`}>
+                {/* Reply bubble with commenter info */}
+                <div className={`flex flex-col ${reply.isFromMe ? 'items-end' : 'items-start'}`}>
+                  {/* Commenter name and avatar */}
+                  {!reply.isFromMe && (
+                    <div className="flex items-center gap-2 mb-1 ml-1">
+                      <div className="relative">
+                        <img
+                          src={reply.user.avatar}
+                          alt={reply.user.name}
+                          className="w-5 h-5 rounded-full object-cover"
+                        />
+                        {reply.user.status && (
+                          <div 
+                            className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getStatusDotColor(reply.user.status)} rounded-full border border-neutral-900`}
+                          />
+                        )}
+                      </div>
+                      <span className="text-neutral-400 text-xs font-medium">
+                        {reply.user.name}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Message bubble */}
                   <div className={`max-w-[70%] p-3 ${
                     reply.isFromMe 
                       ? 'bg-transparent border border-neutral-700 text-white rounded-lg rounded-br-none' 
@@ -377,7 +469,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
               }}
               className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center"
             >
-              Mark Done
+              Create Nudge
             </button>
           </div>
           
@@ -390,12 +482,16 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
                 onChange={(e) => setReplyMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendReply()}
                 placeholder="Type your reply..."
-                className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2.5 pr-12 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2.5 pr-20 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
               />
+              {/* Attachment icon positioned to the left of emoji picker */}
+              <button className="absolute right-10 top-1/2 transform -translate-y-1/2 p-2 rounded transition-colors text-neutral-400 hover:text-white hover:bg-neutral-700">
+                <Paperclip className="w-4 h-4" />
+              </button>
               {/* Emoji Picker positioned in bottom-right corner of input */}
               <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
                 <EmojiPicker 
-                  onEmojiSelect={(emoji) => setReplyMessage(prev => prev + emoji)}
+                  onEmojiSelect={(emoji, content) => setReplyMessage(prev => prev + emoji)}
                   position="bottom-right"
                 />
               </div>

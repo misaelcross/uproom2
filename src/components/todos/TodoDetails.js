@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText, MoreHorizontal, Smile, Edit3 } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText, MoreHorizontal, Smile, Edit3, Paperclip } from 'lucide-react';
 import TodoStep from './TodoStep';
 import TipTapEditor from '../shared/TipTapEditor';
+import EmojiPicker from '../shared/EmojiPicker';
 import useEscapeKey from '../../hooks/useEscapeKey';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -658,11 +659,11 @@ const TodoDetails = ({
   const totalSteps = localTodo.steps?.length || 0;
 
   const handleAddComment = () => {
-    // Use cleanMentionText to check if there's actual content (not just HTML tags)
-    if (cleanMentionText(newComment).trim()) {
+    // Check if there's actual content in the plain text input
+    if (newComment.trim()) {
       const comment = {
         id: Date.now(),
-        text: newComment, // Store the full HTML content with mentions
+        text: newComment, // Store the plain text content
         author: {
           name: 'You',
           avatar: '/api/placeholder/32/32'
@@ -1559,23 +1560,35 @@ const TodoDetails = ({
               )}
 
               {/* Add Comment */}
-              <div className="space-y-2">
-                <div className="relative">
-                  <TipTapEditor
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
                     value={newComment}
-                    onChange={setNewComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
                     placeholder="Add a comment..."
-                    showToolbar={false}
-                    onEnter={handleAddComment}
+                    className="w-full bg-neutral-800 border border-neutral-600 rounded-lg px-3 py-2.5 pr-20 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                   />
-                  <button
-                     onClick={handleAddComment}
-                     disabled={!cleanMentionText(newComment).trim()}
-                     className="absolute right-2 bottom-2 px-3 py-1.5 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-                   >
-                    <Send className="w-4 h-4" />
+                  {/* Attachment icon positioned to the left of emoji picker */}
+                  <button className="absolute right-10 top-1/2 transform -translate-y-1/2 p-2 rounded transition-colors text-neutral-400 hover:text-white hover:bg-neutral-700">
+                    <Paperclip className="w-4 h-4" />
                   </button>
+                  {/* Emoji Picker positioned in bottom-right corner of input */}
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <EmojiPicker 
+                      onEmojiSelect={(emoji, content) => setNewComment(prev => prev + emoji)}
+                      position="bottom-right"
+                    />
+                  </div>
                 </div>
+                <button
+                  onClick={handleAddComment}
+                  disabled={!newComment.trim()}
+                  className="bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-700 disabled:text-neutral-400 text-white border border-neutral-600 px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
               </div>
               
               {/* Transparent spacer div */}

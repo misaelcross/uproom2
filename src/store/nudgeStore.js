@@ -74,6 +74,85 @@ const useNudgeStore = create((set, get) => ({
       replies: []
     },
     {
+      id: 'announcement-1',
+      senderId: 'user-15',
+      senderName: 'Sarah Johnson',
+      senderTitle: 'Team Lead',
+      senderAvatar: 'https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+      message: 'Team announcement: New project kickoff meeting scheduled for Monday at 10 AM. Please review the attached documents beforehand.',
+      fullMessage: 'Team announcement: New project kickoff meeting scheduled for Monday at 10 AM. Please review the attached documents beforehand. We\'ll be discussing project scope, timeline, and role assignments.',
+      timestamp: '2h',
+      type: 'announcement',
+      priority: 'high',
+      isRead: false,
+      isPinned: true,
+      isHighPriority: true,
+      isAnnouncement: true,
+      recipients: [
+        {
+          id: 'user-1',
+          name: 'Emily Davis',
+          title: 'Frontend Developer',
+          avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+          status: 'online'
+        },
+        {
+          id: 'user-2',
+          name: 'Alex Thompson',
+          title: 'Backend Developer',
+          avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+          status: 'away'
+        },
+        {
+          id: 'user-3',
+          name: 'Marcus Chen',
+          title: 'UI/UX Designer',
+          avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+          status: 'online'
+        },
+        {
+          id: 'user-5',
+          name: 'Jessica Brown',
+          title: 'Product Manager',
+          avatar: 'https://images.pexels.com/photos/1181424/pexels-photo-1181424.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
+          status: 'busy'
+        },
+        {
+          id: 'user-6',
+          name: 'David Kim',
+          title: 'DevOps Engineer',
+          avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+          status: 'online'
+        },
+        {
+          id: 'user-7',
+          name: 'Lisa Wang',
+          title: 'QA Engineer',
+          avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+          status: 'offline'
+        },
+        {
+          id: 'user-8',
+          name: 'Robert Miller',
+          title: 'Senior Developer',
+          avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
+          status: 'online'
+        },
+        {
+          id: 'user-9',
+          name: 'Anna Garcia',
+          title: 'Business Analyst',
+          avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
+          status: 'away'
+        }
+      ],
+      attachments: [
+        { name: 'Project-Scope.pdf' },
+        { name: 'Timeline-Overview.xlsx' }
+      ],
+      replies: []
+    },
+    {
       id: 'poll-1',
       senderId: 'user-13',
       senderName: 'Michael Torres',

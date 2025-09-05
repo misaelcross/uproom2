@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreVertical, Bookmark, Eye, CheckCircle2, Flag, EyeOff, Archive, Plus } from 'lucide-react';
+import { MoreVertical, Pin, PinOff, Eye, CheckCircle2, Flag, EyeOff, Archive, Plus } from 'lucide-react';
 import FloatingUserCard from '../shared/FloatingUserCard';
+import AvatarStack from '../shared/AvatarStack';
 import { usersData } from '../../data/usersData';
 import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
@@ -175,9 +176,20 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
           </div>
         </div>
         <div className="relative flex items-center gap-2" ref={dropdownRef}>
-          {/* Bookmark icon when pinned */}
+          {/* Avatar Stack for announcement nudges */}
+          {nudge.isAnnouncement && nudge.recipients && nudge.recipients.length > 0 && (
+            <AvatarStack 
+              users={nudge.recipients}
+              maxVisible={3}
+              size="xs"
+              showStatus={false}
+              className="mr-1"
+            />
+          )}
+          
+          {/* Pin icon when pinned */}
           {nudge.isPinned && (
-            <Bookmark className="w-4 h-4 text-white fill-white" />
+            <Pin className="w-4 h-4 text-white fill-white" />
           )}
           <button
             className="p-1 hover:bg-neutral-800 rounded transition-colors"
@@ -232,7 +244,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                     }
                   }}
                 >
-                  <Bookmark className="w-4 h-4" />
+                  {nudge.isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
                   {nudge.isPinned ? 'Remove pin' : 'Pin nudge'}
                 </button>
                 <button

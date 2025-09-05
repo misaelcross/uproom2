@@ -329,8 +329,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
                 : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            <User className="w-4 h-4" />
-            <span className="text-sm font-medium">Individual</span>
+            <span className="text-sm font-medium">Direct</span>
           </button>
           <button
             onClick={() => setIsAnnouncementMode(true)}
@@ -340,7 +339,6 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
                 : 'text-neutral-400 hover:text-neutral-200'
             }`}
           >
-            <Megaphone className="w-4 h-4" />
             <span className="text-sm font-medium">Announcement</span>
           </button>
         </div>
@@ -440,7 +438,7 @@ const CreateNudgeView = ({ onCancel, preSelectedUser, onOpenPollCreation }) => {
             {/* Emoji Picker positioned in bottom-right corner */}
             <div className="absolute bottom-2 right-2">
               <EmojiPicker 
-                onEmojiSelect={(emoji) => setMessage(prev => prev + emoji)}
+                onEmojiSelect={(emoji, content) => setMessage(prev => prev + emoji)}
                 position="bottom-right"
               />
             </div>
