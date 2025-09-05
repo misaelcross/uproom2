@@ -167,7 +167,7 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
   return (
     <div className="h-full flex flex-col border border-neutral-700 rounded-lg">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-neutral-700">
+      <div className="px-6 py-4 border-b border-neutral-700 flex-shrink-0">
         <div className="flex items-center gap-3 mb-4">
           <button 
             onClick={onBack}
@@ -198,8 +198,10 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 p-6" data-simplebar>
+      {/* Content - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto" data-simplebar>
+          <div className="p-6">
         {/* High Priority Badge */}
         {nudge.isHighPriority && (
           <div className="mb-4 flex justify-center">
@@ -348,10 +350,12 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
             );
           })}
         </div>
+          </div>
+        </div>
       </div>
 
-      {/* Actions */}
-      <div className="p-6 border-t border-neutral-700">
+      {/* Actions - Sticky Footer */}
+      <div className="sticky bottom-0 p-6 border-t border-neutral-700 bg-neutral-900 rounded-b-lg flex-shrink-0">
         {showSuccess && (
           <div className="mb-4 p-3 bg-neutral-800/50 border border-neutral-500/30 rounded-lg">
             <p className="text-white text-sm">Action completed successfully!</p>
@@ -359,13 +363,23 @@ const NudgeDetails = ({ nudge, onBack, onUserClick }) => {
         )}
         
         <div className="space-y-3">
-          <button
-            onClick={handleAddToTodo}
-            className="w-full bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add to my To-Do
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleAddToTodo}
+              className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center"
+            >
+              Add To-Do
+            </button>
+            <button
+              onClick={() => {
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 3000);
+              }}
+              className="flex-1 bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-600 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center"
+            >
+              Mark Done
+            </button>
+          </div>
           
           {/* Reply Input */}
           <div className="flex gap-2">

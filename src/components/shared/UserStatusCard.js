@@ -74,8 +74,9 @@ const UserStatusCard = ({
       // Se esta abrindo o dropdown, definir o status atual como selecionado
       const currentStatusObj = statusOptions.find(s => s.name === currentStatus);
       setSelectedStatusOption(currentStatusObj);
-      // Inicializar o campo temporário vazio para mostrar apenas o placeholder
-      setTempStatusMessage('');
+      // Inicializar o campo temporário com a mensagem atual para edição
+      // Se há uma mensagem salva, usar ela; caso contrário, usar o texto padrão
+      setTempStatusMessage(statusMessage || 'Planning Q4 product roadmap and features');
     }
     setStatusDropdownOpen(!statusDropdownOpen);
   };
@@ -87,8 +88,7 @@ const UserStatusCard = ({
     onStatusMessageChange(tempStatusMessage);
     // Chamar a função setNewStatus do pai
     setNewStatus(tempStatusMessage);
-    // Limpar o campo temporário após salvar
-    setTempStatusMessage('');
+    // Não limpar o campo temporário - será limpo quando o dropdown fechar
   };
 
   return (
@@ -154,12 +154,22 @@ const UserStatusCard = ({
             <div className="pb-1">
               {statusOptions.map((status) => (
                 <button
-                  key={status.name}
-                  onClick={() => selectStatus(status)}
-                  className={`w-full flex items-center justify-between p-2 hover:bg-neutral-700 transition-colors rounded-lg ${
-                    selectedStatusOption?.name === status.name ? 'bg-neutral-700' : ''
-                  }`}
-                >
+                key={status.name}
+                onClick={() => {
+                  selectStatus(status);
+                  // Se selecionou um status diferente do atual, limpar o campo
+                  if (status.name !== currentStatus) {
+                    setTempStatusMessage('');
+                  } else {
+                      // Se selecionou o status atual, manter a mensagem atual
+                      // Se há uma mensagem salva, usar ela; caso contrário, usar o texto padrão
+                      setTempStatusMessage(statusMessage || 'Planning Q4 product roadmap and features');
+                    }
+                }}
+                className={`w-full flex items-center justify-between p-2 hover:bg-neutral-700 transition-colors rounded-lg ${
+                  selectedStatusOption?.name === status.name ? 'bg-neutral-700' : ''
+                }`}
+              >
                   <div className="flex items-center space-x-2">
                     <div className={`w-2 h-2 rounded-full ${status.color}`}></div>
                     <span className="text-sm text-white">{status.name}</span>
@@ -188,15 +198,11 @@ const UserStatusCard = ({
                       }
                     }}
                     placeholder="Give more details..."
-                    className="w-full bg-transparent p-3 pr-10 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none min-h-[40px] border-none"
-                    rows="1"
+                    className="w-full bg-transparent p-3 pr-10 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none border-none"
+                    rows="3"
                     style={{
-                      height: 'auto',
-                      minHeight: '40px'
-                    }}
-                    onInput={(e) => {
-                      e.target.style.height = 'auto';
-                      e.target.style.height = e.target.scrollHeight + 'px';
+                      minHeight: '80px',
+                      maxHeight: '120px'
                     }}
                   />
                 </SimpleBar>
@@ -229,7 +235,7 @@ const UserStatusCard = ({
                     : 'bg-neutral-600 text-neutral-400 cursor-not-allowed'
                 }`}
               >
-                Set Status
+                {selectedStatusOption?.name === currentStatus && (statusMessage || tempStatusMessage === 'Planning Q4 product roadmap and features') ? 'Save' : 'Set Status'}
               </button>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Smile } from 'lucide-react';
@@ -25,15 +26,37 @@ const emojiList = [
 ];
 
 // Emoji Picker Dropdown Component
-const EmojiPickerDropdown = ({ onSelect, onClose, position = 'bottom-right' }) => {
-  const positionClasses = {
-    'bottom-right': 'absolute bottom-full right-0 mb-2',
-    'top-left': 'absolute top-full left-0 mt-1',
-    'bottom-left': 'absolute bottom-full left-0 mb-2'
-  };
+const EmojiPickerDropdown = ({ onSelect, onClose, position, buttonRef }) => {
+  if (!position || !buttonRef.current) return null;
 
-  return (
-    <div className={`${positionClasses[position]} bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg z-50 p-3 max-h-48 overflow-hidden`}>
+  const rect = buttonRef.current.getBoundingClientRect();
+  const dropdownWidth = 280;
+  const dropdownHeight = 200;
+  
+  // Calculate position based on available space
+  let top = rect.bottom + window.scrollY + 4;
+  let left = rect.right + window.scrollX - dropdownWidth;
+  
+  // Adjust if dropdown would go off screen
+  if (left < 10) {
+    left = rect.left + window.scrollX;
+  }
+  
+  if (top + dropdownHeight > window.innerHeight + window.scrollY - 10) {
+    top = rect.top + window.scrollY - dropdownHeight - 4;
+  }
+
+  return createPortal(
+    <div 
+      className="fixed bg-neutral-800 border border-neutral-600 rounded-lg shadow-lg p-3 max-h-48 overflow-hidden"
+      style={{
+        top: `${top}px`,
+        left: `${left}px`,
+        zIndex: 9999,
+        minWidth: `${dropdownWidth}px`,
+        width: `${dropdownWidth}px`
+      }}
+    >
       <SimpleBar style={{ maxHeight: '192px' }}>
         <div className="grid grid-cols-8 gap-1">
           {emojiList.map((emoji, index) => (
@@ -44,14 +67,16 @@ const EmojiPickerDropdown = ({ onSelect, onClose, position = 'bottom-right' }) =
                 onSelect(emoji);
                 onClose();
               }}
-              className="p-1 hover:bg-neutral-700 rounded text-lg transition-colors"
+              className="p-2 hover:bg-neutral-700 rounded text-lg transition-colors flex items-center justify-center"
+              style={{ minWidth: '32px', minHeight: '32px' }}
             >
               {emoji}
             </button>
           ))}
         </div>
       </SimpleBar>
-    </div>
+    </div>,
+    document.body
   );
 };
 
@@ -59,6 +84,7 @@ const EmojiPickerDropdown = ({ onSelect, onClose, position = 'bottom-right' }) =
 const EmojiPicker = ({ onEmojiSelect, position = 'bottom-right', className = '' }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const containerRef = useRef(null);
+  const buttonRef = useRef(null);
 
   // Hidden editor instance for emoji functionality
   const editor = useEditor({
@@ -100,6 +126,7 @@ const EmojiPicker = ({ onEmojiSelect, position = 'bottom-right', className = '' 
       
       {/* Emoji Button */}
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
         className="p-2 rounded transition-colors text-neutral-400 hover:text-white hover:bg-neutral-700"
@@ -114,6 +141,7 @@ const EmojiPicker = ({ onEmojiSelect, position = 'bottom-right', className = '' 
           onSelect={handleEmojiSelect}
           onClose={() => setShowEmojiPicker(false)}
           position={position}
+          buttonRef={buttonRef}
         />
       )}
     </div>

@@ -137,6 +137,17 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
     }
   };
 
+  const handleCardClick = () => {
+    // Mark as read if unread, but don't cause layout shifts
+    if (!nudge.isRead && onMarkRead) {
+      onMarkRead(nudge.id);
+    }
+    // Call the original onClick handler
+    if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <div 
       className={`cursor-pointer transition-all duration-200 rounded-lg p-4 group ${
@@ -144,7 +155,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
           ? 'border border-white' 
           : getPriorityHoverColors()
       }`}
-      onClick={onClick}
+      onClick={handleCardClick}
     >
       {/* Header com avatar, nome, cargo e menu */}
       <div className="flex items-start gap-3 mb-3">

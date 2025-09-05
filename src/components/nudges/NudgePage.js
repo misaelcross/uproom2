@@ -422,7 +422,7 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
     } else {
       setLocalNudges(prev => prev.map(n => 
         n.id === nudgeId 
-          ? { ...n, isRead: true }
+          ? { ...n, isRead: true, readAt: new Date().toISOString() }
           : n
       ));
     }
@@ -439,7 +439,7 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
     } else {
       setLocalNudges(prev => prev.map(n => 
         n.id === nudgeId 
-          ? { ...n, isRead: false }
+          ? { ...n, isRead: false, readAt: null }
           : n
       ));
     }
@@ -599,12 +599,18 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
     const timeStr = timestamp.toLowerCase();
     const value = parseInt(timeStr);
     
-    if (timeStr.includes('h')) {
+    if (timeStr.includes('m') && !timeStr.includes('mo')) {
+      return value / 60; // minutos convertidos em horas
+    } else if (timeStr.includes('h')) {
       return value; // horas
     } else if (timeStr.includes('d')) {
       return value * 24; // dias convertidos em horas
-    } else if (timeStr.includes('m')) {
-      return value / 60; // minutos convertidos em horas
+    } else if (timeStr.includes('w')) {
+      return value * 24 * 7; // semanas convertidas em horas
+    } else if (timeStr.includes('mo')) {
+      return value * 24 * 30; // meses convertidos em horas (aproximado)
+    } else if (timeStr.includes('y')) {
+      return value * 24 * 365; // anos convertidos em horas (aproximado)
     }
     
     return 0;
@@ -665,35 +671,16 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
       return String(b.id).localeCompare(String(a.id));
     });
     
-    // Separar nudges não lidos e lidos dentro dos unpinned
-    const unreadNudges = unpinnedNudges.filter(nudge => !nudge.isRead);
-    const readNudges = unpinnedNudges.filter(nudge => nudge.isRead);
-    
-    // Ordenar não lidos por timestamp (mais recentes primeiro)
-    unreadNudges.sort((a, b) => {
+    // Para unpinned nudges, manter posições originais sem reordenar por read status
+    // Apenas ordenar por timestamp para manter consistência visual
+    unpinnedNudges.sort((a, b) => {
       const timestampA = getTimestampValue(a.timestamp);
       const timestampB = getTimestampValue(b.timestamp);
       return timestampA - timestampB; // Menor valor = mais recente
     });
     
-    // Ordenar lidos por readAt (mais recentemente lidos primeiro), depois por timestamp
-    readNudges.sort((a, b) => {
-      // Se ambos têm readAt, ordenar por readAt (mais recente primeiro)
-      if (a.readAt && b.readAt) {
-        return new Date(b.readAt) - new Date(a.readAt);
-      }
-      // Se apenas um tem readAt, ele vem primeiro
-      if (a.readAt && !b.readAt) return -1;
-      if (!a.readAt && b.readAt) return 1;
-      
-      // Se nenhum tem readAt, ordenar por timestamp
-      const timestampA = getTimestampValue(a.timestamp);
-      const timestampB = getTimestampValue(b.timestamp);
-      return timestampA - timestampB; // Menor valor = mais recente
-    });
-    
-    // Retornar: pinned primeiro, depois não lidos, depois lidos
-    return [...pinnedNudges, ...unreadNudges, ...readNudges];
+    // Retornar: pinned primeiro, depois unpinned (mantendo posições originais)
+    return [...pinnedNudges, ...unpinnedNudges];
   };
 
   return (
