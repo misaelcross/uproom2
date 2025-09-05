@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
+import { X, Users, MapPin, Paperclip, Check, MessageSquare, FileText, Edit3 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg", isCurrentUser = true }) => {
@@ -168,17 +168,17 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
           <div>
             <h3 className="text-sm font-medium text-neutral-300 mb-3">Linked Context</h3>
             <div className="space-y-3">
-              {/* Linked Tasks */}
+              {/* Linked To-do */}
               {event.linkedTasks && event.linkedTasks.length > 0 && (
                 <div>
                   <div className="flex items-center gap-2 text-xs font-medium text-neutral-400 mb-2">
-                    <CheckSquare className="w-3 h-3" />
-                    <span>Tasks ({event.linkedTasks.length})</span>
+                    <Check className="w-3 h-3" />
+                    <span>To-do ({event.linkedTasks.length})</span>
                   </div>
                   <div className="space-y-1">
                     {event.linkedTasks.map((task, index) => (
                       <div key={index} className="flex items-center gap-2 p-2 bg-neutral-700/50 rounded text-sm">
-                        <CheckSquare className="w-3 h-3 text-neutral-400" />
+                        <Check className="w-3 h-3 text-neutral-400" />
                         <span className="text-white">{task.title || `Task ${index + 1}`}</span>
                       </div>
                     ))}

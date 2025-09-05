@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Search, FileText, MessageSquare, CheckSquare, Paperclip, Plus } from 'lucide-react';
+import { X, Search, File, Zap, Check, Paperclip, Plus, FileText, MessageSquare } from 'lucide-react';
 
 const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -143,8 +143,8 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
-                <CheckSquare className="w-4 h-4 inline mr-2" />
-                Tasks ({selectedItems.tasks.length})
+                <Check className="w-4 h-4 inline mr-2" />
+                To-do ({selectedItems.tasks.length})
               </button>
               <button
                 onClick={() => setActiveTab('nudges')}
@@ -154,7 +154,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
-                <MessageSquare className="w-4 h-4 inline mr-2" />
+                <Zap className="w-4 h-4 inline mr-2" />
                 Nudges ({selectedItems.nudges.length})
               </button>
               <button
@@ -165,7 +165,7 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
                     : 'text-neutral-400 hover:text-white'
                 }`}
               >
-                <FileText className="w-4 h-4 inline mr-2" />
+                <File className="w-4 h-4 inline mr-2" />
                 Files ({selectedItems.files.length})
               </button>
             </div>
@@ -259,12 +259,12 @@ const EventContextModal = ({ isOpen, onClose, event, onUpdateEvent }) => {
             <div className="p-6 border-b border-neutral-700">
               <h3 className="text-lg font-semibold text-white mb-4">Linked Context</h3>
               
-              {/* Selected Tasks */}
+              {/* Selected To-do */}
               {selectedItems.tasks.length > 0 && (
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-neutral-300 mb-2 flex items-center">
-                    <CheckSquare className="w-4 h-4 mr-2" />
-                    Tasks ({selectedItems.tasks.length})
+                    <Check className="w-4 h-4 mr-2" />
+                    To-do ({selectedItems.tasks.length})
                   </h4>
                   <div className="space-y-2">
                     {selectedItems.tasks.map((task) => (

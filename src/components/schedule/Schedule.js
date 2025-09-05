@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { MoreVertical, Plus, Paperclip, X, Save, Users, Link } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
 
 import EventContextModal from './EventContextModal';
 import MonthlyCalendar from './MonthlyCalendar';
@@ -17,7 +21,8 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
   const [newEvent, setNewEvent] = useState({
     title: '',
-    time: '',
+    startTime: null,
+    endTime: null,
     people: [],
     links: []
   });
@@ -379,13 +384,16 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
   // Function to handle saving new event
   const handleSaveEvent = () => {
-    if (!newEvent.title || !newEvent.time) return;
+    if (!newEvent.title || !newEvent.startTime || !newEvent.endTime) return;
+    
+    // Format time string from start and end times
+    const formattedTime = `${newEvent.startTime.format('h:mmA').toLowerCase()} - ${newEvent.endTime.format('h:mmA').toLowerCase()}`;
     
     // Create new event object
     const eventToAdd = {
       id: Date.now(), // Simple ID generation
       title: newEvent.title,
-      time: newEvent.time,
+      time: formattedTime,
       date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
       duration: '1 hour', // Default duration
       description: '',
@@ -411,13 +419,13 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
     });
     
     // Reset form and close
-    setNewEvent({ title: '', time: '', people: [], links: [] });
+    setNewEvent({ title: '', startTime: null, endTime: null, people: [], links: [] });
     setIsAddingEvent(false);
   };
 
   // Function to cancel adding event
   const handleCancelAddEvent = () => {
-    setNewEvent({ title: '', time: '', people: [], links: [] });
+    setNewEvent({ title: '', startTime: null, endTime: null, people: [], links: [] });
     setIsAddingEvent(false);
   };
 
@@ -653,13 +661,136 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
 
                       {/* Time Input */}
                       <div className="mb-3">
-                        <input
-                          type="text"
-                          value={newEvent.time}
-                          onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
-                          placeholder="Time (e.g., 2:00pm - 3:00pm)"
-                          className="text-sm font-medium text-neutral-300 bg-transparent border-none outline-none placeholder-neutral-500 w-full"
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <div className={`${fullWidth ? 'flex gap-3 items-center' : 'flex flex-col gap-3'}`}>
+                            <div className="flex-1">
+                              <TimePicker
+                                label="Start Time"
+                                value={newEvent.startTime}
+                                onChange={(newValue) => setNewEvent({ ...newEvent, startTime: newValue })}
+slotProps={{
+                                  textField: {
+                                    size: 'small',
+                                    sx: {
+                                      width: '100%',
+                                      '& .MuiOutlinedInput-root': {
+                                        backgroundColor: 'transparent',
+                                        color: fullWidth ? '#a3a3a3' : '#d4d4d8',
+                                        fontSize: '0.875rem',
+                                        '& fieldset': {
+                                          borderColor: '#404040',
+                                        },
+                                        '&:hover fieldset': {
+                                          borderColor: fullWidth ? '#d4d4d8' : '#737373',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                          borderColor: '#ffffff',
+                                        },
+                                      },
+                                      '& .MuiInputLabel-root': {
+                                        color: fullWidth ? '#a3a3a3' : '#a3a3a3',
+                                        fontSize: '0.875rem',
+                                        '&.Mui-focused': {
+                                          color: '#ffffff',
+                                        },
+                                      },
+                                      '& .MuiSvgIcon-root': {
+                                        color: fullWidth ? '#a3a3a3' : '#a3a3a3',
+                                      },
+                                    },
+                                  },
+                                  popper: {
+                                    sx: {
+                                      '& .MuiPaper-root': {
+                                        backgroundColor: '#262626',
+                                        border: '1px solid #404040',
+                                        '& .MuiList-root': {
+                                          backgroundColor: '#262626',
+                                        },
+                                        '& .MuiMenuItem-root': {
+                                          color: '#ffffff',
+                                          '&:hover': {
+                                            backgroundColor: '#404040',
+                                          },
+                                          '&.Mui-selected': {
+                                            backgroundColor: '#404040',
+                                            color: '#ffffff',
+                                            '&:hover': {
+                                              backgroundColor: '#525252',
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <TimePicker
+                                label="End Time"
+                                value={newEvent.endTime}
+                                onChange={(newValue) => setNewEvent({ ...newEvent, endTime: newValue })}
+slotProps={{
+                                  textField: {
+                                    size: 'small',
+                                    sx: {
+                                      width: '100%',
+                                      '& .MuiOutlinedInput-root': {
+                                        backgroundColor: 'transparent',
+                                        color: fullWidth ? '#a3a3a3' : '#d4d4d8',
+                                        fontSize: '0.875rem',
+                                        '& fieldset': {
+                                          borderColor: '#404040',
+                                        },
+                                        '&:hover fieldset': {
+                                          borderColor: fullWidth ? '#d4d4d8' : '#737373',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                          borderColor: '#ffffff',
+                                        },
+                                      },
+                                      '& .MuiInputLabel-root': {
+                                        color: fullWidth ? '#a3a3a3' : '#a3a3a3',
+                                        fontSize: '0.875rem',
+                                        '&.Mui-focused': {
+                                          color: '#ffffff',
+                                        },
+                                      },
+                                      '& .MuiSvgIcon-root': {
+                                        color: fullWidth ? '#a3a3a3' : '#a3a3a3',
+                                      },
+                                    },
+                                  },
+                                  popper: {
+                                    sx: {
+                                      '& .MuiPaper-root': {
+                                        backgroundColor: '#262626',
+                                        border: '1px solid #404040',
+                                        '& .MuiList-root': {
+                                          backgroundColor: '#262626',
+                                        },
+                                        '& .MuiMenuItem-root': {
+                                          color: '#ffffff',
+                                          '&:hover': {
+                                            backgroundColor: '#404040',
+                                          },
+                                          '&.Mui-selected': {
+                                            backgroundColor: '#404040',
+                                            color: '#ffffff',
+                                            '&:hover': {
+                                              backgroundColor: '#525252',
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </LocalizationProvider>
                       </div>
 
                       {/* People and Links - Responsive Layout */}
@@ -671,7 +802,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         {/* People Input */}
                         <div className="flex-1 relative">
                           <div className="flex items-center gap-2">
-                            <Users className="w-3 h-3 text-neutral-400" />
+                            <Users className="w-4 h-4 text-neutral-400" />
                             <div className="flex-1">
 
                               {/* Search Input */}
@@ -685,7 +816,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                                   updatePeopleDropdownPosition();
                                 }}
                                 placeholder="Add people"
-                                className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 w-full"
+                                className="text-sm text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 w-full"
                               />
                             </div>
                           </div>
@@ -695,11 +826,11 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         <div className={`flex items-center gap-2 flex-1 ${
                           fullWidth ? 'ml-4' : 'ml-0'
                         }`}>
-                          <Link className="w-3 h-3 text-neutral-400" />
+                          <Link className="w-4 h-4 text-neutral-400" />
                           <input
                             type="url"
                             placeholder="Add links"
-                            className="text-xs text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 flex-1"
+                            className="text-sm text-neutral-400 bg-transparent border-none outline-none placeholder-neutral-500 flex-1"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter' && e.target.value.trim()) {
                                 setNewEvent({
@@ -767,20 +898,20 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={handleCancelAddEvent}
-                          className="px-3 py-1 text-xs text-neutral-400 hover:text-white transition-colors"
+                          className="px-3 py-1 text-sm text-neutral-400 hover:text-white transition-colors"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSaveEvent}
-                          disabled={!newEvent.title || !newEvent.time}
-                          className={`px-3 py-1 text-xs rounded transition-colors flex items-center gap-1 ${
-                            newEvent.title && newEvent.time
+                          disabled={!newEvent.title || !newEvent.startTime || !newEvent.endTime}
+                          className={`px-3 py-1 text-sm rounded transition-colors flex items-center gap-2 ${
+                            newEvent.title && newEvent.startTime && newEvent.endTime
                               ? 'bg-white text-black hover:bg-neutral-200'
                               : 'bg-neutral-700 text-neutral-400 cursor-not-allowed'
                           }`}
                         >
-                          <Save className="w-2 h-2" />
+                          <Save className="w-4 h-4" />
                           Save
                         </button>
                       </div>

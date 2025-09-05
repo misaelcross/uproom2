@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Search, FileText, MessageSquare, CheckSquare, Paperclip, Plus, X, File, FileSpreadsheet, Palette, Folder } from 'lucide-react';
+import { ArrowLeft, Search, File, Zap, Check, Paperclip, Plus, X, FileSpreadsheet, Palette, Folder, FileText, MessageSquare } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
@@ -145,7 +145,7 @@ const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
       <SimpleBar className="flex-1">
         <div className="p-6 space-y-6">
           {/* Tabs */}
-          <div className="flex items-center space-x-2 bg-neutral-800 rounded-lg p-1">
+          <div className="flex items-center bg-neutral-800 rounded-lg p-1">
             <button
               onClick={() => setActiveTab('tasks')}
               className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md transition-colors ${
@@ -154,8 +154,8 @@ const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
                   : 'text-neutral-400 hover:text-neutral-200'
               }`}
             >
-              <CheckSquare className="w-4 h-4" />
-              <span className="text-sm font-medium">Tasks</span>
+              <Check className="w-4 h-4" />
+              <span className="text-sm font-medium">To-do</span>
             </button>
             <button
               onClick={() => setActiveTab('nudges')}
@@ -165,7 +165,7 @@ const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
                   : 'text-neutral-400 hover:text-neutral-200'
               }`}
             >
-              <MessageSquare className="w-4 h-4" />
+              <Zap className="w-4 h-4" />
               <span className="text-sm font-medium">Nudges</span>
             </button>
             <button
@@ -176,7 +176,7 @@ const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
                   : 'text-neutral-400 hover:text-neutral-200'
               }`}
             >
-              <FileText className="w-4 h-4" />
+              <File className="w-4 h-4" />
               <span className="text-sm font-medium">Files</span>
             </button>
           </div>
@@ -268,12 +268,12 @@ const LinkContextSidebar = ({ event, onBack, onUpdateEvent }) => {
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-neutral-400">Linked Context</h3>
             
-            {/* Selected Tasks */}
+            {/* Selected To-do */}
             {selectedItems.tasks.length > 0 && (
               <div>
                 <h4 className="text-xs font-medium text-neutral-500 mb-2 flex items-center">
-                  <CheckSquare className="w-3 h-3 mr-2" />
-                  Tasks ({selectedItems.tasks.length})
+                  <Check className="w-3 h-3 mr-2" />
+                  To-do ({selectedItems.tasks.length})
                 </h4>
                 <div className="space-y-1">
                   {selectedItems.tasks.map((task) => (
