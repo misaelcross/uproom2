@@ -75,12 +75,12 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
   const dropdownOptions = isInGroup ? [
     'Remove from Group',
     'Send Nudge',
-    'Set reminder',
+    'Set Reminder',
     'Collaborate',
     'Request to Join Meeting'
   ] : [
     'Send Nudge',
-    'Set reminder',
+    'Set Reminder',
     'Collaborate',
     'Request to Join Meeting',
     'Add to a Group'

@@ -217,7 +217,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                     }}
                   >
                     <EyeOff className="w-4 h-4" />
-                    Mark as read
+                    Mark as Read
                   </button>
                 ) : (
                   <button
@@ -231,7 +231,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                     }}
                   >
                     <Eye className="w-4 h-4" />
-                    Mark as unread
+                    Mark as Unread
                   </button>
                 )}
                 <button
@@ -245,7 +245,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                   }}
                 >
                   {nudge.isPinned ? <PinOff className="w-4 h-4" /> : <Pin className="w-4 h-4" />}
-                  {nudge.isPinned ? 'Remove pin' : 'Pin nudge'}
+                  {nudge.isPinned ? 'Remove Pin' : 'Pin Nudge'}
                 </button>
                 <button
                   className="w-full px-3 py-2 text-left text-sm text-white hover:bg-neutral-700 flex items-center gap-2"
@@ -258,7 +258,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                   }}
                 >
                   <Flag className="w-4 h-4" />
-                  {nudge.isHighPriority ? 'Remove priority' : 'Mark as priority'}
+                  {nudge.isHighPriority ? 'Remove Priority' : 'Mark as Priority'}
                 </button>
                 {!nudge.isRead && (
                   <button
@@ -272,7 +272,7 @@ const NudgeCard = ({ nudge, isSelected, onClick, onCreateTodo, onMarkComplete, o
                     }}
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    Mark as resolved
+                    Mark as Resolved
                   </button>
                 )}
                 <button

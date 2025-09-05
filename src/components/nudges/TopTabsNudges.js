@@ -15,15 +15,25 @@ const TopTabsNudges = ({ activeTab, setActiveTab }) => {
         >
           All
         </button>
-        <button
-          onClick={() => setActiveTab('unread')}
+                <button
+          onClick={() => setActiveTab('direct')}
           className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
-            activeTab === 'unread'
+            activeTab === 'direct'
               ? 'bg-neutral-700 text-white'
               : 'bg-transparent text-neutral-400 hover:text-gray-300'
           }`}
         >
-          Unread
+          Direct
+        </button>
+        <button
+          onClick={() => setActiveTab('announcement')}
+          className={`w-fit px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${
+            activeTab === 'announcement'
+              ? 'bg-neutral-700 text-white'
+              : 'bg-transparent text-neutral-400 hover:text-gray-300'
+          }`}
+        >
+          Announcement
         </button>
         <button
           onClick={() => setActiveTab('priority')}

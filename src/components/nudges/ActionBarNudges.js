@@ -37,6 +37,7 @@ const ActionBarNudges = ({ onUserSelect, onSortChange, onCreateNudge }) => {
   const sortOptions = [
     'Sender',
     'Type',
+    'Unread',
     'Archived'
   ];
 

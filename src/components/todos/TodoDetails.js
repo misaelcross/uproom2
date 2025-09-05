@@ -1174,7 +1174,7 @@ const TodoDetails = ({
           {/* Reminder Form */}
           {showReminderForm && (
             <div className="reminder-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set reminder</h4>
+              <h4 className="text-white font-medium">Set Reminder</h4>
               <div className="grid grid-cols-1 gap-3">
                 <DatePicker
                   label="Reminder Date"
@@ -1219,7 +1219,7 @@ const TodoDetails = ({
           {/* Duration Form */}
           {showDurationForm && (
             <div className="duration-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set duration</h4>
+              <h4 className="text-white font-medium">Set Duration</h4>
               <div className="grid grid-cols-2 gap-3">
                 <TimePicker
                   label="Start Time"
@@ -1252,7 +1252,7 @@ const TodoDetails = ({
                   disabled={!durationStart || !durationEnd}
                   className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Set duration
+                  Set Duration
                 </button>
                 <button
                   onClick={() => setShowDurationForm(false)}
@@ -1267,7 +1267,7 @@ const TodoDetails = ({
           {/* Repeat Form */}
           {showRepeatForm && (
             <div className="repeat-form p-4 bg-neutral-800 border border-neutral-600 rounded-lg space-y-3">
-              <h4 className="text-white font-medium">Set repeat</h4>
+              <h4 className="text-white font-medium">Set Repeat</h4>
               <FormControl fullWidth>
                 <InputLabel id="repeat-select-label">Repeat Frequency</InputLabel>
                 <Select
@@ -1305,7 +1305,7 @@ const TodoDetails = ({
                   onClick={handleAddRepeat}
                   className="flex-1 px-3 py-2 bg-white text-black rounded hover:bg-neutral-200 transition-colors"
                 >
-                  Set repeat
+                  Set Repeat
                 </button>
                 <button
                   onClick={() => setShowRepeatForm(false)}
@@ -1602,7 +1602,7 @@ const TodoDetails = ({
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-neutral-800 border border-neutral-600 rounded-lg p-6 max-w-sm w-full mx-4">
-            <h3 className="text-lg font-medium text-white mb-4">Delete To-do</h3>
+            <h3 className="text-lg font-medium text-white mb-4">Delete Todo</h3>
             <p className="text-neutral-400 mb-6">
               Are you sure you want to delete "{cleanMentionText(localTodo.description)}"? This action cannot be undone.
             </p>

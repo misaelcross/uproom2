@@ -535,8 +535,10 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
   // Função para filtrar nudges por aba
   const getFilteredNudges = () => {
     switch (topTabActive) {
-      case 'unread':
-        return allNudges.filter(nudge => !nudge.isRead);
+      case 'direct':
+        return allNudges.filter(nudge => nudge.type !== 'announcement');
+      case 'announcement':
+        return allNudges.filter(nudge => nudge.type === 'announcement');
       case 'priority':
         return allNudges.filter(nudge => nudge.isHighPriority || nudge.priority === 'high');
       case 'polls':
@@ -641,6 +643,9 @@ function NudgePage({ onNavigate, onOpenPollCreation }) {
           const typeB = b.type || 'message';
           return typeA.localeCompare(typeB);
         });
+        break;
+      case 'Unread':
+        sortedNudges = sortedNudges.filter(nudge => !nudge.isRead);
         break;
       case 'Priority':
         sortedNudges.sort((a, b) => {
