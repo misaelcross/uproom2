@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
-import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText, MoreHorizontal, Smile, Edit3, Paperclip } from 'lucide-react';
+import { ArrowLeft, Star, Plus, Trash2, X, Check, Clock, Bell, Repeat, MessageCircle, Send, FileText, MoreHorizontal, Smile, Edit3, Paperclip, Link } from 'lucide-react';
 import TodoStep from './TodoStep';
 import TipTapEditor from '../shared/TipTapEditor';
 import EmojiPicker from '../shared/EmojiPicker';
@@ -378,7 +378,8 @@ const TodoDetails = ({
   onAddComment,
   onUpdateComment,
   onDeleteComment,
-  onAddEmojiReaction
+  onAddEmojiReaction,
+  onLinkContext
 }) => {
   const [hoveredUser, setHoveredUser] = useState(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -1165,6 +1166,49 @@ const TodoDetails = ({
             </button>
           </div>
         </div>
+
+        {/* Link Context */}
+        <div className="pt-6">
+          <button
+            onClick={() => onLinkContext && onLinkContext(todo)}
+            className="w-full flex items-center justify-center gap-2 p-3 bg-neutral-800 hover:bg-neutral-700 rounded-lg transition-colors border border-neutral-600 text-white"
+          >
+            <Link className="w-4 h-4" />
+            <span>Link Context to Event</span>
+          </button>
+        </div>
+
+        {/* Linked Context */}
+        {todo.linkedEvents && todo.linkedEvents.length > 0 && (
+          <div className="pt-6">
+            <h3 className="text-lg font-medium text-white mb-3">Linked Events</h3>
+            <div className="space-y-2">
+              {todo.linkedEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="flex items-center gap-3 p-3 bg-neutral-800 rounded-lg border border-neutral-600"
+                >
+                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white font-medium truncate">{event.title}</div>
+                    <div className="text-neutral-400 text-sm">{event.time}</div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      // Remove linked event
+                      const updatedEvents = todo.linkedEvents.filter(e => e.id !== event.id);
+                      // This would typically call a prop function to update the todo
+                      console.log('Remove linked event:', event.id);
+                    }}
+                    className="text-neutral-400 hover:text-red-400 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="space-y-3 pt-6">

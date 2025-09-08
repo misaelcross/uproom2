@@ -12,6 +12,7 @@ import AnimatedBottomSheet from '../shared/AnimatedBottomSheet';
 import TopTabsTodos from './TopTabsTodos';
 import ActionBarTodos from './ActionBarTodos';
 import LiveNotifications from '../shared/LiveNotifications';
+import LinkContextToEventSidebar from './LinkContextToEventSidebar';
 import { usersData } from '../../data/usersData';
 
 const TodosPage = ({ onNavigate }) => {
@@ -48,6 +49,10 @@ const TodosPage = ({ onNavigate }) => {
   
   // Accordion state for completed todos
   const [completedTodosCollapsed, setCompletedTodosCollapsed] = useState(true);
+
+  // Link Context state
+  const [showLinkContextSidebar, setShowLinkContextSidebar] = useState(false);
+  const [todoToLink, setTodoToLink] = useState(null);
 
   // Mock data for todos
   const [todos, setTodos] = useState([
@@ -736,6 +741,31 @@ const TodosPage = ({ onNavigate }) => {
     setSelectedUsers(prev => prev.filter(u => u.id !== userId));
   };
 
+  // Link Context handlers
+  const handleLinkContext = (todo) => {
+    setTodoToLink(todo);
+    setShowLinkContextSidebar(true);
+  };
+
+  const handleCloseLinkContext = () => {
+    setShowLinkContextSidebar(false);
+    setTodoToLink(null);
+  };
+
+  const handleSaveLinkContext = (linkedEvents) => {
+    if (todoToLink && linkedEvents.length > 0) {
+      // Update the todo with linked events
+      setTodos(prevTodos => 
+        prevTodos.map(todo => 
+          todo.id === todoToLink.id 
+            ? { ...todo, linkedEvents }
+            : todo
+        )
+      );
+    }
+    handleCloseLinkContext();
+  };
+
   return (
     <div className="h-screen bg-neutral-900 pr-6 overflow-hidden">
       <div className="flex gap-4 h-screen">
@@ -868,6 +898,7 @@ const TodosPage = ({ onNavigate }) => {
                 onUpdateComment={updateComment}
                 onDeleteComment={deleteComment}
                 onAddEmojiReaction={addEmojiReaction}
+                onLinkContext={handleLinkContext}
               />
             )}
           </div>
@@ -927,6 +958,16 @@ const TodosPage = ({ onNavigate }) => {
           setMessage={setMessage}
         />
       </div>
+
+      {/* Link Context Sidebar */}
+      {showLinkContextSidebar && (
+        <LinkContextToEventSidebar
+          isOpen={showLinkContextSidebar}
+          onClose={handleCloseLinkContext}
+          onSave={handleSaveLinkContext}
+          todo={todoToLink}
+        />
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Paperclip } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
 const MonthlyCalendar = ({ 
@@ -215,12 +215,7 @@ const MonthlyCalendar = ({
     );
   };
 
-  const getLinkedItemsCount = (event) => {
-    const tasksCount = event.linkedTasks ? event.linkedTasks.length : 0;
-    const nudgesCount = event.linkedNudges ? event.linkedNudges.length : 0;
-    const filesCount = event.linkedFiles ? event.linkedFiles.length : 0;
-    return tasksCount + nudgesCount + filesCount;
-  };
+
 
   const handleEventClick = (event) => {
     if (onEventSelect) {
@@ -294,14 +289,7 @@ const MonthlyCalendar = ({
                             }`}>
                               {event.title}
                             </div>
-                            {getLinkedItemsCount(event) > 0 && (
-                              <div className="flex items-center gap-0.5 ml-1">
-                                <span className="text-[8px] text-neutral-400">
-                                  {getLinkedItemsCount(event)}
-                                </span>
-                                <Paperclip className="w-2 h-2 text-neutral-400" />
-                              </div>
-                            )}
+
                           </div>
                           <div className={`text-[8px] truncate ${
                             event.status === 'Completed' ? 'text-neutral-400' : 'text-neutral-300'

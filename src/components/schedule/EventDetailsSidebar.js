@@ -1,8 +1,8 @@
 import React from 'react';
-import { X, Users, MapPin, Paperclip, Check, MessageSquare, FileText, Edit3 } from 'lucide-react';
+import { X, Users, MapPin, Check, MessageSquare, FileText, Edit3 } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 
-const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClasses = "border border-neutral-700 rounded-lg", isCurrentUser = true }) => {
+const EventDetailsSidebar = ({ event, onClose, onEdit, borderClasses = "border border-neutral-700 rounded-lg", isCurrentUser = true }) => {
   if (!event) return null;
 
   // Helper function to get status badge with same styling as event cards
@@ -231,13 +231,6 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
           <div>
             <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
             <div className="space-y-2">
-              <button 
-                onClick={() => onLinkContext(event)}
-                className="w-full flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-neutral-700 text-white border border-neutral-700 rounded-lg transition-colors text-sm"
-              >
-                <Paperclip className="w-4 h-4" />
-                Link Context
-              </button>
               <button className="w-full flex items-center gap-2 px-3 py-2 bg-transparent hover:bg-neutral-700 text-white border border-neutral-700 rounded-lg transition-colors text-sm">
                 <Users className="w-4 h-4" />
                 Invite Others

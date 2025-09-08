@@ -1,21 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { MoreVertical, Plus, Paperclip, X, Save, Users, Link } from 'lucide-react';
+import { MoreVertical, Plus, X, Save, Users, Link } from 'lucide-react';
 import SimpleBar from 'simplebar-react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 
-import EventContextModal from './EventContextModal';
+
 import MonthlyCalendar from './MonthlyCalendar';
 import { usersData } from '../../data/usersData';
 
 
-const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false, onLinkContext = null }) => {
-  const [isContextModalOpen, setIsContextModalOpen] = useState(false);
+const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalScheduleData = null, userName = null, onEventSelect = null, noBorder = false }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [contextModalSource, setContextModalSource] = useState(null); // 'details' or 'direct'
   const [isAddingEvent, setIsAddingEvent] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1600);
 
@@ -366,12 +364,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
   const scheduleData = externalScheduleData || internalScheduleData;
   const setScheduleData = externalScheduleData ? () => {} : setInternalScheduleData;
 
-  // Function to handle opening context modal
-  const handleOpenContextModal = (event, source = 'direct') => {
-    setSelectedEvent(event);
-    setContextModalSource(source);
-    setIsContextModalOpen(true);
-  };
+
 
   // Function to handle opening event details modal
   const handleOpenEventDetails = (event) => {
@@ -431,30 +424,9 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
     setIsAddingEvent(false);
   };
 
-  // Function to handle closing context modal
-  const handleCloseContextModal = () => {
-    setIsContextModalOpen(false);
-    setContextModalSource(null);
-  };
 
-  // Function to update event with new context
-  const handleUpdateEvent = (updatedEvent) => {
-    setScheduleData(prevData => 
-      prevData.map(dayData => ({
-        ...dayData,
-        events: dayData.events.map(event => 
-          event.id === updatedEvent.id ? updatedEvent : event
-        )
-      }))
-    );
-  };
 
-  // Helper function to get total linked items count
-  const getLinkedItemsCount = (event) => {
-    return (event.linkedTasks?.length || 0) + 
-           (event.linkedNudges?.length || 0) + 
-           (event.linkedFiles?.length || 0);
-  };
+
 
   // Helper function to get status badge styling
   const getStatusBadge = (status, originalStatus = null) => {
@@ -558,30 +530,6 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                           </div>
                           {/* Right side: Attachment icon and people grouped together */}
                           <div className="flex items-center gap-1 ml-2">
-                            {/* Attachment icon */}
-                            {getLinkedItemsCount(event) > 0 && (
-                              <div className="flex items-center gap-1">
-                                {getLinkedItemsCount(event) > 0 && (
-                                  <span className="text-[10px] text-neutral-400">
-                                    {getLinkedItemsCount(event)}
-                                  </span>
-                                )}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (onLinkContext) {
-                                      onLinkContext(event);
-                                    } else {
-                                      handleOpenContextModal(event);
-                                    }
-                                  }}
-                                  className="p-0.5 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
-                                  title="Link tasks, nudges, and files"
-                                >
-                                  <Paperclip className="w-2.5 h-2.5" />
-                                </button>
-                              </div>
-                            )}
                             {/* People avatars immediately after attachment icon */}
                             {(event.avatar || event.additionalPeople) && (
                               <div className="flex items-center gap-1">
@@ -962,30 +910,6 @@ slotProps={{
                           </div>
                           {/* Right side: Attachment icon and people grouped together */}
                           <div className="flex items-center gap-1 ml-2">
-                            {/* Attachment icon */}
-                            {getLinkedItemsCount(event) > 0 && (
-                              <div className="flex items-center gap-1">
-                                {getLinkedItemsCount(event) > 0 && (
-                                  <span className="text-[10px] text-neutral-400">
-                                    {getLinkedItemsCount(event)}
-                                  </span>
-                                )}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    if (onLinkContext) {
-                                      onLinkContext(event);
-                                    } else {
-                                      handleOpenContextModal(event);
-                                    }
-                                  }}
-                                  className="p-1 hover:bg-opacity-20 hover:bg-white rounded transition-colors text-neutral-400"
-                                  title="Link tasks, nudges, and files"
-                                >
-                                  <Paperclip className="w-4 h-4" />
-                                </button>
-                              </div>
-                            )}
                             {/* People avatars immediately after attachment icon */}
                             {(event.avatar || event.additionalPeople) && (
                               <div className="flex items-center gap-1">
@@ -1038,13 +962,7 @@ slotProps={{
       </SimpleBar>
 
 
-      {/* Event Context Modal */}
-      <EventContextModal
-        isOpen={isContextModalOpen}
-        onClose={handleCloseContextModal}
-        event={selectedEvent}
-        onUpdateEvent={handleUpdateEvent}
-      />
+
 
       {/* People Dropdown */}
       {isPeopleDropdownOpen && createPortal(

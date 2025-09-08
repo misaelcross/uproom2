@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Clock, Calendar, Users, MapPin, Paperclip, CheckSquare, MessageSquare, FileText, Edit3 } from 'lucide-react';
 
-const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) => {
+const EventDetailsModal = ({ isOpen, onClose, event, onEdit }) => {
   if (!isOpen || !event) return null;
 
   // Helper function to get status badge
@@ -205,13 +205,7 @@ const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) =>
           <div>
             <h3 className="text-sm font-medium text-neutral-300 mb-3">Quick actions</h3>
             <div className="flex gap-2">
-              <button 
-                onClick={() => onLinkContext && onLinkContext(event)}
-                className="flex items-center gap-2 px-3 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm"
-              >
-                <Paperclip className="w-4 h-4" />
-                Link Context
-              </button>
+
               <button className="flex items-center gap-2 px-3 py-2 bg-neutral-700 hover:bg-neutral-600 text-white rounded-lg transition-colors text-sm">
                 <Users className="w-4 h-4" />
                 Invite Others

@@ -38,8 +38,8 @@ const ActionBar = ({ onUserSelect, onSortChange, onInvite, onCollaborate, sortBy
   const sortOptions = [
     'Newest',
     'Oldest',
-    'Role',
     'Status',
+    'Role',
     'Alphabetical (A–Z)',
     'Alphabetical (Z–A)'
   ];

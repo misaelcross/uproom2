@@ -573,9 +573,6 @@ const UserDetails = ({ user, onBack }) => {
             onEdit={(event) => {
               console.log('Edit event:', event);
             }}
-            onLinkContext={(event) => {
-              console.log('Link context for event:', event);
-            }}
             borderClasses="border border-neutral-700 rounded-lg"
             isCurrentUser={isCurrentUser}
           />
