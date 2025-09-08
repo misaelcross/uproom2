@@ -280,6 +280,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
           additionalPeople: '+2',
           isCurrent: false,
           status: 'Completed',
+          originalStatus: 'Meeting',
           linkedTasks: [],
           linkedNudges: [],
           linkedFiles: []
@@ -318,6 +319,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
           time: '2:00pm - 3:30pm',
           isCurrent: false,
           status: 'Completed',
+          originalStatus: 'Focus',
           linkedTasks: [],
           linkedNudges: [],
           linkedFiles: []
@@ -455,19 +457,20 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
   };
 
   // Helper function to get status badge styling
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, originalStatus = null) => {
     const statusConfig = {
       'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
       'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
       'Meeting': { text: 'text-blue-400', bg: 'bg-blue-500/10' },
-      'Completed': { text: 'text-green-400', bg: 'bg-green-500/10' }
+      'Completed': { text: 'text-neutral-300', bg: 'bg-neutral-700' }
     };
     
     const config = statusConfig[status] || statusConfig['Available'];
+    const displayText = status === 'Completed' && originalStatus ? originalStatus : status;
     
     return (
       <div className={`px-2 py-1 rounded text-xs font-medium ${config.text} ${config.bg}`}>
-        {status}
+        {displayText}
       </div>
     );
   };
@@ -608,7 +611,7 @@ const Schedule = ({ fullWidth = false, viewMode = 'Day', scheduleData: externalS
                         <div className="flex flex-col gap-1">
                           {/* Status badge */}
                           <div className="flex items-center">
-                            {event.status && getStatusBadge(event.status, 'xs')}
+                            {event.status && getStatusBadge(event.status, event.originalStatus)}
                           </div>
                           
                           {/* Time */}
@@ -1012,7 +1015,7 @@ slotProps={{
                         <div className="flex items-center justify-between">
                           {/* Status badge on the left */}
                           <div className="flex items-center">
-                            {event.status && getStatusBadge(event.status)}
+                            {event.status && getStatusBadge(event.status, event.originalStatus)}
                           </div>
                           
                           {/* Time on the right */}

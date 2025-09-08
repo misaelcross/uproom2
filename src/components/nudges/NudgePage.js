@@ -115,7 +115,7 @@ const nudgesData = [
     senderTitle: "UX Designer",
     senderAvatar: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop",
     message: "User testing results are ready for review. Some interesting insights!",
-    fullMessage: "User testing results are ready for review. Some interesting insights! @Sarah Johnson and @Mike Chen, please check the new navigation pattern results. The mobile experience needs attention from the dev team.",
+    fullMessage: "User testing results are ready for review. Some interesting insights! @Sarah Johnson and @Marcus Chen, please check the new navigation pattern results. The mobile experience needs attention from the dev team.",
     timestamp: "4h",
     type: "message",
     isRead: false,

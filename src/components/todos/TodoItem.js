@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Check, Star, ChevronDown, AlertTriangle, MessageCircle, Clock } from 'lucide-react';
 import { Checkbox, ThemeProvider, createTheme } from '@mui/material';
+import FloatingUserCard from '../shared/FloatingUserCard';
+import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 
 // Material UI theme for checkbox
 const checkboxTheme = createTheme({
@@ -40,6 +43,8 @@ const TodoItem = ({
   selectedGroup,
   groups
 }) => {
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   // Function to get time ago for contextual date display
   const getTimeAgo = (date) => {
     const now = new Date();
@@ -58,6 +63,85 @@ const TodoItem = ({
     if (!text) return '';
     // Remove HTML tags from mentions like <span class="mention bg-white text-black px-1 py-0.5 rounded text-sm">@John Doe</span>
     return text.replace(/<[^>]*>/g, '');
+  };
+
+  const handleUserMentionHover = (user, event) => {
+    setHoveredUser(user);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
+
+  const handleUserMentionLeave = () => {
+    setHoveredUser(null);
+  };
+
+  // Function to render text with mentions - plain text for preview, styled badges for details
+  const renderTextWithMentions = (text, isPreview = false) => {
+    if (!text) return '';
+    
+    // First, clean HTML mentions and convert to plain text format
+    let cleanText = text.replace(/<p[^>]*>|<\/p>/g, ''); // Remove p tags
+    cleanText = cleanText.replace(/<span[^>]*class="[^"]*mention[^"]*"[^>]*>([^<]+)<\/span>/g, '$1'); // Extract mention text
+    
+    // Now parse plain text mentions like @John Doe or @sarah.johnson
+    const mentionRegex = /@([\w\s.]+?)(?=\s|$|[,!?])/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = mentionRegex.exec(cleanText)) !== null) {
+      // Add text before mention
+      if (match.index > lastIndex) {
+        parts.push(cleanText.slice(lastIndex, match.index));
+      }
+      
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.socialLinks.slack.replace('@', '').toLowerCase() === mentionName.toLowerCase() ||
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
+      
+      if (user) {
+        if (isPreview) {
+          // For preview, just plain text
+          parts.push(`@${formatMentionName(user.name)}`);
+        } else {
+          // For details, styled badges with colors
+          const colors = getStatusColors(user.availability);
+          parts.push(
+            <span
+              key={match.index}
+              className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+              onMouseEnter={(e) => handleUserMentionHover(user, e)}
+              onMouseLeave={handleUserMentionLeave}
+            >
+              @{formatMentionName(user.name)}
+            </span>
+          );
+        }
+      } else {
+        if (isPreview) {
+          // For preview, just plain text
+          parts.push(`@${mentionName}`);
+        } else {
+          // For details, gray badge for unmatched mentions
+          parts.push(
+            <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+              @{mentionName}
+            </span>
+          );
+        }
+      }
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < cleanText.length) {
+      parts.push(cleanText.slice(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : cleanText;
   };
 
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
@@ -147,8 +231,8 @@ const TodoItem = ({
               {todo.missed && (
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
               )}
-              <span className={`text-white text-sm sm:text-base truncate ${todo.completed ? 'line-through opacity-60' : ''}`}>
-                {cleanMentionText(todo.description)}
+              <span className={`text-white text-sm sm:text-base ${todo.completed ? 'line-through opacity-60' : ''}`}>
+                {renderTextWithMentions(todo.description, true)}
               </span>
               
 
@@ -252,6 +336,15 @@ const TodoItem = ({
           )}
         </div>
       </div>
+      
+      {/* Floating User Card */}
+      {hoveredUser && (
+        <FloatingUserCard
+          user={hoveredUser}
+          position={mousePosition}
+          onClose={handleUserMentionLeave}
+        />
+      )}
     </div>
   );
 };

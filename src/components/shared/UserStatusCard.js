@@ -19,6 +19,7 @@ const UserStatusCard = ({
   cancelStatusChange
 }) => {
   const dropdownRef = useRef(null);
+  const textareaRef = useRef(null);
 
   // Status options
   const statusOptions = [
@@ -47,6 +48,29 @@ const UserStatusCard = ({
 
   // Estado local temporário para o campo de texto do dropdown
   const [tempStatusMessage, setTempStatusMessage] = useState('');
+
+  // Function to auto-resize textarea
+  const autoResizeTextarea = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  // Auto-resize when tempStatusMessage changes
+  useEffect(() => {
+    autoResizeTextarea();
+  }, [tempStatusMessage]);
+
+  // Auto-resize when dropdown opens
+  useEffect(() => {
+    if (statusDropdownOpen) {
+      // Small delay to ensure the textarea is rendered
+      setTimeout(() => {
+        autoResizeTextarea();
+      }, 0);
+    }
+  }, [statusDropdownOpen]);
 
   // Função para randomizar ícones
   const randomizeAppIcons = () => {
@@ -190,6 +214,7 @@ const UserStatusCard = ({
               }`}>
                 <SimpleBar style={{ maxHeight: '120px' }}>
                   <textarea
+                    ref={textareaRef}
                     value={tempStatusMessage}
                     onChange={(e) => {
                       setTempStatusMessage(e.target.value);
@@ -199,10 +224,11 @@ const UserStatusCard = ({
                     }}
                     placeholder="Give more details..."
                     className="w-full bg-transparent p-3 pr-10 text-sm text-white placeholder-neutral-400 resize-none focus:outline-none border-none"
-                    rows="3"
+                    rows="1"
                     style={{
-                      minHeight: '80px',
-                      maxHeight: '120px'
+                      minHeight: '44px',
+                      maxHeight: '120px',
+                      overflow: 'hidden'
                     }}
                   />
                 </SimpleBar>

@@ -194,7 +194,7 @@ const MonthlyCalendar = ({
     });
   };
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, originalStatus = null) => {
     const statusConfig = {
       'Available': { bg: 'bg-green-500', text: 'Available' },
       'Meeting': { bg: 'bg-blue-500', text: 'Meeting' },
@@ -202,14 +202,15 @@ const MonthlyCalendar = ({
       'Break': { bg: 'bg-yellow-500', text: 'Break' },
       'Away': { bg: 'bg-orange-500', text: 'Away' },
       'Emergency': { bg: 'bg-red-500', text: 'Emergency' },
-      'Completed': { bg: 'bg-green-500', text: 'Completed' }
+      'Completed': { bg: 'bg-neutral-700', text: 'Completed' }
     };
 
     const config = statusConfig[status] || { bg: 'bg-gray-500', text: status };
+    const displayText = status === 'Completed' && originalStatus ? originalStatus : config.text;
     
     return (
-      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium text-white ${config.bg}`}>
-        {config.text}
+      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium ${status === 'Completed' ? 'text-neutral-300' : 'text-white'} ${config.bg}`}>
+        {displayText}
       </span>
     );
   };

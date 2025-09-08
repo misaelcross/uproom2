@@ -7,6 +7,9 @@ import TodoStep from './TodoStep';
 import TipTapEditor from '../shared/TipTapEditor';
 import EmojiPicker from '../shared/EmojiPicker';
 import useEscapeKey from '../../hooks/useEscapeKey';
+import FloatingUserCard from '../shared/FloatingUserCard';
+import { usersData } from '../../data/usersData';
+import { getStatusColors, formatMentionName } from '../../utils/mentionUtils';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
@@ -377,6 +380,8 @@ const TodoDetails = ({
   onDeleteComment,
   onAddEmojiReaction
 }) => {
+  const [hoveredUser, setHoveredUser] = useState(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   // Handle Escape key to close the component view
   useEscapeKey(onBack);
 
@@ -454,6 +459,77 @@ const TodoDetails = ({
     if (!text) return '';
     // Remove HTML tags from mentions like <span class="mention bg-white text-black px-1 py-0.5 rounded text-sm">@John Doe</span>
     return text.replace(/<[^>]*>/g, '');
+  };
+
+  // State for mention hover functionality (using existing hoveredUser state)
+
+  // Handle user mention hover
+  const handleUserMentionHover = (user, event) => {
+    setHoveredUser(user);
+    setMousePosition({ x: event.clientX, y: event.clientY });
+  };
+
+  // Handle user mention leave
+  const handleUserMentionLeave = () => {
+    setHoveredUser(null);
+  };
+
+  // Render text with styled mention badges
+  const renderTextWithMentions = (text) => {
+    if (!text) return '';
+    
+    // First, clean HTML mentions and convert to plain text format
+    let cleanText = text.replace(/<p[^>]*>|<\/p>/g, ''); // Remove p tags
+    cleanText = cleanText.replace(/<span[^>]*class="[^"]*mention[^"]*"[^>]*>([^<]+)<\/span>/g, '$1'); // Extract mention text
+    
+    // Now parse plain text mentions like @John Doe or @sarah.johnson
+    const mentionRegex = /@([\w\s.]+?)(?=\s|$|[,!?])/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = mentionRegex.exec(cleanText)) !== null) {
+      // Add text before mention
+      if (match.index > lastIndex) {
+        parts.push(cleanText.slice(lastIndex, match.index));
+      }
+      
+      const mentionName = match[1].trim();
+      const user = usersData.find(u => 
+        u.socialLinks.slack.replace('@', '').toLowerCase() === mentionName.toLowerCase() ||
+        u.name.toLowerCase().includes(mentionName.toLowerCase()) ||
+        mentionName.toLowerCase().includes(u.name.toLowerCase())
+      );
+      
+      if (user) {
+        const colors = getStatusColors(user.availability);
+        parts.push(
+          <span
+            key={match.index}
+            className={`inline-block px-2 py-1 rounded font-semibold text-xs cursor-pointer transition-colors hover:opacity-80 ${colors.text} ${colors.bg}`}
+            onMouseEnter={(e) => handleUserMentionHover(user, e)}
+            onMouseLeave={handleUserMentionLeave}
+          >
+            @{formatMentionName(user.name)}
+          </span>
+        );
+      } else {
+        parts.push(
+          <span key={match.index} className="inline-block px-2 py-1 rounded bg-gray-500/10 text-gray-400 font-semibold text-xs">
+            @{mentionName}
+          </span>
+        );
+      }
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < cleanText.length) {
+      parts.push(cleanText.slice(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : cleanText;
   };
 
   useEffect(() => {
@@ -888,7 +964,7 @@ const TodoDetails = ({
                     localTodo.completed ? 'line-through text-neutral-500' : 'text-white'
                   }`}
                 >
-                  {cleanMentionText(localTodo.description) || 'Untitled Todo'}
+                  {renderTextWithMentions(localTodo.description) || 'Untitled Todo'}
                 </h1>
               )}
             </div>
@@ -1690,6 +1766,15 @@ const TodoDetails = ({
         </div>
       </div>,
       document.body
+    )}
+    
+    {/* FloatingUserCard for mention hover */}
+    {hoveredUser && (
+      <FloatingUserCard
+        user={hoveredUser}
+        position={mousePosition}
+        onClose={handleUserMentionLeave}
+      />
     )}
     </>
   );

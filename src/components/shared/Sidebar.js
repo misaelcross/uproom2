@@ -55,7 +55,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
       createdAt: new Date('2024-01-15T10:30:00'),
       dueDate: new Date('2024-01-22T14:00:00'),
       priority: 'high',
-      mentions: ['@john', '@sarah']
+      mentions: ['@Marcus Chen', '@Sarah Johnson']
     },
     { 
       id: 2, 
@@ -64,7 +64,7 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
       createdAt: new Date('2024-01-10T09:15:00'),
       dueDate: new Date('2024-01-20T16:30:00'),
       priority: 'medium',
-      mentions: ['@mike']
+      mentions: ['@Marcus Chen']
     }
   ]);
   const [reminderSortBy, setReminderSortBy] = useState('recent'); // 'recent', 'oldest', 'priority'

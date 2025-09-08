@@ -6,7 +6,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
   if (!event) return null;
 
   // Helper function to get status badge with same styling as event cards
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, originalStatus = null) => {
     const statusConfig = {
       'Focus': { text: 'text-purple-400', bg: 'bg-purple-500/10' },
       'Available': { text: 'text-green-400', bg: 'bg-green-500/10' },
@@ -16,14 +16,15 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
       'Away': { text: 'text-yellow-400', bg: 'bg-yellow-500/10' },
       'Offline': { text: 'text-gray-400', bg: 'bg-gray-500/10' },
       'Busy': { text: 'text-red-400', bg: 'bg-red-500/10' },
-      'Completed': { text: 'text-green-400', bg: 'bg-green-500/10' }
+      'Completed': { text: 'text-neutral-300', bg: 'bg-neutral-700' }
     };
     
     const config = statusConfig[status] || statusConfig['Available'];
+    const displayText = status === 'Completed' && originalStatus ? originalStatus : status;
     
     return (
       <div className={`px-2 py-1 rounded text-xs font-medium ${config.text} ${config.bg}`}>
-        {status}
+        {displayText}
       </div>
     );
   };
@@ -62,7 +63,7 @@ const EventDetailsSidebar = ({ event, onClose, onEdit, onLinkContext, borderClas
         <div>
           <h1 className="text-white text-xl font-bold mb-2">{event.title}</h1>
           <div className="inline-block">
-            {getStatusBadge(event.status || 'Available')}
+            {getStatusBadge(event.status || 'Available', event.originalStatus)}
           </div>
         </div>
 

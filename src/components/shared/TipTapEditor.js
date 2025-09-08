@@ -11,14 +11,7 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { formatMentionName, getStatusColors } from '../../utils/mentionUtils';
 import { usersData } from '../../data/usersData';
 
-// Mock users data
-const mockUsers = [
-    { id: 1, name: 'John Doe', username: 'johndoe', avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
-    { id: 2, name: 'Jane Smith', username: 'janesmith', avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
-    { id: 3, name: 'Mike Johnson', username: 'mikejohnson', avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
-    { id: 4, name: 'Sarah Wilson', username: 'sarahwilson', avatar: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' },
-    { id: 5, name: 'David Brown', username: 'davidbrown', avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=32&h=32&fit=crop' }
-  ];
+// Use actual users data instead of mock data
 
 // Emoji list
 const emojiList = [
@@ -165,7 +158,7 @@ const MentionList = React.forwardRef((props, ref) => {
   const selectItem = (index) => {
     const item = props.items[index];
     if (item) {
-      props.command({ id: item.id, label: formatMentionName(item.name) });
+      props.command({ id: item.id, label: item.socialLinks.slack.replace('@', '') });
     }
   };
 
@@ -227,7 +220,7 @@ const MentionList = React.forwardRef((props, ref) => {
             />
             <div className="flex flex-col">
               <span className="text-white text-sm font-medium">{item.name}</span>
-              <span className="text-neutral-400 text-xs">@{item.name}</span>
+              <span className="text-neutral-400 text-xs">{item.socialLinks.slack}</span>
             </div>
           </button>
         ))
@@ -244,7 +237,7 @@ MentionList.displayName = 'MentionList';
 // Simplified suggestion configuration without tippy.js
 const suggestion = {
   items: ({ query }) => {
-    return mockUsers
+    return usersData
       .filter(user => 
         user.name.toLowerCase().includes(query.toLowerCase()) ||
         user.name.toLowerCase().includes(query.toLowerCase())

@@ -5,20 +5,21 @@ const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) =>
   if (!isOpen || !event) return null;
 
   // Helper function to get status badge
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status, originalStatus = null) => {
     const statusConfig = {
       'Focus': { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
       'Available': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
       'Meeting': { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
       'Busy': { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
-      'Completed': { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' }
+      'Completed': { bg: 'bg-neutral-700', text: 'text-neutral-300', border: 'border-neutral-600' }
     };
 
     const config = statusConfig[status] || statusConfig['Available'];
+    const displayText = status === 'Completed' && originalStatus ? originalStatus : status;
     
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium border ${config.bg} ${config.text} ${config.border}`}>
-        {status}
+        {displayText}
       </span>
     );
   };
@@ -57,7 +58,7 @@ const EventDetailsModal = ({ isOpen, onClose, event, onEdit, onLinkContext }) =>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h2 className="text-xl font-semibold text-white">{event.title}</h2>
-              {getStatusBadge(event.status)}
+              {getStatusBadge(event.status, event.originalStatus)}
             </div>
             <div className="flex items-center gap-4 text-neutral-400 text-sm">
               <div className="flex items-center gap-1">
