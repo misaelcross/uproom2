@@ -55,10 +55,10 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
   };
 
   return (
-    <div className="h-full bg-transparent border border-neutral-700 rounded-lg overflow-hidden">
-      <div className="h-full bg-transparent">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-700">
+    <div className="h-full flex flex-col border border-neutral-700 rounded-lg">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-neutral-700 flex-shrink-0">
+        <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-white">Select Team Member</h2>
           <button
             onClick={onClose}
@@ -67,23 +67,25 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
             <X className="w-5 h-5 text-neutral-400" />
           </button>
         </div>
+      </div>
 
-        {/* Search */}
-        <div className="p-4 border-b border-neutral-700">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
-            <input
-              type="text"
-              placeholder="Search team members..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:border-white"
-            />
-          </div>
+      {/* Search */}
+      <div className="p-4 border-b border-neutral-700 flex-shrink-0">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+          <input
+            type="text"
+            placeholder="Search team members..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-neutral-800 border border-neutral-600 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:border-white"
+          />
         </div>
+      </div>
 
-        {/* Employee List */}
-        <div className="flex-1 overflow-y-auto">
+      {/* Content - Scrollable */}
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto" data-simplebar>
           {filteredEmployees.length === 0 ? (
             <div className="p-4 text-center text-neutral-400">
               No employees found matching your search.
@@ -129,15 +131,17 @@ const EmployeeListSidebar = ({ isOpen, onClose, onSelectEmployee }) => {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between p-4 border-t border-neutral-700">
+      {/* Footer - Sticky */}
+      <div className="sticky bottom-0 p-4 border-t border-neutral-700 bg-neutral-900 rounded-b-lg flex-shrink-0 pb-20">
+        <div className="flex items-center justify-between">
           <span className="text-sm text-neutral-400">
             {filteredEmployees.length} employee{filteredEmployees.length !== 1 ? 's' : ''} found
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-neutral-600 text-neutral-300  font-medium hover:bg-neutral-800 transition-colors"
+            className="px-4 py-2 rounded-lg border border-neutral-600 text-neutral-300 font-medium hover:bg-neutral-800 transition-colors"
           >
             Cancel
           </button>

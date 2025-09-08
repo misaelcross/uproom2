@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, Crown } from 'lucide-react';
 import ActivityProgressBar from './ActivityProgressBar';
 
-const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetReminder }) => {
+const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetReminder, isGroupLeader = false, isSelectionMode = false, isSelected = false }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const dropdownRef = useRef(null);
@@ -72,23 +72,31 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
     setDropdownOpen(false);
   };
 
-  const dropdownOptions = isInGroup ? [
+  const dropdownOptions = isInGroup && !isSelectionMode ? [
     'Remove from Group',
     'Send Nudge',
     'Set Reminder',
     'Collaborate',
     'Request to Join Meeting'
-  ] : [
+  ] : !isSelectionMode ? [
     'Send Nudge',
     'Set Reminder',
     'Collaborate',
     'Request to Join Meeting',
     'Add to a Group'
-  ];
+  ] : [];
 
   return (
     <div 
-      className={`bg-transparent border border-neutral-700 rounded-lg p-4 cursor-pointer transition-all duration-200 relative ${getStatusColor(user.availability).hoverBg} ${getStatusColor(user.availability).hoverBorder}`}
+      className={`bg-transparent border rounded-lg p-4 cursor-pointer transition-all duration-200 relative ${
+        isSelected 
+          ? 'border-white bg-neutral-700/50' 
+          : 'border-neutral-700'
+      } ${
+        !isSelectionMode ? `${getStatusColor(user.availability).hoverBg} ${getStatusColor(user.availability).hoverBorder}` : 'hover:border-neutral-300'
+      } ${
+        isSelectionMode ? 'pl-12' : ''
+      }`}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -104,37 +112,44 @@ const UserCard = ({ user, onClick, isInGroup = false, onRemoveFromGroup, onSetRe
           <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDotColor(user.availability)} rounded-full border-2 border-neutral-900`}></div>
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-white font-medium text-base">{user.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-white font-medium text-base">{user.name}</h3>
+            {isGroupLeader && (
+              <Crown className="w-4 h-4 text-yellow-400" title="Group Leader" />
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <p className="text-neutral-400 text-sm truncate">{user.title}</p>
             <span className="text-neutral-400 text-sm whitespace-nowrap">• 2h</span>
           </div>
         </div>
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={handleEllipsesClick}
-            className="p-1 hover:bg-neutral-800 rounded transition-colors"
-          >
-            <MoreVertical className="w-5 h-5 text-neutral-400" />
-          </button>
-          
-          {/* Dropdown Menu */}
-          {dropdownOpen && (
-            <div className="absolute top-full right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 min-w-[180px]">
-              <div className="py-1">
-                {dropdownOptions.map((option, index) => (
-                  <button
-                    key={index}
-                    onClick={(e) => handleOptionClick(option, e)}
-                    className="w-full text-left px-3 py-2 text-sm text-white hover:bg-neutral-800 transition-colors"
-                  >
-                    {option}
-                  </button>
-                ))}
+        {!isSelectionMode && (
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={handleEllipsesClick}
+              className="p-1 hover:bg-neutral-800 rounded transition-colors"
+            >
+              <MoreVertical className="w-5 h-5 text-neutral-400" />
+            </button>
+            
+            {/* Dropdown Menu */}
+            {dropdownOpen && dropdownOptions.length > 0 && (
+              <div className="absolute top-full right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg shadow-2xl z-50 min-w-[180px]">
+                <div className="py-1">
+                  {dropdownOptions.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={(e) => handleOptionClick(option, e)}
+                      className="w-full text-left px-3 py-2 text-sm text-white hover:bg-neutral-800 transition-colors"
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Atividade atual - truncada em 1 linha */}

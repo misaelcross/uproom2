@@ -43,7 +43,7 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
     e.stopPropagation();
     
     switch (option) {
-      case 'Go to original source':
+      case 'Mentioned In':
         if (onGoToOriginalMessage) {
           onGoToOriginalMessage(file);
         }
@@ -65,7 +65,7 @@ const FileCardDropdown = ({ file, onGoToOriginalMessage }) => {
   };
 
   const dropdownOptions = [
-    { label: 'Go to original source', icon: ArrowUpRight },
+    { label: 'Mentioned In', icon: ArrowUpRight },
     { label: 'Download', icon: Download },
     { label: 'Share', icon: Share },
     { label: 'Delete', icon: Trash2 }

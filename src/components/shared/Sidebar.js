@@ -767,6 +767,10 @@ const Sidebar = forwardRef(({ currentPage, onNavigate, rightPanelContent, setRig
               <div className="flex items-center justify-between p-4">
                 <h3 className="text-sm font-medium text-white">Pomodoro</h3>
                 <div className="flex items-center gap-1">
+                  {/* Show timer when collapsed (minimized) */}
+                  {pomodoroCollapsed && (
+                    <span className="text-sm text-neutral-400 mr-2">{formatTime(pomodoroTime)}</span>
+                  )}
                   <button
                     onClick={() => setPomodoroFullScreen(!pomodoroFullScreen)}
                     className="p-1 hover:bg-neutral-600 rounded transition-colors"
